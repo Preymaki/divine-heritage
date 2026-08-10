@@ -368,11 +368,8 @@ export function subscribeToPublishedGallery(
   callback: (items: GalleryItem[]) => void,
   onError?: (err: Error) => void,
 ): Unsubscribe {
-  const q = query(
-    collection(db, GALLERY_COLLECTION),
-  )
   return onSnapshot(
-    q,
+    collection(db, GALLERY_COLLECTION),
     (snap) => {
       const items: GalleryItem[] = snap.docs
         .map((d) => ({ id: d.id, ...(d.data() as Omit<GalleryItem, 'id'>) }))
