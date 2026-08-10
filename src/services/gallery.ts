@@ -17,7 +17,6 @@ import {
   collection,
   query,
   orderBy,
-  where,
   onSnapshot,
   writeBatch,
   doc,
@@ -362,9 +361,8 @@ export function subscribeToGallery(
  * Subscribes to PUBLISHED gallery items only, ordered by group then sortOrder.
  * Used by the public /gallery page.
  *
- * Sorting is done client-side to avoid requiring a Firestore composite index.
- * Only a single-field index on `isPublished` is used, which Firestore
- * handles automatically.
+ * Filtering and sorting are done client-side to avoid requiring any
+ * Firestore indexes (composite or single-field).
  */
 export function subscribeToPublishedGallery(
   callback: (items: GalleryItem[]) => void,
@@ -372,13 +370,13 @@ export function subscribeToPublishedGallery(
 ): Unsubscribe {
   const q = query(
     collection(db, GALLERY_COLLECTION),
-    where('isPublished', '==', true),
   )
   return onSnapshot(
     q,
     (snap) => {
       const items: GalleryItem[] = snap.docs
         .map((d) => ({ id: d.id, ...(d.data() as Omit<GalleryItem, 'id'>) }))
+        .filter((item) => item.isPublished === true)
         .sort((a, b) => {
           if (a.group !== b.group) return a.group.localeCompare(b.group)
           return (a.sortOrder ?? 0) - (b.sortOrder ?? 0)
@@ -391,3 +389,4 @@ export function subscribeToPublishedGallery(
     },
   )
 }
+
