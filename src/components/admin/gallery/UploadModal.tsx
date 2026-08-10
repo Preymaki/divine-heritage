@@ -24,7 +24,8 @@ import {
   type FormEvent,
 } from 'react'
 import { X, UploadCloud, ImagePlus, CheckCircle, AlertTriangle } from 'lucide-react'
-import type { GalleryItemInput, UploadState } from '@appTypes/gallery'
+import type { GalleryItemInput, GalleryGroup, UploadState } from '@appTypes/gallery'
+import { GALLERY_GROUP_LABELS, GALLERY_GROUP_ORDER } from '@appTypes/gallery'
 import UploadProgressBar from './UploadProgressBar'
 
 // ---------------------------------------------------------------------------
@@ -54,6 +55,8 @@ const EMPTY_META: GalleryItemInput = {
   title: '',
   altText: '',
   caption: '',
+  group: 'other',
+  sortOrder: 0,
   isPublished: true,
 }
 
@@ -371,6 +374,24 @@ export default function UploadModal({
                       disabled={isBusy}
                       maxLength={200}
                     />
+                  </div>
+
+                  {/* Group */}
+                  <div className="admin-form-group">
+                    <label htmlFor="upload-group" className="admin-form-label">
+                      Gallery group
+                    </label>
+                    <select
+                      id="upload-group"
+                      className="admin-input admin-input--no-icon"
+                      value={meta.group}
+                      onChange={e => setMeta(m => ({ ...m, group: e.target.value as GalleryGroup }))}
+                      disabled={isBusy}
+                    >
+                      {GALLERY_GROUP_ORDER.map((g) => (
+                        <option key={g} value={g}>{GALLERY_GROUP_LABELS[g]}</option>
+                      ))}
+                    </select>
                   </div>
 
                   {/* Publish toggle */}

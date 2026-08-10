@@ -2,12 +2,17 @@
  * GalleryCard
  *
  * A single image tile in the admin gallery grid.
- * Shows thumbnail, title, published/draft badge, alt text, date.
+ * Shows thumbnail, title, group, published/draft badge, alt text, date.
  * Action buttons: Edit, Publish/Unpublish toggle, Delete.
+ *
+ * A "Static" badge is shown for seeded images (storagePath === null)
+ * so the admin knows the original file lives in public/ and cannot
+ * be deleted from Firebase Storage.
  */
 
 import type { GalleryItem } from '@appTypes/gallery'
-import { Eye, EyeOff, Calendar, Pencil, Trash2 } from 'lucide-react'
+import { GALLERY_GROUP_LABELS } from '@appTypes/gallery'
+import { Eye, EyeOff, Calendar, Pencil, Trash2, HardDrive } from 'lucide-react'
 
 interface GalleryCardProps {
   item: GalleryItem
@@ -30,6 +35,8 @@ export default function GalleryCard({
   onTogglePublish,
   isActionPending = false,
 }: GalleryCardProps) {
+  const isStatic = item.storagePath === null
+
   return (
     <article className="gallery-card" aria-label={item.title}>
       {/* Image */}
@@ -49,11 +56,20 @@ export default function GalleryCard({
             : <><EyeOff size={11} aria-hidden="true" /> Draft</>
           }
         </div>
+        {/* Static asset badge */}
+        {isStatic && (
+          <div className="gallery-card-badge gallery-card-badge--static" title="Original website image — stored in public/, not Firebase Storage">
+            <HardDrive size={11} aria-hidden="true" /> Static
+          </div>
+        )}
       </div>
 
       {/* Meta */}
       <div className="gallery-card-meta">
         <p className="gallery-card-title" title={item.title}>{item.title}</p>
+        <p className="gallery-card-group">
+          {GALLERY_GROUP_LABELS[item.group] ?? item.group}
+        </p>
         {item.altText && (
           <p className="gallery-card-alt" title={item.altText}>
             Alt: {item.altText}
@@ -102,7 +118,7 @@ export default function GalleryCard({
           disabled={isActionPending}
           className="gallery-action-btn gallery-action-btn--delete"
           aria-label={`Delete ${item.title}`}
-          title="Delete image permanently"
+          title={isStatic ? 'Remove from gallery (file stays in public/)' : 'Delete image permanently'}
         >
           <Trash2 size={13} aria-hidden="true" />
         </button>

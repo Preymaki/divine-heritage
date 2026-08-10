@@ -6,9 +6,10 @@
  * Provides:
  *  - Real-time Firestore subscription (all items for admin)
  *  - uploadImage — upload file + save metadata
- *  - updateItem  — edit title / alt / caption / publish status
- *  - deleteItem  — remove Firestore doc + Storage file
+ *  - updateItem  — edit title / alt / caption / group / sortOrder / publish status
+ *  - deleteItem  — remove Firestore doc + Storage file (if applicable)
  *  - togglePublish — convenience flip on isPublished
+ *  - seedGallery — one-time seed of the 19 original hardcoded images
  */
 
 import { useState, useEffect, useCallback } from 'react'
@@ -18,6 +19,7 @@ import {
   updateGalleryItem,
   deleteGalleryItem,
   subscribeToGallery,
+  seedGallery,
 } from '@services/gallery'
 import type {
   GalleryItem,
@@ -38,11 +40,13 @@ export interface UseGalleryReturn {
 
   uploadState: UploadState
   actionState: ActionState
+  seedState: ActionState
 
   uploadImage:   (file: File, meta: GalleryItemInput) => Promise<void>
   updateItem:    (id: string, patch: GalleryItemPatch) => Promise<void>
-  deleteItem:    (id: string, storagePath: string) => Promise<void>
+  deleteItem:    (id: string, storagePath: string | null) => Promise<void>
   togglePublish: (item: GalleryItem) => Promise<void>
+  seedItems:     () => Promise<void>
 
   resetUpload: () => void
   resetAction: () => void
@@ -67,6 +71,7 @@ export function useGallery(): UseGalleryReturn {
   const [error,       setError]       = useState<string | null>(null)
   const [uploadState, setUploadState] = useState<UploadState>(INITIAL_UPLOAD)
   const [actionState, setActionState] = useState<ActionState>(INITIAL_ACTION)
+  const [seedState,   setSeedState]   = useState<ActionState>(INITIAL_ACTION)
 
   // ── Real-time Firestore subscription ──────────────────────────────────────
   useEffect(() => {
@@ -114,7 +119,7 @@ export function useGallery(): UseGalleryReturn {
   }, [])
 
   // ── Delete ────────────────────────────────────────────────────────────────
-  const deleteItem = useCallback(async (id: string, storagePath: string) => {
+  const deleteItem = useCallback(async (id: string, storagePath: string | null) => {
     setActionState({ phase: 'pending', error: null })
     try {
       await deleteGalleryItem(id, storagePath)
@@ -141,13 +146,31 @@ export function useGallery(): UseGalleryReturn {
     }
   }, [])
 
+  // ── Seed ──────────────────────────────────────────────────────────────────
+  const seedItems = useCallback(async () => {
+    if (!user?.email) {
+      setSeedState({ phase: 'error', error: 'You must be signed in to seed the gallery.' })
+      return
+    }
+    setSeedState({ phase: 'pending', error: null })
+    try {
+      await seedGallery(user.email)
+      setSeedState({ phase: 'success', error: null })
+    } catch (err: unknown) {
+      setSeedState({
+        phase: 'error',
+        error: err instanceof Error ? err.message : 'Seed failed.',
+      })
+    }
+  }, [user?.email])
+
   const resetUpload = useCallback(() => setUploadState(INITIAL_UPLOAD), [])
   const resetAction = useCallback(() => setActionState(INITIAL_ACTION), [])
 
   return {
     items, loading, error,
-    uploadState, actionState,
-    uploadImage, updateItem, deleteItem, togglePublish,
+    uploadState, actionState, seedState,
+    uploadImage, updateItem, deleteItem, togglePublish, seedItems,
     resetUpload, resetAction,
   }
 }

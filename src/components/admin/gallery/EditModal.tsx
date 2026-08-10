@@ -10,7 +10,8 @@
 
 import { useState, useEffect, useRef, type FormEvent } from 'react'
 import { X, Pencil, CheckCircle, AlertTriangle } from 'lucide-react'
-import type { GalleryItem, GalleryItemPatch, ActionState } from '@appTypes/gallery'
+import type { GalleryItem, GalleryItemPatch, GalleryGroup, ActionState } from '@appTypes/gallery'
+import { GALLERY_GROUP_LABELS, GALLERY_GROUP_ORDER } from '@appTypes/gallery'
 
 // ---------------------------------------------------------------------------
 // Props
@@ -40,6 +41,7 @@ export default function EditModal({
   const [title,       setTitle]       = useState('')
   const [altText,     setAltText]     = useState('')
   const [caption,     setCaption]     = useState('')
+  const [group,       setGroup]       = useState<GalleryGroup>('other')
   const [isPublished, setIsPublished] = useState(true)
 
   const closeRef = useRef<HTMLButtonElement>(null)
@@ -53,6 +55,7 @@ export default function EditModal({
       setTitle(item.title)
       setAltText(item.altText)
       setCaption(item.caption)
+      setGroup(item.group)
       setIsPublished(item.isPublished)
     }
   }, [item])
@@ -95,6 +98,7 @@ export default function EditModal({
     if (title       !== item.title)       patch.title       = title
     if (altText     !== item.altText)     patch.altText     = altText
     if (caption     !== item.caption)     patch.caption     = caption
+    if (group       !== item.group)       patch.group       = group
     if (isPublished !== item.isPublished) patch.isPublished = isPublished
     if (Object.keys(patch).length === 0)  { handleClose(); return }
     await onSave(item.id, patch)
@@ -154,7 +158,9 @@ export default function EditModal({
                   loading="lazy"
                   decoding="async"
                 />
-                <p className="edit-modal-filename">{item.storagePath.split('/').pop()}</p>
+                <p className="edit-modal-filename">
+                  {item.storagePath ? item.storagePath.split('/').pop() : 'Static asset'}
+                </p>
               </div>
 
               {/* Title */}
@@ -205,6 +211,24 @@ export default function EditModal({
                   disabled={isBusy}
                   maxLength={200}
                 />
+              </div>
+
+              {/* Group */}
+              <div className="admin-form-group">
+                <label htmlFor="edit-group" className="admin-form-label">
+                  Gallery group
+                </label>
+                <select
+                  id="edit-group"
+                  className="admin-input admin-input--no-icon"
+                  value={group}
+                  onChange={e => setGroup(e.target.value as GalleryGroup)}
+                  disabled={isBusy}
+                >
+                  {GALLERY_GROUP_ORDER.map((g) => (
+                    <option key={g} value={g}>{GALLERY_GROUP_LABELS[g]}</option>
+                  ))}
+                </select>
               </div>
 
               {/* Publish toggle */}

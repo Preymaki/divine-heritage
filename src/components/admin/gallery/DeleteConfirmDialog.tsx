@@ -14,7 +14,7 @@ interface DeleteConfirmDialogProps {
   item: GalleryItem | null
   isOpen: boolean
   onClose: () => void
-  onConfirm: (id: string, storagePath: string) => Promise<void>
+  onConfirm: (id: string, storagePath: string | null) => Promise<void>
   actionState: ActionState
   onReset: () => void
 }
@@ -59,6 +59,8 @@ export default function DeleteConfirmDialog({
     // Close after short delay so the user sees the item disappear from the grid
     setTimeout(() => { onReset(); onClose() }, 400)
   }
+
+  const isStatic = item?.storagePath === null
 
   if (!isOpen || !item) return null
 
@@ -105,17 +107,27 @@ export default function DeleteConfirmDialog({
             />
             <div>
               <p className="delete-preview-title">{item.title}</p>
-              <p className="delete-preview-sub">{item.storagePath.split('/').pop()}</p>
+              <p className="delete-preview-sub">
+                {item.storagePath ? item.storagePath.split('/').pop() : 'Static asset'}
+              </p>
             </div>
           </div>
 
           {/* Warning */}
           <div id="delete-dialog-desc" className="delete-warning">
             <AlertTriangle size={16} className="delete-warning-icon" aria-hidden="true" />
-            <p>
-              This will <strong>permanently delete</strong> this image from the gallery and
-              Firebase Storage. This action cannot be undone.
-            </p>
+            {isStatic ? (
+              <p>
+                This will <strong>remove</strong> this image from the gallery. The original
+                image file will remain in the website's public folder — only the gallery
+                record will be deleted.
+              </p>
+            ) : (
+              <p>
+                This will <strong>permanently delete</strong> this image from the gallery and
+                Firebase Storage. This action cannot be undone.
+              </p>
+            )}
           </div>
 
           {/* Error */}

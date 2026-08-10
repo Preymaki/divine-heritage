@@ -3,15 +3,19 @@
  *
  * Public-facing gallery page.
  *
+ * All gallery content is now managed through the Admin Dashboard and stored
+ * in Firestore. The page renders from Firestore only — there is no longer a
+ * hardcoded image list alongside the CMS data.
+ *
  * Structure:
  *  1. Page hero header
  *  2. Video showcase (hardcoded — always shown)
- *  3. CMS-managed section — Firestore published images (dynamic, newest first)
- *  4. Themed hardcoded image groups (existing curated content)
- *  5. Consent notice
- *  6. CTA section
+ *  3. Firestore-driven image groups (grouped by `group` field, ordered by `sortOrder`)
+ *  4. Consent notice
+ *  5. CTA section
  *
- * Lightbox includes both videos, CMS images, and hardcoded images.
+ * Lightbox includes both videos and all Firestore images.
+ * If Firestore is empty (e.g. before seeding), the gallery falls back gracefully.
  */
 
 import { useState, useEffect } from 'react'
@@ -22,58 +26,12 @@ import SectionHeader from '@components/ui/SectionHeader'
 import CTASection from '@components/home/CTASection'
 import { IMAGES, VIDEOS } from '@utils/images'
 import { subscribeToPublishedGallery } from '@services/gallery'
-import type { GalleryItem } from '@appTypes/gallery'
-
-// ─── Hardcoded gallery groups (curated content) ───────────────────────────────
-
-const GALLERY_GROUPS: Array<{
-  title: string
-  subtitle: string
-  images: Array<{ src: string; alt: string; wide?: boolean }>
-}> = [
-  {
-    title: 'Adventures Out & About',
-    subtitle: 'We love exploring London — parks, playgrounds, libraries, and beyond.',
-    images: [
-      { src: IMAGES.galleryOutings1, alt: 'Two happy children smiling on swings at the park during a Divine Heritage outing', wide: true },
-      { src: IMAGES.galleryOutings2, alt: 'Two children exploring nature around a tree in a sunny park during a Divine Heritage outing' },
-      { src: IMAGES.galleryOutings3, alt: 'A child enjoying a spinning ride at an outdoor playground during a Divine Heritage park outing' },
-      { src: IMAGES.galleryOutings4, alt: 'A child confidently navigating a rope climbing frame at an adventure playground during a Divine Heritage outing' },
-      { src: IMAGES.galleryOutings5, alt: 'A toddler riding a red rocking horse in the garden at Divine Heritage' },
-      { src: IMAGES.galleryOutings6, alt: 'A toddler building strength on foam climbing blocks at a soft play session during a Divine Heritage outing' },
-    ],
-  },
-  {
-    title: 'Library & Learning Trips',
-    subtitle: 'Regular library visits nurture a love of books, stories, and imagination.',
-    images: [
-      { src: IMAGES.galleryLibrary1, alt: 'Children delighting in a bubble play session at the local library during a Divine Heritage outing' },
-      { src: IMAGES.galleryLibrary2, alt: 'Two toddlers playing together with bubbles on a colourful alphabet rug during a library visit', wide: true },
-      { src: IMAGES.galleryLibrary3, alt: 'A toddler joyfully tumbling on a brightly coloured educational rug at the local library' },
-    ],
-  },
-  {
-    title: 'Play, Learning & Creativity',
-    subtitle: 'Every day brings rich, hands-on experiences that spark curiosity and growth.',
-    images: [
-      { src: IMAGES.galleryLearning1, alt: 'A young child sitting independently reading a picture book, demonstrating a love of stories at Divine Heritage', wide: true },
-      { src: IMAGES.galleryLearning2, alt: 'A child in a painting apron creating artwork at an easel during an arts and crafts session at Divine Heritage' },
-      { src: IMAGES.galleryLearning3, alt: 'Divine Heritage childminder sitting on the floor with four children exploring vegetables and sensory play together', wide: true },
-    ],
-  },
-  {
-    title: 'Our Home Environment',
-    subtitle: 'A warm, stimulating home full of age-appropriate toys and learning resources.',
-    images: [
-      { src: IMAGES.galleryIndoor1, alt: 'A toddler absorbed in building a wooden train track in the bright welcoming living room at Divine Heritage' },
-      { src: IMAGES.galleryIndoor2, alt: 'Three children playing with a toy kitchen and food items along the hallway of the Divine Heritage childcare home' },
-      { src: IMAGES.galleryIndoor3, alt: 'Children engaged in imaginative play with animal figures on a colourful number play mat at Divine Heritage' },
-      { src: IMAGES.galleryIndoor4, alt: 'A baby enjoying tummy time and sensory exploration with a bright toy on a stimulating play mat at Divine Heritage' },
-      { src: IMAGES.galleryIndoor5, alt: 'Children playing with toy kitchen food items and toys in the hallway of the Divine Heritage home' },
-      { src: IMAGES.galleryIndoor6, alt: 'A child exploring a collection of animal figures on a play mat at Divine Heritage childcare' },
-    ],
-  },
-]
+import {
+  GALLERY_GROUP_ORDER,
+  GALLERY_GROUP_LABELS,
+  GALLERY_GROUP_SUBTITLES,
+} from '@appTypes/gallery'
+import type { GalleryItem, GalleryGroup } from '@appTypes/gallery'
 
 // ─── Lightbox types ────────────────────────────────────────────────────────────
 
@@ -143,58 +101,78 @@ function Lightbox({
   )
 }
 
-// ─── CMS image grid skeleton ───────────────────────────────────────────────────
+// ─── Skeleton ─────────────────────────────────────────────────────────────────
 
-function CmsGallerySkeleton() {
+function GallerySkeleton() {
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 gap-4 auto-rows-[220px] md:auto-rows-[260px]">
-      {Array.from({ length: 6 }).map((_, i) => (
-        <div key={i} className="public-gallery-skeleton rounded-[var(--radius-xl)]" />
-      ))}
-    </div>
+    <SectionWrapper background="muted">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4 auto-rows-[220px] md:auto-rows-[260px]">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <div key={i} className="public-gallery-skeleton rounded-[var(--radius-xl)]" />
+        ))}
+      </div>
+    </SectionWrapper>
   )
 }
 
 // ─── Main component ────────────────────────────────────────────────────────────
 
 export default function Gallery() {
-  // ── Firestore CMS images ─────────────────────────────────────────────────
-  const [cmsItems,   setCmsItems]   = useState<GalleryItem[]>([])
+  // ── Firestore subscription ───────────────────────────────────────────────
+  const [allItems,   setAllItems]   = useState<GalleryItem[]>([])
   const [cmsLoading, setCmsLoading] = useState(true)
   const [cmsError,   setCmsError]   = useState<string | null>(null)
 
   useEffect(() => {
     const unsub = subscribeToPublishedGallery(
-      (items) => { setCmsItems(items); setCmsLoading(false) },
+      (items) => { setAllItems(items); setCmsLoading(false) },
       (err)   => { setCmsError(err.message); setCmsLoading(false) },
     )
     return unsub
   }, [])
 
-  // ── Build flat lightbox list ──────────────────────────────────────────────
-  // Order: 2 videos → CMS images → hardcoded groups
-  const allImages: LightboxItem[] = [
+  // ── Group items by gallery group ──────────────────────────────────────────
+  const grouped = GALLERY_GROUP_ORDER.reduce<Record<GalleryGroup, GalleryItem[]>>(
+    (acc, g) => {
+      acc[g] = allItems.filter((item) => item.group === g)
+      return acc
+    },
+    { outings: [], library: [], learning: [], indoor: [], other: [] },
+  )
+
+  // ── Build flat lightbox list ─────────────────────────────────────────────
+  // Order: 2 videos → then each group in display order
+  const videoItems: LightboxItem[] = [
     { src: VIDEOS.libraryClip1, alt: 'Children playing with bubbles at the library — video clip 1', type: 'video' },
     { src: VIDEOS.libraryClip2, alt: 'Children enjoying a bubble play session at the local library', type: 'video' },
-    ...cmsItems.map((item) => ({
+  ]
+  const imageItems: LightboxItem[] = GALLERY_GROUP_ORDER.flatMap((g) =>
+    grouped[g].map((item) => ({
       src: item.downloadURL,
       alt: item.altText,
       caption: item.caption || undefined,
       type: 'image' as const,
     })),
-    ...GALLERY_GROUPS.flatMap((g) => g.images.map((img) => ({ src: img.src, alt: img.alt, type: 'image' as const }))),
-  ]
+  )
+  const allLightboxItems: LightboxItem[] = [...videoItems, ...imageItems]
 
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
   const closeLightbox = () => setLightboxIndex(null)
-  const goPrev = () => setLightboxIndex((i) => (i == null ? 0 : (i - 1 + allImages.length) % allImages.length))
-  const goNext = () => setLightboxIndex((i) => (i == null ? 0 : (i + 1) % allImages.length))
+  const goPrev = () => setLightboxIndex((i) => (i == null ? 0 : (i - 1 + allLightboxItems.length) % allLightboxItems.length))
+  const goNext = () => setLightboxIndex((i) => (i == null ? 0 : (i + 1) % allLightboxItems.length))
 
-  // CMS section starts at index 2 (after 2 videos)
-  const CMS_OFFSET = 2
+  // Videos occupy indices 0–1; images start at 2
+  const VIDEO_COUNT = 2
 
-  // Hardcoded groups start after videos + CMS images
-  let imageOffset = CMS_OFFSET + cmsItems.length
+  // Compute the lightbox start index for each group
+  let groupOffset = VIDEO_COUNT
+  const groupOffsets: Record<GalleryGroup, number> = {
+    outings: 0, library: 0, learning: 0, indoor: 0, other: 0,
+  }
+  for (const g of GALLERY_GROUP_ORDER) {
+    groupOffsets[g] = groupOffset
+    groupOffset += grouped[g].length
+  }
 
   return (
     <>
@@ -264,109 +242,79 @@ export default function Gallery() {
         </div>
       </SectionWrapper>
 
-      {/* ── CMS-managed images section ── */}
-      {(cmsLoading || cmsError || cmsItems.length > 0) && (
+      {/* Loading state */}
+      {cmsLoading && <GallerySkeleton />}
+
+      {/* Error state */}
+      {cmsError && !cmsLoading && (
         <SectionWrapper background="background">
-          <AnimatedSection className="text-center flex justify-center mb-10">
-            <SectionHeader
-              eyebrow="Latest"
-              title="Fresh from the Childminder"
-              subtitle="Newly uploaded moments, added directly by Divine Heritage."
-              centered
-            />
-          </AnimatedSection>
-
-          {/* Error state */}
-          {cmsError && !cmsLoading && (
-            <div className="public-gallery-error" role="alert">
-              Could not load latest images. Please refresh the page.
-            </div>
-          )}
-
-          {/* Loading state */}
-          {cmsLoading && <CmsGallerySkeleton />}
-
-          {/* Images */}
-          {!cmsLoading && !cmsError && cmsItems.length > 0 && (
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 auto-rows-[220px] md:auto-rows-[260px]">
-              {cmsItems.map((item, imgIdx) => {
-                const globalIdx = CMS_OFFSET + imgIdx
-                return (
-                  <AnimatedSection key={item.id} delay={imgIdx * 0.06}>
-                    <button
-                      aria-label={`Open image: ${item.altText}`}
-                      onClick={() => setLightboxIndex(globalIdx)}
-                      className="w-full h-full rounded-[var(--radius-xl)] overflow-hidden group focus-visible:ring-2 focus-visible:ring-[var(--color-primary-400)] block relative"
-                    >
-                      <img
-                        src={item.downloadURL}
-                        alt={item.altText}
-                        className="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
-                        loading="lazy"
-                        decoding="async"
-                        sizes="(max-width: 640px) 50vw, 33vw"
-                      />
-                      {item.caption && (
-                        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                          <p className="text-white text-xs leading-snug">{item.caption}</p>
-                        </div>
-                      )}
-                    </button>
-                  </AnimatedSection>
-                )
-              })}
-            </div>
-          )}
-
-          {/* Empty state — only show if not loading and no CMS error */}
-          {!cmsLoading && !cmsError && cmsItems.length === 0 && (
-            <div className="public-gallery-empty">
-              <Images size={32} aria-hidden="true" className="public-gallery-empty-icon" />
-              <p>New photos coming soon. Check back later!</p>
-            </div>
-          )}
+          <div className="public-gallery-error" role="alert">
+            Could not load gallery images. Please refresh the page.
+          </div>
         </SectionWrapper>
       )}
 
-      {/* Themed hardcoded groups */}
-      {GALLERY_GROUPS.map((group, gi) => {
-        const groupOffset = imageOffset
-        imageOffset += group.images.length
-        return (
-          <SectionWrapper key={group.title} background={gi % 2 === 0 ? 'muted' : 'white'}>
-            <AnimatedSection className="text-center flex justify-center mb-10">
-              <SectionHeader
-                eyebrow={`${gi + 1} of ${GALLERY_GROUPS.length}`}
-                title={group.title}
-                subtitle={group.subtitle}
-                centered
-              />
-            </AnimatedSection>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 auto-rows-[220px] md:auto-rows-[260px]">
-              {group.images.map((image, imgIdx) => {
-                const globalIdx = groupOffset + imgIdx
-                return (
-                  <AnimatedSection key={image.src} delay={imgIdx * 0.07} className={image.wide ? 'col-span-2 md:col-span-2' : ''}>
-                    <button
-                      aria-label={`Open image: ${image.alt}`}
-                      onClick={() => setLightboxIndex(globalIdx)}
-                      className="w-full h-full rounded-[var(--radius-xl)] overflow-hidden group focus-visible:ring-2 focus-visible:ring-[var(--color-primary-400)] block"
-                    >
-                      <img
-                        src={image.src}
-                        alt={image.alt}
-                        className="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
-                        loading="lazy"
-                        decoding="async"
-                      />
-                    </button>
-                  </AnimatedSection>
-                )
-              })}
-            </div>
-          </SectionWrapper>
-        )
-      })}
+      {/* Gallery groups — rendered from Firestore */}
+      {!cmsLoading && !cmsError && (
+        <>
+          {GALLERY_GROUP_ORDER.filter((g) => grouped[g].length > 0).map((g, gi, filteredGroups) => {
+            const images = grouped[g]
+            const baseOffset = groupOffsets[g]
+            return (
+              <SectionWrapper key={g} background={gi % 2 === 0 ? 'muted' : 'white'}>
+                <AnimatedSection className="text-center flex justify-center mb-10">
+                  <SectionHeader
+                    eyebrow={`${gi + 1} of ${filteredGroups.length}`}
+                    title={GALLERY_GROUP_LABELS[g]}
+                    subtitle={GALLERY_GROUP_SUBTITLES[g]}
+                    centered
+                  />
+                </AnimatedSection>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4 auto-rows-[220px] md:auto-rows-[260px]">
+                  {images.map((item, imgIdx) => {
+                    const globalIdx = baseOffset + imgIdx
+                    return (
+                      <AnimatedSection key={item.id} delay={imgIdx * 0.07}>
+                        <button
+                          aria-label={`Open image: ${item.altText}`}
+                          onClick={() => setLightboxIndex(globalIdx)}
+                          className="w-full h-full rounded-[var(--radius-xl)] overflow-hidden group focus-visible:ring-2 focus-visible:ring-[var(--color-primary-400)] block relative"
+                        >
+                          <img
+                            src={item.downloadURL}
+                            alt={item.altText}
+                            className="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
+                            loading="lazy"
+                            decoding="async"
+                            sizes="(max-width: 640px) 50vw, 33vw"
+                          />
+                          {item.caption && (
+                            <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                              <p className="text-white text-xs leading-snug">{item.caption}</p>
+                            </div>
+                          )}
+                        </button>
+                      </AnimatedSection>
+                    )
+                  })}
+                </div>
+              </SectionWrapper>
+            )
+          })}
+
+          {/* Empty state — all groups empty (pre-seed) */}
+          {allItems.length === 0 && (
+            <SectionWrapper background="muted">
+              <AnimatedSection className="text-center">
+                <div className="public-gallery-empty">
+                  <Images size={32} aria-hidden="true" className="public-gallery-empty-icon" />
+                  <p>Gallery photos coming soon. Check back later!</p>
+                </div>
+              </AnimatedSection>
+            </SectionWrapper>
+          )}
+        </>
+      )}
 
       {/* Consent note */}
       <SectionWrapper background="muted">
@@ -382,8 +330,8 @@ export default function Gallery() {
       {/* Lightbox */}
       {lightboxIndex !== null && (
         <Lightbox
-          item={allImages[lightboxIndex]}
-          total={allImages.length}
+          item={allLightboxItems[lightboxIndex]}
+          total={allLightboxItems.length}
           index={lightboxIndex}
           onClose={closeLightbox}
           onPrev={goPrev}
