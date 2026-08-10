@@ -325,6 +325,8 @@ export async function seedGallery(uploadedBy: string): Promise<void> {
 /**
  * Subscribes to the full `gallery` collection, ordered by group then sortOrder.
  * Admin use only — shows published AND draft items.
+ *
+ * Sorting is done client-side to avoid requiring a Firestore composite index.
  */
 export function subscribeToGallery(
   callback: (items: GalleryItem[]) => void,
@@ -332,16 +334,17 @@ export function subscribeToGallery(
 ): Unsubscribe {
   const q = query(
     collection(db, GALLERY_COLLECTION),
-    orderBy('group', 'asc'),
-    orderBy('sortOrder', 'asc'),
+    orderBy('createdAt', 'asc'),
   )
   return onSnapshot(
     q,
     (snap) => {
-      const items: GalleryItem[] = snap.docs.map((d) => ({
-        id: d.id,
-        ...(d.data() as Omit<GalleryItem, 'id'>),
-      }))
+      const items: GalleryItem[] = snap.docs
+        .map((d) => ({ id: d.id, ...(d.data() as Omit<GalleryItem, 'id'>) }))
+        .sort((a, b) => {
+          if (a.group !== b.group) return a.group.localeCompare(b.group)
+          return (a.sortOrder ?? 0) - (b.sortOrder ?? 0)
+        })
       callback(items)
     },
     (err) => {
@@ -359,8 +362,9 @@ export function subscribeToGallery(
  * Subscribes to PUBLISHED gallery items only, ordered by group then sortOrder.
  * Used by the public /gallery page.
  *
- * Requires a Firestore composite index: isPublished ASC + group ASC + sortOrder ASC
- * Firebase will log a direct link to create the index the first time this runs.
+ * Sorting is done client-side to avoid requiring a Firestore composite index.
+ * Only a single-field index on `isPublished` is used, which Firestore
+ * handles automatically.
  */
 export function subscribeToPublishedGallery(
   callback: (items: GalleryItem[]) => void,
@@ -369,16 +373,16 @@ export function subscribeToPublishedGallery(
   const q = query(
     collection(db, GALLERY_COLLECTION),
     where('isPublished', '==', true),
-    orderBy('group', 'asc'),
-    orderBy('sortOrder', 'asc'),
   )
   return onSnapshot(
     q,
     (snap) => {
-      const items: GalleryItem[] = snap.docs.map((d) => ({
-        id: d.id,
-        ...(d.data() as Omit<GalleryItem, 'id'>),
-      }))
+      const items: GalleryItem[] = snap.docs
+        .map((d) => ({ id: d.id, ...(d.data() as Omit<GalleryItem, 'id'>) }))
+        .sort((a, b) => {
+          if (a.group !== b.group) return a.group.localeCompare(b.group)
+          return (a.sortOrder ?? 0) - (b.sortOrder ?? 0)
+        })
       callback(items)
     },
     (err) => {
