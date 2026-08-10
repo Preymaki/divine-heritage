@@ -1,0 +1,187 @@
+import { Home, Sparkles, BookOpen, Clock, Check, ArrowRight } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { SERVICES } from '@data/services'
+import { IMAGES } from '@utils/images'
+import AnimatedSection from '@components/ui/AnimatedSection'
+import SectionWrapper from '@components/ui/SectionWrapper'
+import CTASection from '@components/home/CTASection'
+
+const iconMap: Record<string, React.ComponentType<{ size?: number }>> = {
+  Home,
+  Sparkles,
+  BookOpen,
+}
+
+const colourMap: Record<string, string> = {
+  primary: 'var(--color-primary-500)',
+  accent: 'var(--color-accent-400)',
+  sage: 'var(--color-sage-500)',
+}
+
+const bgMap: Record<string, string> = {
+  primary: 'var(--color-primary-50)',
+  accent: 'var(--color-accent-50)',
+  sage: 'var(--color-sage-50)',
+}
+
+const serviceImages: Record<string, { src: string; alt: string; position: string }> = {
+  childminding: {
+    src: IMAGES.serviceChildminding,
+    alt: 'A toddler absorbed in building a wooden train track in the bright welcoming living room at Divine Heritage — illustrating our cosy home environment',
+    position: 'object-top',
+  },
+  'early-years': {
+    src: IMAGES.serviceEarlyYears,
+    alt: 'A young child sitting independently reading a picture book, demonstrating the love of stories and early literacy encouraged at Divine Heritage',
+    position: 'object-top',
+  },
+  'after-school': {
+    src: IMAGES.serviceAfterSchool,
+    alt: 'A toddler building strength and coordination on foam climbing blocks at a soft play session — one of many active outings arranged by Divine Heritage',
+    position: 'object-center',
+  },
+}
+
+export default function Services() {
+  return (
+    <>
+      {/* Page header */}
+      <div className="bg-[var(--color-primary-900)] pt-32 pb-16">
+        <div className="container-site">
+          <AnimatedSection>
+            <p className="text-[var(--color-accent-400)] text-xs font-semibold uppercase tracking-[0.15em] mb-3 font-[var(--font-family-heading)]">
+              Our Services
+            </p>
+            <h1 className="font-[var(--font-family-heading)] font-bold text-white text-4xl md:text-5xl leading-tight tracking-tight max-w-2xl">
+              Care for Every Stage of Childhood
+            </h1>
+            <p className="mt-4 text-white/65 text-base md:text-lg leading-relaxed max-w-xl">
+              From tiny babies to school-age children, we offer professional childcare that grows 
+              with your family's needs.
+            </p>
+          </AnimatedSection>
+        </div>
+      </div>
+
+      {/* Services detail */}
+      <SectionWrapper background="background">
+        <div className="space-y-16 md:space-y-24">
+          {SERVICES.map((service, i) => {
+            const Icon = iconMap[service.icon] ?? Home
+            const iconColour = colourMap[service.colour] ?? colourMap.primary
+            const iconBg = bgMap[service.colour] ?? bgMap.primary
+            const isReversed = i % 2 !== 0
+
+            return (
+              <AnimatedSection key={service.id} delay={i * 0.08}>
+                <div
+                  className={`grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center ${
+                    isReversed ? 'lg:[&>*:first-child]:order-2' : ''
+                  }`}
+                >
+                  {/* Image */}
+                  <div className="rounded-[var(--radius-2xl)] overflow-hidden aspect-[4/3] bg-[var(--color-muted)]">
+                    <img
+                      src={serviceImages[service.id]?.src}
+                      alt={serviceImages[service.id]?.alt ?? service.title}
+                      className={`w-full h-full object-cover ${serviceImages[service.id]?.position ?? 'object-center'}`}
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </div>
+
+                  {/* Content */}
+                  <div>
+                    <div
+                      className="w-14 h-14 rounded-2xl flex items-center justify-center mb-5"
+                      style={{ backgroundColor: iconBg, color: iconColour }}
+                      aria-hidden="true"
+                    >
+                      <Icon size={26} />
+                    </div>
+
+                    <h2 className="font-[var(--font-family-heading)] font-bold text-2xl md:text-3xl text-[var(--color-text-primary)] leading-tight mb-3">
+                      {service.title}
+                    </h2>
+
+                    <div className="flex flex-wrap gap-2 mb-5">
+                      <span className="text-xs text-[var(--color-text-muted)] bg-[var(--color-muted)] rounded-full px-3 py-1.5">
+                        {service.ageRange}
+                      </span>
+                      <span className="text-xs text-[var(--color-text-muted)] bg-[var(--color-muted)] rounded-full px-3 py-1.5 flex items-center gap-1">
+                        <Clock size={11} aria-hidden="true" /> {service.availability}
+                      </span>
+                    </div>
+
+                    <p className="text-[var(--color-text-secondary)] text-base leading-relaxed mb-6">
+                      {service.description}
+                    </p>
+
+                    <div className="bg-white border border-[var(--color-muted)] rounded-[var(--radius-lg)] p-5">
+                      <p className="font-semibold text-sm text-[var(--color-text-primary)] mb-3 font-[var(--font-family-heading)]">
+                        What's Included
+                      </p>
+                      <ul className="grid grid-cols-1 sm:grid-cols-2 gap-y-2.5 gap-x-4" role="list">
+                        {service.features.map((f) => (
+                          <li key={f} className="flex items-start gap-2 text-sm text-[var(--color-text-secondary)]">
+                            <Check
+                              size={14}
+                              className="mt-0.5 shrink-0"
+                              style={{ color: iconColour }}
+                              aria-hidden="true"
+                            />
+                            {f}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    <Link
+                      to="/contact"
+                      className="inline-flex items-center gap-2 mt-6 px-6 py-3 rounded-xl font-semibold text-sm text-white transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[var(--shadow-card)] group focus-visible:outline-2 focus-visible:outline-offset-2"
+                      style={{ backgroundColor: iconColour }}
+                      id={`service-${service.id}-enquire`}
+                    >
+                      Enquire About This Service
+                      <ArrowRight size={15} className="group-hover:translate-x-0.5 transition-transform" aria-hidden="true" />
+                    </Link>
+                  </div>
+                </div>
+              </AnimatedSection>
+            )
+          })}
+        </div>
+      </SectionWrapper>
+
+      {/* Funding & support note — no pricing, just signpost to contact */}
+      <SectionWrapper background="muted">
+        <AnimatedSection>
+          <div className="bg-white border border-[var(--color-primary-100)] rounded-[var(--radius-xl)] p-7 md:p-10 text-center max-w-2xl mx-auto">
+            <div className="w-12 h-12 rounded-2xl bg-[var(--color-primary-50)] flex items-center justify-center mx-auto mb-4" aria-hidden="true">
+              <span className="text-2xl">💷</span>
+            </div>
+            <h3 className="font-[var(--font-family-heading)] font-bold text-xl text-[var(--color-text-primary)] mb-3">
+              Childcare Funding & Support
+            </h3>
+            <p className="text-[var(--color-text-secondary)] text-sm md:text-base leading-relaxed">
+              We accept <strong>Tax-Free Childcare</strong> and <strong>childcare vouchers</strong>. 
+              Eligible families may also access the government's 
+              <strong> 15 or 30 hours free childcare</strong> for 3 and 4-year-olds. 
+              Please get in touch to discuss your specific requirements — we're happy to help you 
+              understand what support is available.
+            </p>
+            <Link
+              to="/contact"
+              id="services-funding-contact"
+              className="inline-flex items-center gap-2 mt-5 px-6 py-3 bg-[var(--color-primary-500)] hover:bg-[var(--color-primary-600)] text-white font-semibold rounded-xl text-sm transition-all duration-200 hover:shadow-[var(--shadow-card)] hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2"
+            >
+              Discuss Your Requirements
+            </Link>
+          </div>
+        </AnimatedSection>
+      </SectionWrapper>
+
+      <CTASection />
+    </>
+  )
+}

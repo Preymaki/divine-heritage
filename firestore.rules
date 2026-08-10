@@ -1,0 +1,18 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── Gallery collection ──────────────────────────────────────────────────
+    // Public read (used by the public /gallery page).
+    // All write operations require the user to be authenticated.
+    match /gallery/{docId} {
+      allow read: if true;
+      allow create, update, delete: if request.auth != null;
+    }
+
+    // ── Default deny — all other collections ────────────────────────────────
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
