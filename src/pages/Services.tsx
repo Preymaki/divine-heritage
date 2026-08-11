@@ -153,33 +153,7 @@ export default function Services() {
         </div>
       </SectionWrapper>
 
-      {/* Funding & support note — no pricing, just signpost to contact */}
-      <SectionWrapper background="muted">
-        <AnimatedSection>
-          <div className="bg-white border border-[var(--color-primary-100)] rounded-[var(--radius-xl)] p-7 md:p-10 text-center max-w-2xl mx-auto">
-            <div className="w-12 h-12 rounded-2xl bg-[var(--color-primary-50)] flex items-center justify-center mx-auto mb-4" aria-hidden="true">
-              <span className="text-2xl">💷</span>
-            </div>
-            <h3 className="font-[var(--font-family-heading)] font-bold text-xl text-[var(--color-text-primary)] mb-3">
-              Childcare Funding & Support
-            </h3>
-            <p className="text-[var(--color-text-secondary)] text-sm md:text-base leading-relaxed">
-              We accept <strong>Tax-Free Childcare</strong> and <strong>childcare vouchers</strong>. 
-              Eligible families may also access the government's 
-              <strong> 15 or 30 hours free childcare</strong> for 3 and 4-year-olds. 
-              Please get in touch to discuss your specific requirements — we're happy to help you 
-              understand what support is available.
-            </p>
-            <Link
-              to="/contact"
-              id="services-funding-contact"
-              className="inline-flex items-center gap-2 mt-5 px-6 py-3 bg-[var(--color-primary-500)] hover:bg-[var(--color-primary-600)] text-white font-semibold rounded-xl text-sm transition-all duration-200 hover:shadow-[var(--shadow-card)] hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2"
-            >
-              Discuss Your Requirements
-            </Link>
-          </div>
-        </AnimatedSection>
-      </SectionWrapper>
+
 
       <CTASection />
     </>
