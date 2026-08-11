@@ -17,7 +17,7 @@ import { Eye, EyeOff, Calendar, Pencil, Trash2, HardDrive } from 'lucide-react'
 interface GalleryCardProps {
   item: GalleryItem
   onEdit:   (item: GalleryItem) => void
-  onDelete: (item: GalleryItem) => void
+  onDelete?: (item: GalleryItem) => void
   onTogglePublish: (item: GalleryItem) => void
   /** Disable action buttons when another action is in-flight */
   isActionPending?: boolean
@@ -109,18 +109,6 @@ export default function GalleryCard({
             ? <><EyeOff size={13} aria-hidden="true" />Unpublish</>
             : <><Eye size={13} aria-hidden="true" />Publish</>
           }
-        </button>
-
-        {/* Delete */}
-        <button
-          type="button"
-          onClick={() => onDelete(item)}
-          disabled={isActionPending}
-          className="gallery-action-btn gallery-action-btn--delete"
-          aria-label={`Delete ${item.title}`}
-          title={isStatic ? 'Remove from gallery (file stays in public/)' : 'Delete image permanently'}
-        >
-          <Trash2 size={13} aria-hidden="true" />
         </button>
       </div>
     </article>

@@ -3080,3 +3080,199 @@ textarea.admin-input {
   min-height: 80px;
   line-height: 1.6;
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   EDIT MODAL — Image Swap UI
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Swap section wrapper ── */
+.edit-swap-section {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  padding: 0.875rem 1rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 0.875rem;
+}
+
+/* ── Preview image ── */
+.edit-swap-preview-wrap {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  border-radius: 0.625rem;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.06);
+  flex-shrink: 0;
+}
+
+.edit-swap-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.edit-swap-new-badge {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  padding: 2px 6px;
+  border-radius: 999px;
+  font-size: 0.625rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  background: rgba(99, 102, 241, 0.85);
+  color: #fff;
+  backdrop-filter: blur(4px);
+}
+
+/* ── Controls column ── */
+.edit-swap-controls {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.edit-swap-label {
+  font-size: 0.75rem;
+  color: #475569;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── Pick button ── */
+.edit-swap-pick-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.875rem;
+  background: rgba(99, 102, 241, 0.15);
+  border: 1px solid rgba(99, 102, 241, 0.25);
+  color: #a5b4fc;
+  border-radius: 0.5rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+  width: fit-content;
+}
+
+.edit-swap-pick-btn:hover:not(:disabled) {
+  background: rgba(99, 102, 241, 0.25);
+  border-color: rgba(99, 102, 241, 0.4);
+}
+
+.edit-swap-pick-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ── Chosen file row ── */
+.edit-swap-chosen {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.edit-swap-chosen-name {
+  font-size: 0.8125rem;
+  color: #a5b4fc;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 160px;
+}
+
+.edit-swap-clear-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #94a3b8;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.15s;
+}
+.edit-swap-clear-btn:hover { background: rgba(255, 255, 255, 0.14); }
+
+/* ── File error ── */
+.edit-swap-file-error {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.75rem;
+  color: #fca5a5;
+}
+
+/* ── Upload progress bar ── */
+.edit-upload-progress {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.edit-upload-track {
+  flex: 1;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.edit-upload-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #6366f1, #a78bfa);
+  border-radius: 999px;
+  transition: width 0.3s ease;
+}
+
+.edit-upload-pct {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  flex-shrink: 0;
+  min-width: 32px;
+  text-align: right;
+}
+
+/* ── Group locked badge ── */
+.edit-group-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.75rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0.5rem;
+  font-size: 0.8125rem;
+  color: #94a3b8;
+}
+
+.edit-group-badge-lock {
+  font-size: 0.6875rem;
+  color: #475569;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* ── Info note (shown when new file queued) ── */
+.edit-swap-info {
+  font-size: 0.8125rem;
+  color: #64748b;
+  line-height: 1.6;
+  padding: 0.75rem 1rem;
+  background: rgba(99, 102, 241, 0.06);
+  border: 1px solid rgba(99, 102, 241, 0.12);
+  border-radius: 0.75rem;
+}

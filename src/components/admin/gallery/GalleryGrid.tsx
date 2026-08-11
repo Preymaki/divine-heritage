@@ -14,9 +14,9 @@ interface GalleryGridProps {
   items: GalleryItem[]
   loading: boolean
   isActionPending: boolean
-  onUploadClick:       () => void
+  onUploadClick?:      (() => void) | undefined
   onEdit:              (item: GalleryItem) => void
-  onDelete:            (item: GalleryItem) => void
+  onDelete?:           ((item: GalleryItem) => void) | undefined
   onTogglePublish:     (item: GalleryItem) => void
 }
 
@@ -56,8 +56,8 @@ export default function GalleryGrid({
       <EmptyState
         icon={Images}
         title="No images yet"
-        description="Upload your first image to get started. It will appear here and, if published, on the public gallery page."
-        action={
+        description="Seed the gallery using the button above to import all existing website photos."
+        action={onUploadClick ? (
           <button
             type="button"
             id="gallery-empty-upload-btn"
@@ -66,7 +66,7 @@ export default function GalleryGrid({
           >
             Upload your first image
           </button>
-        }
+        ) : undefined}
       />
     )
   }

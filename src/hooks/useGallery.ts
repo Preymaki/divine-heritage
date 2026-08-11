@@ -18,6 +18,7 @@ import {
   uploadGalleryImage,
   updateGalleryItem,
   deleteGalleryItem,
+  replaceGalleryImage,
   subscribeToGallery,
   seedGallery,
 } from '@services/gallery'
@@ -43,6 +44,7 @@ export interface UseGalleryReturn {
   seedState: ActionState
 
   uploadImage:   (file: File, meta: GalleryItemInput) => Promise<void>
+  replaceImage:  (id: string, oldStoragePath: string | null, newFile: File) => Promise<void>
   updateItem:    (id: string, patch: GalleryItemPatch) => Promise<void>
   deleteItem:    (id: string, storagePath: string | null) => Promise<void>
   togglePublish: (item: GalleryItem) => Promise<void>
@@ -104,8 +106,34 @@ export function useGallery(): UseGalleryReturn {
     }
   }, [user?.email])
 
+  // ── Replace image ─────────────────────────────────────────────────────────
+  const replaceImage = useCallback(async (
+    id: string,
+    oldStoragePath: string | null,
+    newFile: File,
+  ) => {
+    if (!user?.email) {
+      setUploadState({ phase: 'error', progress: 0, error: 'You must be signed in to replace an image.' })
+      return
+    }
+    setUploadState({ phase: 'uploading', progress: 0, error: null })
+    try {
+      await replaceGalleryImage(id, oldStoragePath, newFile, (progress) => {
+        setUploadState((prev) => ({ ...prev, progress }))
+      })
+      setUploadState({ phase: 'success', progress: 100, error: null })
+    } catch (err: unknown) {
+      setUploadState({
+        phase: 'error',
+        progress: 0,
+        error: err instanceof Error ? err.message : 'Image replacement failed.',
+      })
+    }
+  }, [user?.email])
+
   // ── Update ────────────────────────────────────────────────────────────────
   const updateItem = useCallback(async (id: string, patch: GalleryItemPatch) => {
+
     setActionState({ phase: 'pending', error: null })
     try {
       await updateGalleryItem(id, patch)
@@ -170,7 +198,7 @@ export function useGallery(): UseGalleryReturn {
   return {
     items, loading, error,
     uploadState, actionState, seedState,
-    uploadImage, updateItem, deleteItem, togglePublish, seedItems,
+    uploadImage, replaceImage, updateItem, deleteItem, togglePublish, seedItems,
     resetUpload, resetAction,
   }
 }

@@ -106,6 +106,53 @@ export async function updateGalleryItem(
 }
 
 // ---------------------------------------------------------------------------
+// Replace image — swap the Storage file + update Firestore URLs
+// ---------------------------------------------------------------------------
+
+/**
+ * Replaces the image file for an existing gallery item.
+ *
+ * Steps:
+ *  1. Uploads the new file to Firebase Storage
+ *  2. Updates the Firestore doc with the new downloadURL and storagePath
+ *  3. If the item previously had a Storage file (storagePath !== null),
+ *     deletes the old file (best-effort — failure does not throw)
+ *
+ * The Firestore doc is updated BEFORE the old file is deleted so the
+ * real-time listener in the admin always reflects the latest image.
+ */
+export async function replaceGalleryImage(
+  id: string,
+  oldStoragePath: string | null,
+  newFile: File,
+  onProgress?: UploadProgressCallback,
+): Promise<void> {
+  // 1. Upload new file
+  const { path: newStoragePath, downloadURL: newDownloadURL } = await uploadFile(
+    GALLERY_STORAGE_FOLDER,
+    newFile,
+    onProgress,
+  )
+
+  // 2. Update Firestore doc
+  await updateDocument(GALLERY_COLLECTION, id, {
+    storagePath:  newStoragePath,
+    downloadURL:  newDownloadURL,
+  })
+
+  // 3. Delete old Storage file (if any) — best-effort
+  if (oldStoragePath) {
+    try {
+      await deleteFile(oldStoragePath)
+    } catch (err) {
+      console.warn('[gallery] Old Storage file removal failed:', oldStoragePath, err)
+    }
+  }
+}
+
+
+
+// ---------------------------------------------------------------------------
 // Delete — Firestore doc + Storage file (if applicable)
 // ---------------------------------------------------------------------------
 
