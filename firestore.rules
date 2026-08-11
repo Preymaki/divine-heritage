@@ -18,6 +18,14 @@ service cloud.firestore {
       allow create, update, delete: if request.auth != null;
     }
 
+    // ── Enquiries collection ─────────────────────────────────────────────────
+    // Anyone can create (public contact form — no auth required).
+    // Only authenticated admin users can read, update, or delete.
+    match /enquiries/{docId} {
+      allow create: if true;
+      allow read, update, delete: if request.auth != null;
+    }
+
     // ── Default deny — all other collections ────────────────────────────────
     match /{document=**} {
       allow read, write: if false;

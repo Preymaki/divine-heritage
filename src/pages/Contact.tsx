@@ -5,6 +5,7 @@ import AnimatedSection from '@components/ui/AnimatedSection'
 import SectionWrapper from '@components/ui/SectionWrapper'
 import SectionHeader from '@components/ui/SectionHeader'
 import { useContactSettings } from '@hooks/useContactSettings'
+import { submitEnquiry } from '@services/enquiries'
 
 interface FormData {
   parentName: string
@@ -44,6 +45,7 @@ export default function Contact() {
   const { contact } = useContactSettings()
   const [submitted, setSubmitted] = useState(false)
   const [submitting, setSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState<string | null>(null)
 
   const {
     register,
@@ -52,13 +54,26 @@ export default function Contact() {
     reset,
   } = useForm<FormData>()
 
-  const onSubmit = async (_data: FormData) => {
+  const onSubmit = async (data: FormData) => {
     setSubmitting(true)
-    // Simulate async submission — replace with real endpoint
-    await new Promise((r) => setTimeout(r, 1200))
-    setSubmitted(true)
-    setSubmitting(false)
-    reset()
+    setSubmitError(null)
+    try {
+      await submitEnquiry({
+        parentName:  data.parentName,
+        email:       data.email,
+        phone:       data.phone,
+        childAge:    data.childAge,
+        serviceType: data.serviceType,
+        message:     data.message,
+        status:      'unread',
+      })
+      setSubmitted(true)
+      reset()
+    } catch {
+      setSubmitError('Sorry, we could not send your message. Please try again or contact us directly by phone.')
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   const inputClass = (hasError: boolean) =>
@@ -335,6 +350,14 @@ export default function Contact() {
                   Your information is handled with care and will only be used to respond to your 
                   enquiry. We will never share your details with third parties.
                 </p>
+
+                {/* Submission error */}
+                {submitError && (
+                  <div role="alert" className="flex items-start gap-2 p-3.5 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700">
+                    <AlertCircle size={16} className="mt-0.5 shrink-0" aria-hidden="true" />
+                    {submitError}
+                  </div>
+                )}
 
                 <button
                   type="submit"
