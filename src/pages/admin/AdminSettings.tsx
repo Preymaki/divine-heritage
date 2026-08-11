@@ -13,7 +13,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import {
-  Phone, Mail, MapPin, Clock, Globe, ArrowRight, AlignLeft,
+  Phone, Clock, Globe, ArrowRight, AlignLeft,
   Type, Image, CheckCircle, AlertTriangle, Save, Loader2,
 } from 'lucide-react'
 import PageHeader from '@components/admin/PageHeader'

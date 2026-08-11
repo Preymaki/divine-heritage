@@ -12,7 +12,7 @@
 
 import type { GalleryItem } from '@appTypes/gallery'
 import { GALLERY_GROUP_LABELS } from '@appTypes/gallery'
-import { Eye, EyeOff, Calendar, Pencil, Trash2, HardDrive } from 'lucide-react'
+import { Eye, EyeOff, Calendar, Pencil, HardDrive } from 'lucide-react'
 
 interface GalleryCardProps {
   item: GalleryItem
@@ -31,7 +31,7 @@ function formatDate(ts: GalleryItem['createdAt']): string {
 export default function GalleryCard({
   item,
   onEdit,
-  onDelete,
+  onDelete: _onDelete,
   onTogglePublish,
   isActionPending = false,
 }: GalleryCardProps) {
