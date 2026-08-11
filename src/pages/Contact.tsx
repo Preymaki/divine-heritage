@@ -4,7 +4,7 @@ import { Phone, Mail, MapPin, Clock, CheckCircle, AlertCircle } from 'lucide-rea
 import AnimatedSection from '@components/ui/AnimatedSection'
 import SectionWrapper from '@components/ui/SectionWrapper'
 import SectionHeader from '@components/ui/SectionHeader'
-import { SITE } from '@constants/site'
+import { useContactSettings } from '@hooks/useContactSettings'
 
 interface FormData {
   parentName: string
@@ -41,6 +41,7 @@ function FieldError({ message }: { message?: string }) {
 }
 
 export default function Contact() {
+  const { contact } = useContactSettings()
   const [submitted, setSubmitted] = useState(false)
   const [submitting, setSubmitting] = useState(false)
 
@@ -105,19 +106,19 @@ export default function Contact() {
                   {
                     icon: Phone,
                     label: 'Phone',
-                    value: SITE.phone,
-                    href: `tel:${SITE.phone.replace(/\s/g, '')}`,
+                    value: contact.phone,
+                    href: `tel:${contact.phone.replace(/\s/g, '')}`,
                   },
                   {
                     icon: Mail,
                     label: 'Email',
-                    value: SITE.email,
-                    href: `mailto:${SITE.email}`,
+                    value: contact.email,
+                    href: `mailto:${contact.email}`,
                   },
                   {
                     icon: MapPin,
                     label: 'Location',
-                    value: SITE.address,
+                    value: contact.address,
                     href: undefined,
                   },
                 ].map(({ icon: Icon, label, value, href }) => (

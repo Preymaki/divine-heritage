@@ -2,12 +2,13 @@ import { ArrowRight, Phone } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { motion, useReducedMotion } from 'framer-motion'
 import AnimatedSection from '@components/ui/AnimatedSection'
-import { SITE } from '@constants/site'
+import { useContactSettings } from '@hooks/useContactSettings'
 import { IMAGES } from '@utils/images'
 
 
 export default function CTASection() {
   const prefersReducedMotion = useReducedMotion()
+  const { contact } = useContactSettings()
 
   return (
     <section
@@ -64,12 +65,12 @@ export default function CTASection() {
               <ArrowRight size={18} className="group-hover:translate-x-0.5 transition-transform" />
             </Link>
             <a
-              href={`tel:${SITE.phone.replace(/\s/g, '')}`}
+              href={`tel:${contact.phone.replace(/\s/g, '')}`}
               id="cta-section-call"
               className="inline-flex items-center gap-2.5 px-8 py-4 bg-white/10 hover:bg-white/18 backdrop-blur-sm border border-white/25 text-white font-semibold rounded-xl text-base transition-all duration-200 hover:-translate-y-0.5 group"
             >
               <Phone size={18} className="group-hover:scale-110 transition-transform" />
-              {SITE.phone}
+              {contact.phone}
             </a>
           </div>
 

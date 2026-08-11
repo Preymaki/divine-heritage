@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { Phone, Mail, MapPin, Heart, ExternalLink } from 'lucide-react'
 import { SITE, NAV_LINKS } from '@constants/site'
+import { useContactSettings } from '@hooks/useContactSettings'
 
 const FOOTER_SERVICES = [
   { label: 'Full-Day Childminding', href: '/services' },
@@ -10,6 +11,7 @@ const FOOTER_SERVICES = [
 
 export default function Footer() {
   const year = new Date().getFullYear()
+  const { contact } = useContactSettings()
 
   return (
     <footer
@@ -48,7 +50,7 @@ export default function Footer() {
             {/* Social links */}
             <div className="flex items-center gap-3 mt-5">
               <a
-                href={SITE.social.facebook}
+                href={contact.social.facebook}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-9 h-9 rounded-xl bg-white/10 hover:bg-[var(--color-primary-500)] flex items-center justify-center transition-all duration-200 hover:scale-110"
@@ -57,7 +59,7 @@ export default function Footer() {
                 <ExternalLink size={16} />
               </a>
               <a
-                href={SITE.social.instagram}
+                href={contact.social.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-9 h-9 rounded-xl bg-white/10 hover:bg-[var(--color-primary-500)] flex items-center justify-center transition-all duration-200 hover:scale-110"
@@ -110,35 +112,36 @@ export default function Footer() {
             <ul className="space-y-3.5" role="list">
               <li>
                 <a
-                  href={`tel:${SITE.phone.replace(/\s/g, '')}`}
+                  href={`tel:${contact.phone.replace(/\s/g, '')}`}
                   className="flex items-start gap-3 text-white/90 hover:text-white text-sm transition-colors duration-150 group"
                 >
                   <Phone size={16} className="mt-0.5 shrink-0 group-hover:text-[var(--color-accent-400)]" />
-                  {SITE.phone}
+                  {contact.phone}
                 </a>
               </li>
               <li>
                 <a
-                  href={`mailto:${SITE.email}`}
+                  href={`mailto:${contact.email}`}
                   className="flex items-start gap-3 text-white/90 hover:text-white text-sm transition-colors duration-150 group"
                 >
                   <Mail size={16} className="mt-0.5 shrink-0 group-hover:text-[var(--color-accent-400)]" />
-                  {SITE.email}
+                  {contact.email}
                 </a>
               </li>
               <li className="flex items-start gap-3 text-white/90 text-sm">
                 <MapPin size={16} className="mt-0.5 shrink-0 text-[var(--color-accent-400)]" />
-                {SITE.address}
+                {contact.address}
               </li>
             </ul>
 
             <div className="mt-7 p-4 bg-white/8 rounded-xl border border-white/12">
               <p className="text-white font-medium text-sm mb-1">Business Hours</p>
               <p className="text-white/85 text-xs leading-relaxed">
-                Mon – Thu: 8:00am – 6:00pm<br />
-                Friday: 8:00am – 5:00pm
+                {contact.hours.weekdays}
               </p>
-              <p className="text-white/70 text-xs mt-1.5">Closed weekends & bank holidays</p>
+              {contact.hours.notes && (
+                <p className="text-white/70 text-xs mt-1.5">{contact.hours.notes}</p>
+              )}
             </div>
           </div>
         </div>

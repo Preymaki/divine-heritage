@@ -1,6 +1,6 @@
 import { Phone } from 'lucide-react'
 import { motion, useReducedMotion } from 'framer-motion'
-import { SITE } from '@constants/site'
+import { useContactSettings } from '@hooks/useContactSettings'
 
 // WhatsApp SVG icon (brand colour)
 function WhatsAppIcon({ size = 24 }: { size?: number }) {
@@ -27,8 +27,9 @@ function WhatsAppIcon({ size = 24 }: { size?: number }) {
  */
 export default function FloatingButtons() {
   const prefersReducedMotion = useReducedMotion()
+  const { contact } = useContactSettings()
 
-  const phoneNumber = SITE.phone.replace(/\s/g, '')
+  const phoneNumber = contact.phone.replace(/\s/g, '')
   const whatsappUrl = `https://wa.me/44${phoneNumber.replace(/^0/, '')}`
   const telUrl = `tel:${phoneNumber}`
 
@@ -91,13 +92,13 @@ export default function FloatingButtons() {
           "
           aria-hidden="true"
         >
-          {SITE.phone}
+          {contact.phone}
         </span>
         <a
           href={telUrl}
           className="fab-button text-white"
           style={{ backgroundColor: 'var(--color-primary-500)' }}
-          aria-label={`Call us on ${SITE.phone}`}
+          aria-label={`Call us on ${contact.phone}`}
           id="fab-call"
         >
           <Phone size={22} />

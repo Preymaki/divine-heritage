@@ -1,19 +1,49 @@
+/**
+ * HeroSection
+ *
+ * Home page hero banner. All copy is managed via the Admin Dashboard
+ * (Settings → Hero tab) and stored in Firestore `settings/hero`.
+ *
+ * Falls back to DEFAULT_HERO values instantly on first render so there
+ * is never a blank/flash state — the defaults exactly match the original
+ * hardcoded content.
+ */
+
 import { useReducedMotion } from 'framer-motion'
 import { motion } from 'framer-motion'
 import { ArrowRight, ShieldCheck, Star, Clock } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { IMAGES } from '@utils/images'
+import { useHeroSettings } from '@hooks/useHeroSettings'
 
 const TRUST_BADGES = [
   { icon: ShieldCheck, label: 'Ofsted Registered' },
-  { icon: Star, label: 'Outstanding Care' },
-  { icon: Clock, label: 'Flexible Hours' },
+  { icon: Star,        label: 'Outstanding Care' },
+  { icon: Clock,       label: 'Flexible Hours' },
 ]
 
 export default function HeroSection() {
   const prefersReducedMotion = useReducedMotion()
+  const { hero } = useHeroSettings()
 
-  // When reduced motion is preferred, show content immediately
+  // Build the heading — the accentWord is highlighted within the heading text
+  function renderHeading(heading: string, accentWord: string) {
+    if (!accentWord || !heading.includes(accentWord)) {
+      return <>{heading}</>
+    }
+    const [before, ...rest] = heading.split(accentWord)
+    const after = rest.join(accentWord)
+    return (
+      <>
+        {before}
+        <span className="text-[var(--color-accent-400)] drop-shadow-[0_0_12px_rgba(224,40,155,0.5)]">
+          {accentWord}
+        </span>
+        {after}
+      </>
+    )
+  }
+
   const containerVariants = prefersReducedMotion
     ? { hidden: {}, visible: {} }
     : {
@@ -35,6 +65,8 @@ export default function HeroSection() {
         },
       }
 
+  const bgSrc = hero.bgImageUrl || IMAGES.hero
+
   return (
     <section
       className="relative flex items-center justify-center overflow-hidden"
@@ -44,7 +76,7 @@ export default function HeroSection() {
       {/* Background image with overlay */}
       <div className="absolute inset-0 z-0">
         <img
-          src={IMAGES.hero}
+          src={bgSrc}
           alt=""
           aria-hidden="true"
           className="w-full h-full object-cover object-[center_40%]"
@@ -81,7 +113,7 @@ export default function HeroSection() {
               <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/12 backdrop-blur-sm border border-white/20">
                 <div className="w-1.5 h-1.5 rounded-full bg-[var(--color-accent-400)]" aria-hidden="true" />
                 <span className="text-white/90 text-xs font-medium tracking-wide">
-                  London-Based Childminding
+                  {hero.eyebrow}
                 </span>
               </div>
             </motion.div>
@@ -92,9 +124,7 @@ export default function HeroSection() {
               className="font-[var(--font-family-heading)] font-bold text-white leading-tight tracking-tight"
               style={{ fontSize: 'clamp(2.1rem, 4.5vw, 3.75rem)' }}
             >
-              Where Every Child{' '}
-              <span className="text-[var(--color-accent-400)] drop-shadow-[0_0_12px_rgba(224,40,155,0.5)]">Thrives</span>,<br />
-              Grows, and Belongs
+              {renderHeading(hero.heading, hero.accentWord)}
             </motion.h1>
 
             {/* Subtitle */}
@@ -102,8 +132,7 @@ export default function HeroSection() {
               variants={itemVariants}
               className="mt-4 text-white/75 text-base md:text-lg leading-relaxed max-w-xl"
             >
-              Professional, nurturing home-based childcare in London. A safe, loving environment
-              where your child is valued, inspired, and encouraged to flourish — every single day.
+              {hero.subtitle}
             </motion.p>
 
             {/* CTA buttons */}
@@ -116,7 +145,7 @@ export default function HeroSection() {
                 id="hero-cta-book-visit"
                 className="inline-flex items-center gap-2 px-7 py-3.5 bg-[var(--color-accent-500)] hover:bg-[var(--color-accent-400)] text-white font-semibold rounded-xl text-base transition-all duration-200 hover:shadow-[0_8px_28px_rgba(224,40,155,0.40)] hover:-translate-y-0.5 group focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2"
               >
-                Book a Visit
+                {hero.ctaPrimary}
                 <ArrowRight
                   size={18}
                   className="group-hover:translate-x-0.5 transition-transform duration-200"
@@ -128,7 +157,7 @@ export default function HeroSection() {
                 id="hero-cta-learn-more"
                 className="inline-flex items-center gap-2 px-7 py-3.5 bg-white/12 hover:bg-white/20 backdrop-blur-sm border border-white/25 text-white font-semibold rounded-xl text-base transition-all duration-200 hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2"
               >
-                Learn More
+                {hero.ctaSecondary}
               </Link>
             </motion.div>
 
@@ -154,7 +183,7 @@ export default function HeroSection() {
         </div>
       </div>
 
-      {/* Scroll cue — hidden when reduced motion preferred */}
+      {/* Scroll cue */}
       {!prefersReducedMotion && (
         <motion.div
           initial={{ opacity: 0, y: -8 }}
