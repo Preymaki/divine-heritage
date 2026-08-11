@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Phone, Mail, MapPin, Heart, ExternalLink } from 'lucide-react'
+import { Phone, Mail, MapPin, Heart } from 'lucide-react'
 import { SITE, NAV_LINKS } from '@constants/site'
 import { useContactSettings } from '@hooks/useContactSettings'
 
@@ -47,27 +47,7 @@ export default function Footer() {
               </span>
             </div>
 
-            {/* Social links */}
-            <div className="flex items-center gap-3 mt-5">
-              <a
-                href={contact.social.facebook}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-9 h-9 rounded-xl bg-white/10 hover:bg-[var(--color-primary-500)] flex items-center justify-center transition-all duration-200 hover:scale-110"
-                aria-label="Divine Heritage on Facebook"
-              >
-                <ExternalLink size={16} />
-              </a>
-              <a
-                href={contact.social.instagram}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-9 h-9 rounded-xl bg-white/10 hover:bg-[var(--color-primary-500)] flex items-center justify-center transition-all duration-200 hover:scale-110"
-                aria-label="Divine Heritage on Instagram"
-              >
-                <ExternalLink size={16} />
-              </a>
-            </div>
+
           </div>
 
           {/* Navigation column */}
