@@ -17,7 +17,8 @@ interface FormData {
 }
 
 const AGE_OPTIONS = [
-  '1 – 2 years (Toddler)',
+  '0 – 6 months (Baby)',
+  '6 months – 2 years (Baby / Toddler)',
   '2 – 3 years (Toddler)',
   '3 – 4 years (Pre-school)',
   '4 – 5 years (Pre-school)',

@@ -17,7 +17,7 @@ export const FAQS: FAQ[] = [
     id: 'ages',
     question: 'What ages do you care for?',
     answer:
-      'We care for toddlers, pre-school children, and school-age children. We do not care for infants. After-school care is also available for school-age children. We carefully manage our numbers to maintain an exceptional standard of individualised care for every child.',
+      'We care for babies, toddlers, pre-school children, and school-age children (from 0 / 6 months to 11 years). After-school care is also available for school-age children. We carefully manage our numbers to maintain an exceptional standard of individualised care for every child.',
     category: 'general',
   },
   {
