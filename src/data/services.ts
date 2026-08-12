@@ -14,7 +14,7 @@ export const SERVICES: Service[] = [
     id: 'childminding',
     icon: 'Home',
     title: 'Full-Day Childminding',
-    ageRange: 'Babies & Toddlers – Pre-school (0 – 5 years)',
+    ageRange: 'Babies & Toddlers – Pre-school (0 / 6 months – 5 years)',
     availability: 'Mon – Fri, flexible hours',
     description:
       'The core service provides full-day care in a warm, home-from-home setting. Children benefit from a consistent routine, personalised attention, and a rich variety of activities tailored to their developmental stage.',
