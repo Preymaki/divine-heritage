@@ -50,14 +50,13 @@ export default function Services() {
         <div className="container-site">
           <AnimatedSection>
             <p className="text-[var(--color-accent-400)] text-xs font-semibold uppercase tracking-[0.15em] mb-3 font-[var(--font-family-heading)]">
-              Our Services
+              The Services
             </p>
             <h1 className="font-[var(--font-family-heading)] font-bold text-white text-4xl md:text-5xl leading-tight tracking-tight max-w-2xl">
               Care for Every Stage of Childhood
             </h1>
-            <p className="mt-4 text-white/65 text-base md:text-lg leading-relaxed max-w-xl">
-              From tiny babies to school-age children, we offer professional childcare that grows 
-              with your family's needs.
+            <p className="mt-4 text-white/65 text-base md:text-lg leading-relaxed max-w-2xl">
+              Divine Heritage offers a range of professional childcare services from babies and preschoolers, adapted entirely to the unique, individual needs of every child.
             </p>
           </AnimatedSection>
         </div>

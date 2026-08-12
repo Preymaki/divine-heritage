@@ -8,7 +8,7 @@ export const SITE = {
   email: 'Divineheritagechildcare@gmail.com',
   address: 'Pitman Building, Freda Street, SE16 4BW',
   ofsted: '', // TODO: Add Ofsted registration number before launch
-  founded: '2018',
+  founded: '2017',
   social: {
     facebook: 'https://facebook.com/divineheritagechildcare',
     instagram: 'https://instagram.com/divineheritagechildcare',

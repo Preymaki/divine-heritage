@@ -7,7 +7,7 @@ import { IMAGES } from '@utils/images'
 
 
 const HIGHLIGHTS = [
-  'Family-centred approach since 2018',
+  'Family-centred approach since 2017',
   'Experienced, qualified, and passionate',
   'Every child treated as an individual',
   'Transparent communication with parents',
@@ -32,7 +32,7 @@ export default function AboutPreview() {
             {/* Floating stat card */}
             <div className="absolute -bottom-5 -right-3 sm:-right-6 bg-white rounded-2xl p-4 shadow-[var(--shadow-elevated)] border border-[var(--color-muted)] flex items-center gap-3.5 max-w-[200px]">
               <div className="w-12 h-12 rounded-xl bg-[var(--color-primary-50)] flex items-center justify-center shrink-0">
-                <span className="text-[var(--color-primary-500)] font-bold text-xl font-[var(--font-family-heading)]">6+</span>
+                <span className="text-[var(--color-primary-500)] font-bold text-xl font-[var(--font-family-heading)]">9+</span>
               </div>
               <div>
                 <p className="text-[var(--color-text-primary)] font-semibold text-sm leading-tight">Years of</p>
@@ -52,7 +52,7 @@ export default function AboutPreview() {
           <SectionHeader
             eyebrow="About Us"
             title="A Home Away From Home"
-            subtitle="We believe every child deserves to feel safe, loved, and celebrated. At Divine Heritage, we create a warm, nurturing space where children can explore, discover, and grow with confidence."
+            subtitle="Every child deserves to feel safe, loved, and celebrated. Divine Heritage provides a warm, nurturing space where children can explore, discover, and grow with confidence."
           />
 
           <ul className="mt-7 space-y-3.5" role="list">

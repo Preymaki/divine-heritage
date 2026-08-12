@@ -80,7 +80,7 @@ export const DEFAULT_HERO: HeroSettings = {
 export const DEFAULT_ABOUT: AboutSettings = {
   aboutImageUrl: '',
   previewTitle:    'A Childcare Service Built on Love & Trust',
-  previewSubtitle: 'Founded in 2018, Divine Heritage provides warm, professional home-based childminding for families across South East London.',
+  previewSubtitle: 'Founded in 2017, Divine Heritage provides warm, professional home-based childminding for families across South East London.',
   highlights: [
     { title: 'Child-Led Learning',      description: 'Activities are inspired by each child\'s interests and developmental stage.' },
     { title: 'Family Partnership',      description: 'We work closely with parents to provide consistent, joined-up care.' },
@@ -88,12 +88,12 @@ export const DEFAULT_ABOUT: AboutSettings = {
     { title: 'Nutritious Meals',        description: 'Healthy, home-cooked meals and snacks prepared fresh every day.' },
   ],
   storyParagraphs: [
-    'Divine Heritage Childcare Service was founded in 2018 with a clear vision: to create a warm, loving home-from-home where every child is seen, valued, and inspired to reach their full potential.',
+    'Divine Heritage Childcare Service was founded in 2017 with a clear vision: to create a warm, loving home-from-home where every child is seen, valued, and inspired to reach their full potential.',
     'As a registered childminder based in South East London, I offer professional care in a genuine family setting. Children thrive here not just because of the rich activities and learning opportunities, but because they feel safe, loved, and truly at home.',
     'My approach is rooted in the Early Years Foundation Stage (EYFS) framework, which guides everything from how I plan activities to how I observe and document each child\'s growth. But beyond the paperwork, it\'s the small moments — the first independent steps, the proud smile after completing a puzzle, the friendships formed — that make this work so meaningful.',
     'Every family that joins us becomes part of the Divine Heritage family. I believe in open, honest communication with parents, regular updates, and working together to support each child\'s unique journey.',
   ],
-  missionQuote: 'Every child deserves to feel loved, safe, and celebrated — not just at home, but everywhere they spend their precious early years.',
+  missionQuote: 'Every child deserves to feel safe, loved, and celebrated. Divine Heritage provides a warm, nurturing space where children can explore, discover, and grow with confidence.',
   values: [
     { title: 'Love & Belonging',    description: 'Every child is welcomed as part of our family. We build warm, secure relationships that help children feel confident and loved.' },
     { title: 'Learning Through Play', description: 'We follow a play-based approach aligned with EYFS, where curiosity is celebrated and every activity has a purpose.' },
@@ -102,7 +102,7 @@ export const DEFAULT_ABOUT: AboutSettings = {
   ],
   bioName:       'Your Childminder',
   bioParagraphs: [
-    'I have been working with children for over a decade, starting as a nursery nurse before taking the step to register as a childminder and open Divine Heritage in 2018.',
+    'I have been working with children for over a decade, starting as a nursery nurse before taking the step to register as a childminder and open Divine Heritage in 2017.',
     'My passion is simple: to give every child in my care the very best start in life. I hold a Level 3 qualification in Childcare and Education, a full Paediatric First Aid certificate, and I complete regular CPD training to stay current with best practices.',
     'When I\'m not planning activities or updating learning journeys, you\'ll find me in the kitchen preparing healthy meals, setting up a messy play station in the garden, or curled up on the sofa reading stories. This is a real home — and that\'s exactly what makes it special.',
   ],

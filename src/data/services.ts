@@ -17,7 +17,7 @@ export const SERVICES: Service[] = [
     ageRange: 'Toddlers – Pre-school (1 – 5 years)',
     availability: 'Mon – Fri, flexible hours',
     description:
-      'Our core service provides full-day care in a warm, home-like setting. Children benefit from a consistent routine, personalised attention, and a rich variety of activities tailored to their developmental stage.',
+      'The core service provides full-day care in a warm, home-from-home setting. Children benefit from a consistent routine, personalised attention, and a rich variety of activities tailored to their developmental stage.',
     features: [
       'Home-cooked nutritious meals & snacks',
       'Daily outdoor play in secure garden',
@@ -35,14 +35,12 @@ export const SERVICES: Service[] = [
     ageRange: 'Toddlers (1 – 3 years)',
     availability: 'Flexible sessions available',
     description:
-      'Specialised care for babies and toddlers during their most formative years. We focus on secure attachment, sensory exploration, language development, and building a love of learning from day one.',
+      'Catering to babies and toddlers during their most formative years, this specialised care focuses on secure attachment, sensory exploration, language development, and building a love of learning from day one.',
     features: [
-      'Secure attachment approach',
-      'Sensory play & exploration',
-      'Language-rich environment',
-      'Baby-led weaning support',
-      'Sleep routine support',
-      'Regular parent progress updates',
+      'Secure attachment and emotional safety',
+      'Sensory exploration through play',
+      'Language development and communication skills',
+      'Building a love of learning from day one',
     ],
     colour: 'accent',
   },

@@ -28,9 +28,9 @@ export default function ServicesSection() {
     <SectionWrapper id="services" background="muted">
       <AnimatedSection className="text-center flex justify-center">
         <SectionHeader
-          eyebrow="Our Services"
+          eyebrow="The Services"
           title="Care Tailored to Every Stage"
-          subtitle="From babies to school-age children, we offer a range of professional childcare services designed around your child's individual needs."
+          subtitle="Divine Heritage offers a range of professional childcare services from babies and preschoolers, adapted entirely to the unique, individual needs of every child."
           centered
         />
       </AnimatedSection>

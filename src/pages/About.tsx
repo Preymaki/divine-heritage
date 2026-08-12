@@ -168,9 +168,7 @@ export default function About() {
             </p>
             <blockquote>
               <p className="text-2xl md:text-3xl font-[var(--font-family-heading)] font-medium text-[var(--color-text-primary)] leading-relaxed italic">
-                "To provide a safe, nurturing, and family-centered environment where every child 
-                feels loved, valued, and encouraged to foster curiosity, independence and 
-                resilience at their own pace."
+                "Every child deserves to feel safe, loved, and celebrated. Divine Heritage provides a warm, nurturing space where children can explore, discover, and grow with confidence."
               </p>
               <cite className="block mt-6 text-sm text-[var(--color-text-muted)] not-italic font-medium">
                 — Divine Heritage Childcare Service

@@ -48,7 +48,7 @@ export default function MeetChildminder() {
             >
               <div className="w-11 h-11 rounded-xl bg-[var(--color-accent-100)] flex items-center justify-center shrink-0">
                 <span className="text-[var(--color-accent-500)] font-bold text-lg font-[var(--font-family-heading)]">
-                  6+
+                  9+
                 </span>
               </div>
               <div>
@@ -84,7 +84,7 @@ export default function MeetChildminder() {
               every day. Consistency matters enormously to young children — and to parents.
             </p>
             <p>
-              With over six years of professional home childminding experience in London, I bring 
+              With over 9 years of professional home childminding experience in London, I bring 
               genuine passion, formal qualifications, and a deep commitment to every child's 
               individual growth and happiness.
             </p>
