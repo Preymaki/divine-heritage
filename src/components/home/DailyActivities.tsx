@@ -49,7 +49,7 @@ export default function DailyActivities() {
         <SectionHeader
           eyebrow="A Typical Day"
           title="Rich Experiences, Every Day"
-          subtitle="Our daily programme balances structured learning with free play, outdoor time, creative activities, and essential rest — keeping every day exciting, varied, and developmentally rich."
+          subtitle="The daily programme balances structured learning with free play, outdoor time, creative activities, and essential rest — keeping every day exciting, varied, and developmentally rich."
           centered
           maxWidth="max-w-2xl"
         />
@@ -88,7 +88,7 @@ export default function DailyActivities() {
         {/* Activities grid */}
         <AnimatedSection direction="right" delay={0.12}>
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--color-primary-500)] mb-5 font-[var(--font-family-heading)]">
-            Our Activities
+            Activities Provided
           </p>
           <div className="grid grid-cols-2 gap-3">
             {ACTIVITIES.map((activity, i) => {

@@ -3,7 +3,7 @@ export const SITE = {
   shortName: 'Divine Heritage',
   tagline: 'A Safe, Nurturing Home for Every Child',
   description:
-    'Professional home-based childminding in London. We provide a safe, nurturing, family-centred environment where every child is loved, valued, and encouraged to grow.',
+    'Professional home-based childminding in London. A safe, nurturing, family-centred environment where every child is loved, valued, and encouraged to grow.',
   phone: '07939 303144',
   email: 'Divineheritagechildcare@gmail.com',
   address: 'Pitman Building, Freda Street, SE16 4BW',

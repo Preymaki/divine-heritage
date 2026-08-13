@@ -22,12 +22,12 @@ export const GALLERY_GROUP_LABELS: Record<GalleryGroup, string> = {
   outings:  'Adventures Out & About',
   library:  'Library & Learning Trips',
   learning: 'Play, Learning & Creativity',
-  indoor:   'Our Home Environment',
+  indoor:   'The Home Environment',
   other:    'Other',
 }
 
 export const GALLERY_GROUP_SUBTITLES: Record<GalleryGroup, string> = {
-  outings:  'We love exploring London — parks, playgrounds, libraries, and beyond.',
+  outings:  'Exploration across London — parks, playgrounds, libraries, and beyond.',
   library:  'Regular library visits nurture a love of books, stories, and imagination.',
   learning: 'Every day brings rich, hands-on experiences that spark curiosity and growth.',
   indoor:   'A warm, stimulating home full of age-appropriate toys and learning resources.',

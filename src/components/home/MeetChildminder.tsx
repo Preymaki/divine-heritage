@@ -73,24 +73,24 @@ export default function MeetChildminder() {
         {/* Text side */}
         <AnimatedSection direction="left" delay={0.12} className="order-2 lg:order-1">
           <SectionHeader
-            eyebrow="Meet Your Childminder"
+            eyebrow="Professional Childminder"
             title="A Familiar Face You Can Trust"
             maxWidth="max-w-full"
           />
 
           <div className="mt-5 space-y-4 text-[var(--color-text-secondary)] text-sm md:text-base leading-relaxed">
             <p>
-              At Divine Heritage, your child will be cared for by the same warm, familiar face 
+              At Divine Heritage, children are cared for by the same warm, familiar childminder 
               every day. Consistency matters enormously to young children — and to parents.
             </p>
             <p>
-              With over 9 years of professional home childminding experience in London, I bring 
-              genuine passion, formal qualifications, and a deep commitment to every child's 
+              With over 9 years of professional home childminding experience in London, the setting 
+              brings genuine passion, formal qualifications, and a deep commitment to every child's 
               individual growth and happiness.
             </p>
             <p>
-              My home is your child's second home. I believe every child deserves to feel safe, 
-              celebrated, and inspired — and I pour that belief into everything I do.
+              The home environment provides a welcoming second home for children, where safety, 
+              celebration, and inspiration are at the heart of daily care.
             </p>
           </div>
 
@@ -116,8 +116,7 @@ export default function MeetChildminder() {
           {/* Quote */}
           <blockquote className="mt-7 pl-4 border-l-2 border-[var(--color-accent-400)]">
             <p className="text-[var(--color-text-secondary)] text-sm italic leading-relaxed">
-              "Every child who comes through my door is treated as a member of my family. 
-              Their happiness, safety, and development are my absolute priority."
+              "Every child who enters Divine Heritage is welcomed into a family-centred environment where happiness, safety, and development remain the absolute priority."
             </p>
           </blockquote>
 
@@ -126,7 +125,7 @@ export default function MeetChildminder() {
             id="meet-childminder-read-more"
             className="inline-flex items-center gap-2 mt-7 text-[var(--color-primary-500)] font-semibold text-sm hover:gap-3 transition-all duration-200 group focus-visible:underline"
           >
-            Read Our Full Story
+            Read The Full Story
             <ArrowRight
               size={16}
               className="group-hover:translate-x-0.5 transition-transform duration-200"

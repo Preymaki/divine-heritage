@@ -17,7 +17,7 @@ const WHY_ITEMS = [
     icon: Home,
     title: 'Safe Home Environment',
     description:
-      'Our fully risk-assessed home provides the warmth and comfort of a family setting, with professional-grade safety standards.',
+      'The fully risk-assessed home provides the warmth and comfort of a family setting, with professional-grade safety standards.',
     colour: '#1e56d0',  // blue
   },
   {
@@ -31,7 +31,7 @@ const WHY_ITEMS = [
     icon: Heart,
     title: 'Individualised Care',
     description:
-      "Every child is unique. We tailor our approach to each child's personality, interests, and developmental stage.",
+      "Every child is unique. Care is tailored to each child's personality, interests, and developmental stage.",
     colour: '#e0289b',  // pink
   },
   {
@@ -52,7 +52,7 @@ const WHY_ITEMS = [
     icon: ShieldCheck,
     title: 'Fully Insured & Ofsted Registered',
     description:
-      'Complete peace of mind. We hold full Public Liability Insurance and are registered and inspected by Ofsted.',
+      'Complete peace of mind. The setting holds full Public Liability Insurance and is registered and inspected by Ofsted.',
     colour: '#1845aa',  // dark blue
   },
   {
@@ -66,7 +66,7 @@ const WHY_ITEMS = [
     icon: MessageSquare,
     title: 'Open Parent Communication',
     description:
-      "Daily updates, photos, and an open-door policy keep you connected and informed about your child's day.",
+      "Daily updates, photos, and an open communication policy keep parents connected and informed about the child's day.",
     colour: '#1e56d0',  // blue
   },
 ]
@@ -76,9 +76,9 @@ export default function WhyChooseUs() {
     <SectionWrapper id="why-choose-us" background="white">
       <AnimatedSection className="text-center flex justify-center">
         <SectionHeader
-          eyebrow="Why Choose Us"
+          eyebrow="Why Divine Heritage"
           title="Everything a Growing Child Needs"
-          subtitle="We've thoughtfully designed every aspect of our setting to give children the best possible start in life — and give parents complete peace of mind."
+          subtitle="Every aspect of the setting is thoughtfully designed to give children the best possible start in life — and give parents complete peace of mind."
           centered
           maxWidth="max-w-2xl"
         />

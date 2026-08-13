@@ -50,7 +50,7 @@ export default function AboutPreview() {
         {/* Text side */}
         <AnimatedSection direction="right" delay={0.15}>
           <SectionHeader
-            eyebrow="About Us"
+            eyebrow="About Divine Heritage"
             title="A Home Away From Home"
             subtitle="Every child deserves to feel safe, loved, and celebrated. Divine Heritage provides a warm, nurturing space where children can explore, discover, and grow with confidence."
           />
@@ -70,7 +70,7 @@ export default function AboutPreview() {
 
           <blockquote className="mt-8 pl-4 border-l-2 border-[var(--color-accent-400)]">
             <p className="text-[var(--color-text-secondary)] text-sm md:text-base italic leading-relaxed">
-              "My mission is to provide a safe, nurturing, and family-centered environment where every 
+              "The mission of Divine Heritage is to provide a safe, nurturing, and family-centered environment where every 
               child feels loved, valued, and encouraged to foster curiosity, independence, and 
               resilience at their own pace."
             </p>
@@ -85,7 +85,7 @@ export default function AboutPreview() {
               id="about-preview-learn-more"
               className="inline-flex items-center gap-2 text-[var(--color-primary-500)] font-semibold text-sm hover:gap-3 transition-all duration-200 group"
             >
-              Meet Us & Learn More
+              Discover More About The Setting
               <ArrowRight
                 size={16}
                 className="group-hover:translate-x-0.5 transition-transform duration-200"

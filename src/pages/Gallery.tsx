@@ -198,7 +198,7 @@ export default function Gallery() {
               Gallery
             </p>
             <h1 className="font-[var(--font-family-heading)] font-bold text-white text-4xl md:text-5xl leading-tight tracking-tight max-w-2xl">
-              A Glimpse Into Our World
+              A Glimpse Into Divine Heritage
             </h1>
             <p className="mt-4 text-white/65 text-base md:text-lg leading-relaxed max-w-xl">
               Real moments from a typical week at Divine Heritage — happy children, enriching
@@ -214,7 +214,7 @@ export default function Gallery() {
           <SectionHeader
             eyebrow="In Motion"
             title="See the Joy for Yourself"
-            subtitle="Short clips from our library outing — click to watch."
+            subtitle="Short clips from the library outing — click to watch."
             centered
           />
         </AnimatedSection>

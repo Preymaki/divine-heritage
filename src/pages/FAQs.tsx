@@ -90,7 +90,7 @@ export default function FAQs() {
               Frequently Asked Questions
             </h1>
             <p className="mt-4 text-white/65 text-base md:text-lg leading-relaxed max-w-xl">
-              Everything you need to know about our childcare service, from settling in to fees 
+              Everything to know about the childcare service, from settling in to fees 
               and safety.
             </p>
           </AnimatedSection>
@@ -146,8 +146,8 @@ export default function FAQs() {
               Still have questions?
             </h3>
             <p className="text-[var(--color-primary-600)] text-sm leading-relaxed mb-4">
-              We're always happy to talk things through. Whether you're ready to book or just 
-              exploring your options, please don't hesitate to get in touch.
+              Information and guidance are readily provided. Whether preparing to book or 
+              exploring options, inquiries are always welcome.
             </p>
             <a
               href="/contact"

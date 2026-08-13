@@ -19,22 +19,22 @@ const VALUES = [
   {
     title: 'Safety First',
     description:
-      'Our home is fully risk-assessed and equipped to the highest safety standards. Every corner, every outing, and every activity is planned with your child\'s safety as the absolute priority.',
+      'The setting is fully risk-assessed and equipped to the highest safety standards. Every corner, every outing, and every activity is planned with child safety as the absolute priority.',
   },
   {
     title: 'Nurturing Environment',
     description:
-      'We create a warm, loving, and consistent environment that helps children develop secure attachments, emotional resilience, and a deep sense of belonging.',
+      'A warm, loving, and consistent environment is provided that helps children develop secure attachments, emotional resilience, and a deep sense of belonging.',
   },
   {
     title: 'Individualised Attention',
     description:
-      'With a small, carefully managed number of children, we ensure every child receives the personalised attention and care they deserve.',
+      'With a small, carefully managed number of children, every child receives the personalised attention and care required.',
   },
   {
     title: 'Family Partnership',
     description:
-      'We work closely with parents and carers, sharing daily updates, photos, and progress reports. Your family is our partner in your child\'s development.',
+      'Close collaboration is maintained with parents and carers through daily updates, photos, and progress reports. Families are true partners in each child\'s development.',
   },
 ]
 
@@ -46,13 +46,13 @@ export default function About() {
         <div className="container-site">
           <AnimatedSection>
             <p className="text-[var(--color-accent-400)] text-xs font-semibold uppercase tracking-[0.15em] mb-3 font-[var(--font-family-heading)]">
-              About Us
+              About Divine Heritage
             </p>
             <h1 className="font-[var(--font-family-heading)] font-bold text-white text-4xl md:text-5xl leading-tight tracking-tight max-w-2xl">
               A Childminder Who Truly Cares
             </h1>
             <p className="mt-4 text-white/65 text-base md:text-lg leading-relaxed max-w-xl">
-              Learn about our philosophy, qualifications, and the values that make Divine Heritage a 
+              Learn about the philosophy, qualifications, and values that make Divine Heritage a 
               setting parents trust completely.
             </p>
           </AnimatedSection>
@@ -76,30 +76,30 @@ export default function About() {
 
           <AnimatedSection direction="right" delay={0.15}>
             <SectionHeader
-              eyebrow="Our Story"
+              eyebrow="Setting Overview"
               title="Welcome to Divine Heritage"
               maxWidth="max-w-full"
             />
             <div className="space-y-4 mt-5 text-[var(--color-text-secondary)] text-sm md:text-base leading-relaxed">
               <p>
                 Divine Heritage Childcare Service is a professional home-based childminding service 
-                where children can learn, play, and grow safely. We believe that a loving, familiar 
-                home environment is the very best foundation for a child's early years.
+                where children can learn, play, and grow safely. A loving, familiar 
+                home environment provides the very best foundation for early childhood development.
               </p>
               <p>
-                We welcome children from birth to 5 years old, as well as school-age children for 
+                Children are welcomed from birth to 5 years old, as well as school-age children for 
                 after-school care — covering toddlers, pre-schoolers, and school-age groups. 
                 Every child is treated as an individual and cared for at their own pace.
               </p>
               <p>
-                Our large playroom is thoughtfully equipped with age-appropriate resources to spark 
-                curiosity and creativity. Children also have access to our enclosed garden for daily 
+                The large playroom is thoughtfully equipped with age-appropriate resources to spark 
+                curiosity and creativity. Children also have access to an enclosed garden for daily 
                 fresh air and outdoor play, whatever the season.
               </p>
               <p>
-                We make regular outings to the local playground, library, and community playgroups — 
+                Regular outings are made to the local playground, library, and community playgroups — 
                 giving children rich social experiences and a connection to their local community. 
-                We work in true partnership with families, maintaining open and honest communication 
+                True partnership is maintained with families, with open and honest communication 
                 every step of the way.
               </p>
             </div>
@@ -136,9 +136,9 @@ export default function About() {
       <SectionWrapper id="our-values" background="muted">
         <AnimatedSection className="text-center flex justify-center mb-12">
           <SectionHeader
-            eyebrow="Our Values"
-            title="What We Stand For"
-            subtitle="Everything we do flows from four core values that guide our approach to childcare."
+            eyebrow="Core Values"
+            title="What The Setting Stands For"
+            subtitle="Everything in the setting flows from four core values that guide the approach to childcare."
             centered
           />
         </AnimatedSection>
@@ -164,7 +164,7 @@ export default function About() {
         <AnimatedSection>
           <div className="max-w-3xl mx-auto text-center">
             <p className="text-xs font-semibold uppercase tracking-[0.15em] text-[var(--color-primary-500)] mb-5 font-[var(--font-family-heading)]">
-              Our Mission
+              The Mission
             </p>
             <blockquote>
               <p className="text-2xl md:text-3xl font-[var(--font-family-heading)] font-medium text-[var(--color-text-primary)] leading-relaxed italic">

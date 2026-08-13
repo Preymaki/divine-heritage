@@ -51,8 +51,8 @@ export default function CTASection() {
             Give Your Child the Best Possible Start
           </h2>
           <p className="mt-4 text-white/70 text-base md:text-lg leading-relaxed max-w-xl mx-auto">
-            We'd love to meet you and your child. Book a free introductory visit and see for 
-            yourself why families trust Divine Heritage Childcare Service.
+            Book a free introductory visit to explore the setting and see why families 
+            trust Divine Heritage Childcare Service.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-9">
@@ -82,11 +82,11 @@ export default function CTASection() {
               transition={{ delay: 0.8 }}
               className="mt-6 text-white/40 text-sm"
             >
-              No obligation. We're happy to answer any questions you have.
+              No obligation. All questions are welcome.
             </motion.p>
           ) : (
             <p className="mt-6 text-white/40 text-sm">
-              No obligation. We're happy to answer any questions you have.
+              No obligation. All questions are welcome.
             </p>
           )}
         </AnimatedSection>

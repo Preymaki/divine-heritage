@@ -71,7 +71,7 @@ export default function Contact() {
       setSubmitted(true)
       reset()
     } catch {
-      setSubmitError('Sorry, we could not send your message. Please try again or contact us directly by phone.')
+      setSubmitError('The message could not be sent. Please try again or make contact directly by phone.')
     } finally {
       setSubmitting(false)
     }
@@ -96,11 +96,11 @@ export default function Contact() {
               Get In Touch
             </p>
             <h1 className="font-[var(--font-family-heading)] font-bold text-white text-4xl md:text-5xl leading-tight tracking-tight max-w-2xl">
-              We'd Love to Meet Your Family
+              Contact Divine Heritage
             </h1>
             <p className="mt-4 text-white/65 text-base md:text-lg leading-relaxed max-w-xl">
-              Fill in the form below to book a free introductory visit or ask any questions you have. 
-              We'll be in touch within one working day.
+              Complete the form below to book a free introductory visit or submit an inquiry. 
+              Responses are provided within one working day.
             </p>
           </AnimatedSection>
         </div>
@@ -183,9 +183,8 @@ export default function Contact() {
                   Free Introductory Visit
                 </p>
                 <p className="text-[var(--color-accent-600)] text-sm leading-relaxed">
-                  We offer a free, no-obligation introductory visit so you and your child can see 
-                  our space and ask any questions. Simply fill in the form and we'll arrange a 
-                  convenient time.
+                  A free, no-obligation introductory visit is available to view the setting and 
+                  discuss any questions. Complete the form to arrange a convenient time.
                 </p>
               </div>
             </div>
@@ -202,8 +201,7 @@ export default function Contact() {
                   Message Sent!
                 </h2>
                 <p className="text-[var(--color-text-secondary)] text-base max-w-sm leading-relaxed">
-                  Thank you for reaching out. We'll review your message and get back to you within 
-                  one working day.
+                  Thank you for reaching out. Inquiries are reviewed and answered within one working day.
                 </p>
                 <button
                   type="button"
@@ -221,7 +219,7 @@ export default function Contact() {
                 aria-label="Contact form"
               >
                 <h2 className="font-[var(--font-family-heading)] font-bold text-xl text-[var(--color-text-primary)]">
-                  Send Us a Message
+                  Send a Message
                 </h2>
 
                 {/* Parent name */}
@@ -335,7 +333,7 @@ export default function Contact() {
                   <textarea
                     id="message"
                     rows={5}
-                    placeholder="Tell us about your childcare needs, questions you have, or preferred start date..."
+                    placeholder="Provide details regarding childcare requirements, questions, or preferred start date..."
                     className={`${inputClass(!!errors.message)} resize-none`}
                     aria-required="true"
                     {...register('message', {
@@ -348,8 +346,8 @@ export default function Contact() {
 
                 {/* Privacy note */}
                 <p className="text-[var(--color-text-muted)] text-xs leading-relaxed">
-                  Your information is handled with care and will only be used to respond to your 
-                  enquiry. We will never share your details with third parties.
+                  Information is handled with care and used solely to respond to the inquiry. 
+                  Details are never shared with third parties.
                 </p>
 
                 {/* Submission error */}
