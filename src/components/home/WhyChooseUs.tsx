@@ -78,7 +78,7 @@ export default function WhyChooseUs() {
         <SectionHeader
           eyebrow="Why Divine Heritage"
           title="Everything a Growing Child Needs"
-          subtitle="Every aspect of the setting is thoughtfully designed to give children the best possible start in life — and give parents complete peace of mind."
+          subtitle="Thoughtfully designed to give children the best possible start in life, and parents complete peace of mind."
           centered
           maxWidth="max-w-2xl"
         />
