@@ -49,11 +49,11 @@ export default function About() {
               About Divine Heritage
             </p>
             <h1 className="font-[var(--font-family-heading)] font-bold text-white text-4xl md:text-5xl leading-tight tracking-tight max-w-2xl">
-              A Childminder Who Truly Cares
+              Dedicated Childminding. Genuine Care.
             </h1>
             <p className="mt-4 text-white/65 text-base md:text-lg leading-relaxed max-w-xl">
               Learn about the philosophy, qualifications, and values that make Divine Heritage a 
-              setting parents trust completely.
+              childcare setting parents trust completely.
             </p>
           </AnimatedSection>
         </div>
@@ -93,8 +93,8 @@ export default function About() {
               </p>
               <p>
                 The large playroom is thoughtfully equipped with age-appropriate resources to spark 
-                curiosity and creativity. Children also have access to an enclosed garden for daily 
-                fresh air and outdoor play, whatever the season.
+                curiosity and creativity. The setting features a spacious, secure garden, allowing for 
+                daily outdoor play and physical development.
               </p>
               <p>
                 Regular outings are made to the local playground, library, and community playgroups — 

@@ -35,7 +35,7 @@ const WHY_ITEMS: WhyItem[] = [
       'The childcare environment is designed for independence and exploration, featuring:',
     bullets: [
       { label: 'Accessible Resources', text: 'Age-appropriate toys positioned at child height for independent selection.' },
-      { label: 'Outdoor Exploration', text: 'An enclosed, private garden dedicated to safe outdoor play.' },
+      { label: 'Outdoor Exploration', text: 'The setting features a spacious, secure garden, allowing for daily outdoor play and physical development.' },
     ],
     colour: '#6b9e7a',  // sage
   },
