@@ -12,26 +12,38 @@ import AnimatedSection from '@components/ui/AnimatedSection'
 import SectionWrapper from '@components/ui/SectionWrapper'
 import SectionHeader from '@components/ui/SectionHeader'
 
-const WHY_ITEMS = [
+interface WhyItem {
+  icon: React.ComponentType<{ size?: number; style?: React.CSSProperties }>
+  title: string
+  description: string
+  bullets?: { label: string; text: string }[]
+  colour: string
+}
+
+const WHY_ITEMS: WhyItem[] = [
   {
     icon: Home,
     title: 'Safe Home Environment',
     description:
-      'The fully risk-assessed home provides the warmth and comfort of a family setting, with professional-grade safety standards.',
+      'This fully risk-assessed home provides the warmth and comfort of a family setting alongside professional-grade safety standards.',
     colour: '#1e56d0',  // blue
   },
   {
     icon: TreePine,
-    title: 'Large Playroom & Garden',
+    title: 'Setting & Garden',
     description:
-      'A dedicated playroom packed with age-appropriate resources, and a large, fully enclosed private garden for daily outdoor play.',
+      'The childcare environment is designed for independence and exploration, featuring:',
+    bullets: [
+      { label: 'Accessible Resources', text: 'Age-appropriate toys positioned at child height for independent selection.' },
+      { label: 'Outdoor Exploration', text: 'An enclosed, private garden dedicated to safe outdoor play.' },
+    ],
     colour: '#6b9e7a',  // sage
   },
   {
     icon: Heart,
     title: 'Individualised Care',
     description:
-      "Every child is unique. Care is tailored to each child's personality, interests, and developmental stage.",
+      'Recognising that every child is unique, daily care and learning experiences are carefully tailored to align with each child’s specific personality, interests, and developmental stage.',
     colour: '#e0289b',  // pink
   },
   {
@@ -50,9 +62,16 @@ const WHY_ITEMS = [
   },
   {
     icon: ShieldCheck,
-    title: 'Fully Insured & Ofsted Registered',
+    title: 'Professional Credentials & Safety Standards',
     description:
-      'Complete peace of mind. The setting holds full Public Liability Insurance and is registered and inspected by Ofsted.',
+      'Complete peace of mind is assured through full compliance and up-to-date professional qualifications, including:',
+    bullets: [
+      { label: 'Ofsted Inspected', text: 'Fully registered and regularly inspected.' },
+      { label: 'Enhanced DBS Checked', text: 'Cleared for working safely with children.' },
+      { label: 'Paediatric First Aid', text: 'Certified to handle medical situations confidently.' },
+      { label: 'Safeguarding Trained', text: 'Up-to-date certification in child protection.' },
+      { label: 'Fully Insured', text: 'Comprehensive public liability insurance in place.' },
+    ],
     colour: '#1845aa',  // dark blue
   },
   {
@@ -89,19 +108,30 @@ export default function WhyChooseUs() {
           const Icon = item.icon
           return (
             <AnimatedSection key={item.title} delay={i * 0.07}>
-              <div className="group p-5 rounded-[var(--radius-lg)] bg-[var(--color-background)] border border-[var(--color-muted)] hover:border-transparent hover:shadow-[var(--shadow-card)] hover:bg-white transition-all duration-300 h-full">
-                <div
-                  className="w-11 h-11 rounded-xl flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-110"
-                  style={{ backgroundColor: `${item.colour}18` }}
-                >
-                  <Icon size={20} style={{ color: item.colour }} />
+              <div className="group p-5 rounded-[var(--radius-lg)] bg-[var(--color-background)] border border-[var(--color-muted)] hover:border-transparent hover:shadow-[var(--shadow-card)] hover:bg-white transition-all duration-300 h-full flex flex-col justify-between">
+                <div>
+                  <div
+                    className="w-11 h-11 rounded-xl flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-110"
+                    style={{ backgroundColor: `${item.colour}18` }}
+                  >
+                    <Icon size={20} style={{ color: item.colour }} />
+                  </div>
+                  <h3 className="font-[var(--font-family-heading)] font-semibold text-sm text-[var(--color-text-primary)] leading-snug mb-2">
+                    {item.title}
+                  </h3>
+                  <p className="text-[var(--color-text-muted)] text-xs leading-relaxed">
+                    {item.description}
+                  </p>
+                  {item.bullets && (
+                    <ul className="mt-2.5 space-y-1.5" role="list">
+                      {item.bullets.map((b) => (
+                        <li key={b.label} className="text-xs text-[var(--color-text-muted)] leading-relaxed">
+                          <span className="font-semibold text-[var(--color-text-primary)]">• {b.label}:</span> {b.text}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                 </div>
-                <h3 className="font-[var(--font-family-heading)] font-semibold text-sm text-[var(--color-text-primary)] leading-snug mb-2">
-                  {item.title}
-                </h3>
-                <p className="text-[var(--color-text-muted)] text-xs leading-relaxed">
-                  {item.description}
-                </p>
               </div>
             </AnimatedSection>
           )
