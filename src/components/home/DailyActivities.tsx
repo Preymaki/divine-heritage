@@ -31,7 +31,7 @@ const iconMap: Record<string, LucideIcon> = {
 }
 
 const DAILY_SCHEDULE = [
-  { time: '7:30 – 9:00am', activity: 'Welcome, free play & breakfast' },
+  { time: '8:00 – 9:00am', activity: 'Welcome, free play & breakfast' },
   { time: '9:00 – 10:30am', activity: 'Planned learning activity (EYFS-linked)' },
   { time: '10:30 – 11:30am', activity: 'Outdoor play — garden or park visit' },
   { time: '11:30am – 12:30pm', activity: 'Story time, music & movement' },

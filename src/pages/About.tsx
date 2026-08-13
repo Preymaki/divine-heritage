@@ -87,7 +87,7 @@ export default function About() {
                 home environment provides the very best foundation for early childhood development.
               </p>
               <p>
-                Children are welcomed from birth to 5 years old, as well as school-age children for 
+                Children are welcomed from 5/6 months to 5 years old, as well as school-age children for 
                 after-school care — covering toddlers, pre-schoolers, and school-age groups. 
                 Every child is treated as an individual and cared for at their own pace.
               </p>

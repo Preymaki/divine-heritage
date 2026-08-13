@@ -56,7 +56,7 @@ export const DEFAULT_CONTACT: ContactSettings = {
   tagline: 'A Safe, Nurturing Home for Every Child',
   ofsted:  '',
   hours: {
-    weekdays: 'Monday – Friday, 7:30 am – 6:00 pm',
+    weekdays: 'Monday – Thursday, 8:00 am – 6:00 pm, Friday 8:00 am – 5:00 pm',
     notes:    'School holiday care available on request',
   },
   social: {

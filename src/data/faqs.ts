@@ -17,7 +17,7 @@ export const FAQS: FAQ[] = [
     id: 'ages',
     question: 'What ages do you care for?',
     answer:
-      'Care is provided for babies, toddlers, pre-school children, and school-age children (from 0 / 6 months to 11 years). After-school care is also available. Numbers are carefully managed to maintain an exceptional standard of individualised care for every child.',
+      'Care is provided for babies, toddlers, pre-school children, and school-age children (from 5/6 months to 11 years). After-school care is also available. Numbers are carefully managed to maintain an exceptional standard of individualised care for every child.',
     category: 'general',
   },
   {
