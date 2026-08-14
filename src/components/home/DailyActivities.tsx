@@ -31,14 +31,14 @@ const iconMap: Record<string, LucideIcon> = {
 }
 
 const DAILY_SCHEDULE = [
-  { time: '8:00 – 9:00am', activity: 'Welcome, free play & breakfast' },
+  { time: '8:00 – 9:00am', activity: 'Welcome & indoor free play' },
   { time: '9:00 – 10:30am', activity: 'Planned learning activity (EYFS-linked)' },
-  { time: '10:30 – 11:30am', activity: 'Outdoor play — garden or park visit' },
+  { time: '10:30 – 11:30am', activity: 'Indoor & outdoor play — garden exploration' },
   { time: '11:30am – 12:30pm', activity: 'Story time, music & movement' },
-  { time: '12:30 – 1:30pm', activity: 'Lunch & rest / quiet time' },
-  { time: '1:30 – 3:00pm', activity: 'Arts & crafts, sensory play, or community outing' },
-  { time: '3:00 – 4:00pm', activity: 'After-school children join — healthy snack' },
-  { time: '4:00 – 6:00pm', activity: 'Outdoor play, creative play, and wind-down' },
+  { time: '12:30 – 1:30pm', activity: 'Lunch (packed meals) & rest / quiet time' },
+  { time: '1:30 – 3:00pm', activity: 'Arts & crafts, sensory play, or library visit' },
+  { time: '3:00 – 4:00pm', activity: 'School pickups & afternoon snack time' },
+  { time: '4:00 – 6:00pm', activity: 'Indoor and outdoor play, creative play, and wind-down' },
 ]
 
 export default function DailyActivities() {

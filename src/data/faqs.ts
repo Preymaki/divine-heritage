@@ -50,9 +50,9 @@ export const FAQS: FAQ[] = [
   },
   {
     id: 'food',
-    question: 'Do you provide meals and snacks?',
+    question: 'Do you provide meals or do children bring their own food?',
     answer:
-      'Yes, nutritious home-cooked meals and snacks are provided throughout the day as part of the fee. Healthy eating guidelines are followed, accommodating allergies, dietary requirements, and cultural or religious food preferences. Specific dietary needs are confirmed prior to starting.',
+      'Children bring in their own food and packed meals. Healthy eating routines, individual preferences, and dietary requirements are supported and accommodated throughout the day.',
     category: 'daily',
   },
   {
@@ -66,7 +66,7 @@ export const FAQS: FAQ[] = [
     id: 'outdoor',
     question: 'Do children get outdoor time every day?',
     answer:
-      'Daily outdoor play is a cornerstone of the provision. Children enjoy a large, secure garden every day, alongside regular trips to local parks, playgrounds, the library, and community playgroups. Outings take place in all weather (suitably dressed), as fresh air is vital for child wellbeing.',
+      'Indoor and outdoor play is a cornerstone of the provision. Children enjoy a large, secure garden every day alongside indoor creative learning, with trips to the local library and community groups. Fresh air and active play are vital for child wellbeing.',
     category: 'daily',
   },
   {

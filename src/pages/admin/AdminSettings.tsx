@@ -153,7 +153,7 @@ function ContactTab() {
             id="contact-hours-weekdays"
             value={form.hours.weekdays}
             onChange={setNested('hours', 'weekdays')}
-            hint="e.g. Monday – Friday, 7:30 am – 6:00 pm"
+            hint="e.g. Monday – Thursday 8:00 am – 6:00 pm, Friday 8:00 am – 5:00 pm"
             disabled={busy}
           />
           <FormField

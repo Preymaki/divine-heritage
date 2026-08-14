@@ -10,11 +10,11 @@ import SectionHeader from '@components/ui/SectionHeader'
 import { IMAGES } from '@utils/images'
 
 const GALLERY_PREVIEW = [
-  { src: IMAGES.gallery1, alt: 'Two happy children smiling on swings at the park during a Divine Heritage outing' },
+  { src: IMAGES.gallery1, alt: 'Two happy children smiling on swings during outdoor play at Divine Heritage' },
   { src: IMAGES.gallery2, alt: 'A child in a painting apron creating artwork at an easel during an arts and crafts session' },
   { src: IMAGES.gallery3, alt: 'A young child sitting independently reading a picture book at Divine Heritage' },
   { src: IMAGES.gallery4, alt: 'Divine Heritage childminder sitting on the floor with four children in hands-on sensory play' },
-  { src: IMAGES.gallery5, alt: 'Two children exploring nature around a tree in a sunny park during an outdoor outing' },
+  { src: IMAGES.gallery5, alt: 'Two children exploring nature outdoors during an outdoor play session' },
   { src: IMAGES.gallery6, alt: 'Children delighting in a bubble play session at the local library during a Divine Heritage outing' },
 ]
 

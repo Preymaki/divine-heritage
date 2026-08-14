@@ -204,8 +204,8 @@ export default function Gallery() {
               Moments of Joy, Growth &amp; Discovery
             </h1>
             <p className="mt-4 text-white/65 text-base md:text-lg leading-relaxed max-w-xl">
-              Explore daily life at Divine Heritage — from library visits and park outings to 
-              sensory play, arts and crafts, and cosy home play.
+              Explore daily life at Divine Heritage — from library visits and creative activities to 
+              sensory play, arts and crafts, and indoor and outdoor play.
             </p>
           </AnimatedSection>
         </div>

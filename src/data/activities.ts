@@ -10,8 +10,8 @@ export const ACTIVITIES: Activity[] = [
   {
     id: 'outdoor-play',
     icon: 'TreePine',
-    title: 'Outdoor Exploration',
-    description: 'Daily fresh air in our large, enclosed garden and regular park visits to explore nature.',
+    title: 'Indoor & Outdoor Play',
+    description: 'Daily active play in our spacious setting and secure garden to explore and develop physical skills.',
     colour: '#6b9e7a',  // sage
   },
   {
@@ -66,8 +66,8 @@ export const ACTIVITIES: Activity[] = [
   {
     id: 'healthy-snacks',
     icon: 'Apple',
-    title: 'Healthy Snacks & Meals',
-    description: 'Home-cooked nutritious meals and snacks, with food habits that support lifelong wellbeing.',
+    title: 'Healthy Meal Routine',
+    description: 'Children bring in their own food, supported with healthy eating habits and structured mealtime routines.',
     colour: '#6b9e7a',  // sage
   },
   {

@@ -56,7 +56,7 @@ export const DEFAULT_CONTACT: ContactSettings = {
   tagline: 'A Safe, Nurturing Home for Every Child',
   ofsted:  '',
   hours: {
-    weekdays: 'Monday – Thursday, 8:00 am – 6:00 pm, Friday 8:00 am – 5:00 pm',
+    weekdays: 'Monday – Thursday 8:00 am – 6:00 pm, Friday 8:00 am – 5:00 pm',
     notes:    'School holiday care available on request',
   },
   social: {
@@ -83,9 +83,9 @@ export const DEFAULT_ABOUT: AboutSettings = {
   previewSubtitle: 'Founded in 2017, Divine Heritage provides warm, professional home-based childminding for families across South East London.',
   highlights: [
     { title: 'Child-Led Learning',      description: 'Activities are inspired by each child\'s interests and developmental stage.' },
-    { title: 'Family Partnership',      description: 'Close collaboration is maintained with parents to provide consistent, joined-up care.' },
+    { title: 'Family Partnership',      description: 'Close collaboration is maintained with parents with regular updates.' },
     { title: 'Safe & Stimulating',      description: 'The home environment is fully Ofsted registered and richly resourced.' },
-    { title: 'Nutritious Meals',        description: 'Healthy, home-cooked meals and snacks prepared fresh every day.' },
+    { title: 'Indoor & Outdoor Play',   description: 'Spacious indoor learning areas and secure outdoor play.' },
   ],
   storyParagraphs: [
     'Divine Heritage Childcare Service was founded in 2017 with a clear vision: to create a warm, loving home-from-home where every child is seen, valued, and inspired to reach their full potential.',
@@ -97,14 +97,13 @@ export const DEFAULT_ABOUT: AboutSettings = {
   values: [
     { title: 'Love & Belonging',    description: 'Every child is welcomed as part of the family environment. Warm, secure relationships help children feel confident and valued.' },
     { title: 'Learning Through Play', description: 'A play-based approach aligned with EYFS is followed, where curiosity is celebrated and every activity serves a developmental purpose.' },
-    { title: 'Partnership',         description: 'Collaboration with parents is central, with daily updates and milestones shared together as a team.' },
+    { title: 'Partnership',         description: 'Collaboration with parents is central, with updates and milestones shared together as a team.' },
     { title: 'Respect & Inclusion', description: 'Diversity is celebrated, guiding children to respect and appreciate the world around them.' },
   ],
-  bioName:       'The Childminder',
+  bioName:       '',
   bioParagraphs: [
-    'Over a decade of professional childcare experience supports the setting, beginning as a nursery nurse before registering as a childminder and opening Divine Heritage in 2017.',
-    'The mission is clear: to give every child the very best start in life. Full Level 3 Childcare and Education qualifications, Paediatric First Aid certification, and regular CPD training ensure adherence to best practices.',
-    'From preparing healthy meals to setting up messy play stations in the garden or reading stories together, the setting offers a genuine home environment that supports children every day.',
+    'Divine Heritage offers young children the consistency of seeing the same warm, familiar childminder every day.',
+    'With over 9 years of qualified home childminding experience in London, the setting delivers dedicated, individualised care designed to foster growth and happiness. It provides a safe, welcoming second home where children are celebrated and inspired daily.',
   ],
   bioQuote: 'Dedicated to providing exceptional care and investing in children\'s futures.',
   updatedAt: null,

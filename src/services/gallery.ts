@@ -212,7 +212,7 @@ export async function seedGallery(uploadedBy: string): Promise<void> {
       group: 'home_hero', sortOrder: 1,
       downloadURL: '/images/outdoor-spinning-ride.jpeg',
       title: 'Home Page — Hero Background Banner',
-      altText: 'Two happy children smiling on swings at the park — main home page hero banner frame',
+      altText: 'Two happy children smiling on swings during outdoor play — main home page hero banner frame',
       caption: 'Main background banner displayed at the top of the home page.',
     },
 
@@ -263,7 +263,7 @@ export async function seedGallery(uploadedBy: string): Promise<void> {
       downloadURL: '/images/outing-softplay-blocks.jpeg',
       title: 'Services Page — After-School Care Cover',
       altText: 'Toddler playing with climbing blocks',
-      caption: 'Cover photo for After-School & Holiday Care card.',
+      caption: 'Cover photo for After-School Care card.',
     },
     {
       group: 'services_page', sortOrder: 4,
@@ -276,7 +276,7 @@ export async function seedGallery(uploadedBy: string): Promise<void> {
       group: 'services_page', sortOrder: 5,
       downloadURL: '/images/outdoor-nature-tree.jpeg',
       title: 'Services Page — Outdoor Nature Play Cover',
-      altText: 'Children exploring around tree in park',
+      altText: 'Children exploring outdoors in nature',
       caption: 'Cover photo for Outdoor Nature Exploration card.',
     },
 
@@ -284,29 +284,29 @@ export async function seedGallery(uploadedBy: string): Promise<void> {
     {
       group: 'outings', sortOrder: 1,
       downloadURL: '/images/outdoor-spinning-ride.jpeg',
-      title: 'Park Swings',
-      altText: 'Two happy children smiling on swings at the park during a Divine Heritage outing',
+      title: 'Outdoor Swings',
+      altText: 'Two happy children smiling on swings during outdoor play',
       caption: '',
     },
     {
       group: 'outings', sortOrder: 2,
       downloadURL: '/images/outdoor-nature-tree.jpeg',
       title: 'Nature Exploration',
-      altText: 'Two children exploring nature around a tree in a sunny park during a Divine Heritage outing',
+      altText: 'Two children exploring nature outdoors during a Divine Heritage activity',
       caption: '',
     },
     {
       group: 'outings', sortOrder: 3,
       downloadURL: '/images/hero-swings.jpeg',
       title: 'Spinning Ride',
-      altText: 'A child enjoying a spinning ride at an outdoor playground during a Divine Heritage park outing',
+      altText: 'A child enjoying outdoor play equipment during a Divine Heritage activity',
       caption: '',
     },
     {
       group: 'outings', sortOrder: 4,
       downloadURL: '/images/outdoor-rope-climb.jpeg',
       title: 'Rope Climbing Frame',
-      altText: 'A child confidently navigating a rope climbing frame at an adventure playground during a Divine Heritage outing',
+      altText: 'A child confidently navigating an outdoor climbing frame',
       caption: '',
     },
     {
@@ -320,7 +320,7 @@ export async function seedGallery(uploadedBy: string): Promise<void> {
       group: 'outings', sortOrder: 6,
       downloadURL: '/images/outing-softplay-blocks.jpeg',
       title: 'Soft Play',
-      altText: 'A toddler building strength on foam climbing blocks at a soft play session during a Divine Heritage outing',
+      altText: 'A toddler building strength on foam climbing blocks at a soft play session',
       caption: '',
     },
 

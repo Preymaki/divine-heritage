@@ -78,7 +78,7 @@ export default function MeetChildminder() {
         <AnimatedSection direction="left" delay={0.12} className="order-2 lg:order-1">
           <SectionHeader
             eyebrow="Professional Childminder"
-            title={about.bioName ? `Meet ${about.bioName}` : 'A Familiar Face You Can Trust'}
+            title={about.bioName && about.bioName !== 'The Childminder' ? `Meet ${about.bioName}` : 'A Familiar Face You Can Trust'}
             maxWidth="max-w-full"
           />
 
@@ -90,17 +90,10 @@ export default function MeetChildminder() {
             ) : (
               <>
                 <p>
-                  At Divine Heritage, children are cared for by the same warm, familiar childminder 
-                  every day. Consistency matters enormously to young children — and to parents.
+                  Divine Heritage offers young children the consistency of seeing the same warm, familiar childminder every day.
                 </p>
                 <p>
-                  With over 9 years of professional home childminding experience in London, the setting 
-                  brings genuine passion, formal qualifications, and a deep commitment to every child's 
-                  individual growth and happiness.
-                </p>
-                <p>
-                  The home environment provides a welcoming second home for children, where safety, 
-                  celebration, and inspiration are at the heart of daily care.
+                  With over 9 years of qualified home childminding experience in London, the setting delivers dedicated, individualised care designed to foster growth and happiness. It provides a safe, welcoming second home where children are celebrated and inspired daily.
                 </p>
               </>
             )}
