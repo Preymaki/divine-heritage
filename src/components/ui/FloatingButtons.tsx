@@ -71,7 +71,7 @@ export default function FloatingButtons() {
           rel="noopener noreferrer"
           className="fab-button text-white"
           style={{ backgroundColor: '#25D366' }}
-          aria-label="Contact us on WhatsApp"
+          aria-label="Contact Divine Heritage on WhatsApp"
           id="fab-whatsapp"
         >
           <WhatsAppIcon size={26} />
@@ -98,7 +98,7 @@ export default function FloatingButtons() {
           href={telUrl}
           className="fab-button text-white"
           style={{ backgroundColor: 'var(--color-primary-500)' }}
-          aria-label={`Call us on ${contact.phone}`}
+          aria-label={`Call Divine Heritage on ${contact.phone}`}
           id="fab-call"
         >
           <Phone size={22} />

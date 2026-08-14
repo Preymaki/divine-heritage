@@ -113,6 +113,27 @@ export const DEFAULT_ABOUT: AboutSettings = {
 // Helpers
 // ---------------------------------------------------------------------------
 
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+function replaceLegacyYears<T>(val: T): T {
+  if (typeof val === 'string') {
+    return val.replace(/\b2018\b/g, '2017') as unknown as T
+  }
+  if (Array.isArray(val)) {
+    return val.map(replaceLegacyYears) as unknown as T
+  }
+  if (val !== null && typeof val === 'object') {
+    const res: Record<string, unknown> = {}
+    for (const [k, v] of Object.entries(val as Record<string, unknown>)) {
+      res[k] = replaceLegacyYears(v)
+    }
+    return res as T
+  }
+  return val
+}
+
 function settingsRef(docId: string) {
   return doc(db, SETTINGS_COLLECTION, docId)
 }
@@ -123,8 +144,8 @@ function settingsRef(docId: string) {
 
 export async function getContactSettings(): Promise<ContactSettings> {
   const snap = await getDoc(settingsRef(DOC_CONTACT))
-  if (!snap.exists()) return { ...DEFAULT_CONTACT }
-  return { ...DEFAULT_CONTACT, ...(snap.data() as Partial<ContactSettings>) }
+  if (!snap.exists()) return replaceLegacyYears({ ...DEFAULT_CONTACT })
+  return replaceLegacyYears({ ...DEFAULT_CONTACT, ...(snap.data() as Partial<ContactSettings>) })
 }
 
 export function subscribeToContact(
@@ -134,10 +155,10 @@ export function subscribeToContact(
   return onSnapshot(
     settingsRef(DOC_CONTACT),
     (snap) => {
-      const data: ContactSettings = snap.exists()
+      const raw: ContactSettings = snap.exists()
         ? { ...DEFAULT_CONTACT, ...(snap.data() as Partial<ContactSettings>) }
         : { ...DEFAULT_CONTACT }
-      callback(data)
+      callback(replaceLegacyYears(raw))
     },
     (err) => { console.error('[settings/contact]', err); onError?.(err) },
   )
@@ -149,8 +170,8 @@ export function subscribeToContact(
 
 export async function getHeroSettings(): Promise<HeroSettings> {
   const snap = await getDoc(settingsRef(DOC_HERO))
-  if (!snap.exists()) return { ...DEFAULT_HERO }
-  return { ...DEFAULT_HERO, ...(snap.data() as Partial<HeroSettings>) }
+  if (!snap.exists()) return replaceLegacyYears({ ...DEFAULT_HERO })
+  return replaceLegacyYears({ ...DEFAULT_HERO, ...(snap.data() as Partial<HeroSettings>) })
 }
 
 export function subscribeToHero(
@@ -160,10 +181,10 @@ export function subscribeToHero(
   return onSnapshot(
     settingsRef(DOC_HERO),
     (snap) => {
-      const data: HeroSettings = snap.exists()
+      const raw: HeroSettings = snap.exists()
         ? { ...DEFAULT_HERO, ...(snap.data() as Partial<HeroSettings>) }
         : { ...DEFAULT_HERO }
-      callback(data)
+      callback(replaceLegacyYears(raw))
     },
     (err) => { console.error('[settings/hero]', err); onError?.(err) },
   )
@@ -175,8 +196,8 @@ export function subscribeToHero(
 
 export async function getAboutSettings(): Promise<AboutSettings> {
   const snap = await getDoc(settingsRef(DOC_ABOUT))
-  if (!snap.exists()) return { ...DEFAULT_ABOUT }
-  return { ...DEFAULT_ABOUT, ...(snap.data() as Partial<AboutSettings>) }
+  if (!snap.exists()) return replaceLegacyYears({ ...DEFAULT_ABOUT })
+  return replaceLegacyYears({ ...DEFAULT_ABOUT, ...(snap.data() as Partial<AboutSettings>) })
 }
 
 export function subscribeToAbout(
@@ -186,10 +207,10 @@ export function subscribeToAbout(
   return onSnapshot(
     settingsRef(DOC_ABOUT),
     (snap) => {
-      const data: AboutSettings = snap.exists()
+      const raw: AboutSettings = snap.exists()
         ? { ...DEFAULT_ABOUT, ...(snap.data() as Partial<AboutSettings>) }
         : { ...DEFAULT_ABOUT }
-      callback(data)
+      callback(replaceLegacyYears(raw))
     },
     (err) => { console.error('[settings/about]', err); onError?.(err) },
   )
@@ -200,25 +221,28 @@ export function subscribeToAbout(
 // ---------------------------------------------------------------------------
 
 export async function saveContactSettings(patch: ContactPatch): Promise<void> {
+  const sanitised = replaceLegacyYears(patch)
   await setDoc(
     settingsRef(DOC_CONTACT),
-    { ...patch, updatedAt: serverTimestamp() },
+    { ...sanitised, updatedAt: serverTimestamp() },
     { merge: true },
   )
 }
 
 export async function saveHeroSettings(patch: HeroPatch): Promise<void> {
+  const sanitised = replaceLegacyYears(patch)
   await setDoc(
     settingsRef(DOC_HERO),
-    { ...patch, updatedAt: serverTimestamp() },
+    { ...sanitised, updatedAt: serverTimestamp() },
     { merge: true },
   )
 }
 
 export async function saveAboutSettings(patch: AboutPatch): Promise<void> {
+  const sanitised = replaceLegacyYears(patch)
   await setDoc(
     settingsRef(DOC_ABOUT),
-    { ...patch, updatedAt: serverTimestamp() },
+    { ...sanitised, updatedAt: serverTimestamp() },
     { merge: true },
   )
 }

@@ -55,7 +55,7 @@ export default function AdminLogin() {
         {/* Heading */}
         <div className="admin-auth-heading">
           <h1>Welcome back</h1>
-          <p>Enter your email and we'll send you a secure sign-in link — no password needed.</p>
+          <p>Enter your email to receive a secure sign-in link — no password needed.</p>
         </div>
 
         {/* Form */}

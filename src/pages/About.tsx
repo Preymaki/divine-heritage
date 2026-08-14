@@ -45,7 +45,7 @@ export default function About() {
   const storyParagraphs = about.storyParagraphs && about.storyParagraphs.length > 0
     ? about.storyParagraphs
     : [
-        'Divine Heritage Childcare Service is a professional home-based childminding service where children can learn, play, and grow safely. A loving, familiar home environment provides the very best foundation for early childhood development.',
+        'Divine Heritage Childcare Service was founded in 2017 as a professional home-based childminding service where children can learn, play, and grow safely. A loving, familiar home environment provides the very best foundation for early childhood development.',
         'Children are welcomed from 5/6 months to 5 years old, as well as school-age children for after-school care — covering toddlers, pre-schoolers, and school-age groups. Every child is treated as an individual and cared for at their own pace.',
         'The large playroom is thoughtfully equipped with age-appropriate resources to spark curiosity and creativity. The setting features a spacious, secure garden, allowing for daily outdoor play and physical development.',
         'Regular outings are made to the local playground, library, and community playgroups — giving children rich social experiences and a connection to their local community. True partnership is maintained with families, with open and honest communication every step of the way.',
@@ -129,8 +129,8 @@ export default function About() {
         </div>
       </SectionWrapper>
 
-      {/* Our Values */}
-      <SectionWrapper id="our-values" background="muted">
+      {/* Core Values */}
+      <SectionWrapper id="core-values" background="muted">
         <AnimatedSection className="text-center flex justify-center mb-12">
           <SectionHeader
             eyebrow="Core Values"

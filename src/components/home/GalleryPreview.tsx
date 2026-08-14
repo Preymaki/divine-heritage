@@ -23,9 +23,9 @@ export default function GalleryPreview() {
     <SectionWrapper id="gallery-preview" background="white">
       <AnimatedSection className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-10">
         <SectionHeader
-          eyebrow="Our Space"
-          title="See Our World"
-          subtitle="A glimpse into the wonderful days we share at Divine Heritage."
+          eyebrow="The Setting"
+          title="Life at Divine Heritage"
+          subtitle="A glimpse into the enriching days and joyful moments at Divine Heritage."
           maxWidth="max-w-lg"
         />
         <Link
@@ -56,7 +56,7 @@ export default function GalleryPreview() {
           pagination={{ clickable: true }}
           loop
           className="pb-10"
-          aria-label="Gallery preview — a selection of our activities and environment"
+          aria-label="Gallery preview — a selection of activities and the childcare environment"
           a11y={{
             prevSlideMessage: 'Previous image',
             nextSlideMessage: 'Next image',

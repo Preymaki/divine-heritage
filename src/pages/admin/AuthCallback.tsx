@@ -111,7 +111,7 @@ export default function AuthCallback() {
             {phase === 'detecting' ? 'Verifying link…' : 'Signing you in…'}
           </h1>
           <p className="admin-auth-status-body">
-            Please wait while we securely authenticate your session.
+            Please wait while the session is securely authenticated.
           </p>
         </div>
       </div>

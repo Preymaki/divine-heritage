@@ -8,28 +8,28 @@ export interface FAQ {
 export const FAQS: FAQ[] = [
   {
     id: 'ofsted',
-    question: 'Are you Ofsted registered?',
+    question: 'Is Divine Heritage Ofsted registered?',
     answer:
       'Yes, Divine Heritage is fully registered with Ofsted, holding all required qualifications and insurances. Full Public Liability Insurance is maintained, and every adult in the household holds an enhanced DBS check. The Ofsted registration is publicly verifiable on the Ofsted website.',
     category: 'general',
   },
   {
     id: 'ages',
-    question: 'What ages do you care for?',
+    question: 'What ages are cared for?',
     answer:
       'Care is provided for babies, toddlers, pre-school children, and school-age children (from 5/6 months to 11 years). After-school care is also available. Numbers are carefully managed to maintain an exceptional standard of individualised care for every child.',
     category: 'general',
   },
   {
     id: 'hours',
-    question: 'What are your hours of operation?',
+    question: 'What are the hours of operation?',
     answer:
       'Standard operating hours are Monday to Thursday, 8:00am to 6:00pm, and Friday 8:00am to 5:00pm. Flexible arrangements, including part-time, term-time only, and before or after school care, can be arranged based on availability. Weekend or overnight care is not currently offered.',
     category: 'general',
   },
   {
     id: 'fees',
-    question: 'What are your fees?',
+    question: 'What are the fees?',
     answer:
       'Fees are based on age and hours required and are discussed during the initial visit. Tax-Free Childcare, childcare vouchers, and government free childcare hours for eligible 3 and 4-year-olds are accepted. Contact the setting for a personalised quote based on specific requirements.',
     category: 'fees',
@@ -50,14 +50,14 @@ export const FAQS: FAQ[] = [
   },
   {
     id: 'food',
-    question: 'Do you provide meals or do children bring their own food?',
+    question: 'Are meals provided or do children bring their own food?',
     answer:
       'Children bring in their own food and packed meals. Healthy eating routines, individual preferences, and dietary requirements are supported and accommodated throughout the day.',
     category: 'daily',
   },
   {
     id: 'eyfs',
-    question: 'How do you support children\'s learning and development?',
+    question: 'How does Divine Heritage support children\'s learning and development?',
     answer:
       'The Early Years Foundation Stage (EYFS) curriculum is followed, with activities planned around each child\'s individual interests and developmental stage. A Learning Journey is maintained for each child, documenting progress with photos and observations, and shared regularly with parents.',
     category: 'daily',
@@ -71,21 +71,21 @@ export const FAQS: FAQ[] = [
   },
   {
     id: 'illness',
-    question: 'What happens if my child is unwell?',
+    question: 'What happens if a child is unwell?',
     answer:
       'If a child becomes unwell during the day, parents are contacted immediately. Public Health England exclusion guidelines for illness are followed. Children who have experienced vomiting or diarrhoea must not return for 48 hours after the last episode to protect all children in the setting.',
     category: 'safety',
   },
   {
     id: 'emergency',
-    question: 'What first aid training do you hold?',
+    question: 'What first aid training and certifications are held?',
     answer:
       'A current Paediatric First Aid certificate is held, and a comprehensive first aid kit is kept on the premises. In the event of a medical emergency, emergency services (999) and parents are contacted immediately. Emergency contact forms and medical information are maintained for every child in care.',
     category: 'safety',
   },
   {
     id: 'safeguarding',
-    question: 'How do you keep children safe?',
+    question: 'How does Divine Heritage keep children safe?',
     answer:
       'Child safety is the absolute priority. A comprehensive Safeguarding policy is maintained with up-to-date Safeguarding training. All adults in the home hold enhanced DBS certificates. The setting is fully risk-assessed, with a fully enclosed and secure garden. Robust policies are in place for outings, medication, and emergency procedures.',
     category: 'safety',

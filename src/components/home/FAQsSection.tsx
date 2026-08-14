@@ -75,7 +75,7 @@ export default function FAQsSection() {
           <SectionHeader
             eyebrow="FAQs"
             title="Common Questions from Parents"
-            subtitle="We know choosing childcare is one of the most important decisions you'll make. Here are the answers to the questions we hear most often."
+            subtitle="Choosing the right childcare is one of the most important decisions for any family. Here are clear answers to frequently asked questions."
             maxWidth="max-w-full"
           />
           <div className="mt-8 p-5 bg-[var(--color-primary-50)] rounded-[var(--radius-lg)] border border-[var(--color-primary-100)]">
@@ -83,13 +83,13 @@ export default function FAQsSection() {
               Can't find your answer?
             </p>
             <p className="text-[var(--color-primary-600)] text-sm mt-1 leading-relaxed">
-              We're always happy to chat. Get in touch and we'll answer any questions you have.
+              The team is always happy to assist. Get in touch to discuss any questions or specific requirements.
             </p>
             <a
               href="/contact"
               className="inline-flex items-center gap-1.5 mt-3 text-[var(--color-primary-500)] font-semibold text-sm hover:underline"
             >
-              Contact Us →
+              Get in Touch →
             </a>
           </div>
         </AnimatedSection>

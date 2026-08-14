@@ -14,7 +14,7 @@ export default function CTASection() {
   return (
     <section
       className="relative overflow-hidden py-20 md:py-28"
-      aria-label="Contact us and book a visit"
+      aria-label="Contact Divine Heritage and book a visit"
     >
       {/* Background */}
       <div className="absolute inset-0 z-0">

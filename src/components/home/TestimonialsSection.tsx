@@ -29,8 +29,8 @@ export default function TestimonialsSection() {
       <AnimatedSection className="text-center flex justify-center">
         <SectionHeader
           eyebrow="Google Reviews · 4.9 ★"
-          title="What Families Say About Us"
-          subtitle="Real, verified reviews from parents on Google Maps. We are proud of every word."
+          title="What Families Say About Divine Heritage"
+          subtitle="Real, verified reviews from parents on Google Maps, reflecting the high standard of care provided."
           centered
           maxWidth="max-w-2xl"
         />

@@ -15,7 +15,7 @@ export default function NotFound() {
           Page Not Found
         </h2>
         <p className="text-[var(--color-text-secondary)] text-base leading-relaxed mb-8">
-          Sorry, we couldn't find the page you were looking for. Let's get you back on track.
+          The requested page could not be found. Navigate back to explore Divine Heritage.
         </p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
           <Link
@@ -31,7 +31,7 @@ export default function NotFound() {
             id="404-contact"
             className="inline-flex items-center gap-2 px-6 py-3 border-2 border-[var(--color-primary-500)] text-[var(--color-primary-500)] hover:bg-[var(--color-primary-50)] font-semibold rounded-xl text-sm transition-all duration-200"
           >
-            Contact Us
+            Get in Touch
           </Link>
         </div>
       </div>

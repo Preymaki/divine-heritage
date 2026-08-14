@@ -53,7 +53,7 @@ export default function CheckEmail() {
         <div className="admin-auth-heading">
           <h1>Check your email</h1>
           <p>
-            We've sent a secure sign-in link to{' '}
+            A secure sign-in link has been sent to{' '}
             {sentEmail ? (
               <strong className="admin-email-highlight">{sentEmail}</strong>
             ) : (

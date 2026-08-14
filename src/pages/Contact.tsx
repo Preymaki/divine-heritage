@@ -112,7 +112,7 @@ export default function Contact() {
             <div className="space-y-6 lg:sticky lg:top-28">
               <SectionHeader
                 eyebrow="Contact Details"
-                title="Reach Out to Us"
+                title="Get in Touch"
                 maxWidth="max-w-full"
               />
 

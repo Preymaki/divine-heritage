@@ -219,7 +219,7 @@ export default function Navbar() {
                   {CTA.primary.label}
                 </Link>
                 <p className="text-center text-xs text-[var(--color-text-muted)] mt-3">
-                  or call us on{' '}
+                  or call directly on{' '}
                   <a
                     href={`tel:${contact.phone.replace(/\s/g, '')}`}
                     className="text-[var(--color-primary-500)] font-medium hover:underline"

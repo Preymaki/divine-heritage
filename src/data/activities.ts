@@ -11,7 +11,7 @@ export const ACTIVITIES: Activity[] = [
     id: 'outdoor-play',
     icon: 'TreePine',
     title: 'Indoor & Outdoor Play',
-    description: 'Daily active play in our spacious setting and secure garden to explore and develop physical skills.',
+    description: 'Daily active play in a spacious setting and secure garden to explore and develop physical skills.',
     colour: '#6b9e7a',  // sage
   },
   {

@@ -30,7 +30,7 @@ export default function Services() {
   const serviceImagesMap: Record<string, { src: string; alt: string; position: string }> = {
     childminding: {
       src: siteImages.serviceChildminding,
-      alt: 'A toddler absorbed in building a wooden train track in the bright welcoming living room at Divine Heritage — illustrating our cosy home environment',
+      alt: 'A toddler absorbed in building a wooden train track in the bright welcoming living room at Divine Heritage — illustrating the cosy home environment',
       position: 'object-top',
     },
     'early-years': {

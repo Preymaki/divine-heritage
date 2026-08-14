@@ -87,7 +87,7 @@ export default function Footer() {
           {/* Contact column */}
           <div>
             <h3 className="text-white font-semibold text-sm uppercase tracking-wider mb-4 font-[var(--font-family-heading)]">
-              Contact Us
+              Contact
             </h3>
             <ul className="space-y-3.5" role="list">
               <li>
