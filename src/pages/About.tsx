@@ -3,8 +3,7 @@ import AnimatedSection from '@components/ui/AnimatedSection'
 import SectionWrapper from '@components/ui/SectionWrapper'
 import SectionHeader from '@components/ui/SectionHeader'
 import CTASection from '@components/home/CTASection'
-import { IMAGES } from '@utils/images'
-
+import { useSiteImages } from '@hooks/useSiteImages'
 
 const QUALIFICATIONS = [
   { icon: Award, label: 'Ofsted Registered', detail: 'Fully registered childminder' },
@@ -39,6 +38,8 @@ const VALUES = [
 ]
 
 export default function About() {
+  const siteImages = useSiteImages()
+
   return (
     <>
       {/* Page Header */}
@@ -65,7 +66,7 @@ export default function About() {
           <AnimatedSection direction="left">
             <div className="rounded-[var(--radius-2xl)] overflow-hidden aspect-[4/5]">
               <img
-                src={IMAGES.aboutChildminder}
+                src={siteImages.aboutPage}
                 alt="Divine Heritage childminder sitting on the floor with four children doing hands-on sensory and vegetable play, illustrating the nurturing and interactive approach at Divine Heritage"
                 className="w-full h-full object-cover object-top"
                 loading="lazy"

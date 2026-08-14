@@ -3,12 +3,13 @@ import { Link } from 'react-router-dom'
 import { motion, useReducedMotion } from 'framer-motion'
 import AnimatedSection from '@components/ui/AnimatedSection'
 import { useContactSettings } from '@hooks/useContactSettings'
-import { IMAGES } from '@utils/images'
+import { useSiteImages } from '@hooks/useSiteImages'
 
 
 export default function CTASection() {
   const prefersReducedMotion = useReducedMotion()
   const { contact } = useContactSettings()
+  const siteImages = useSiteImages()
 
   return (
     <section
@@ -18,7 +19,7 @@ export default function CTASection() {
       {/* Background */}
       <div className="absolute inset-0 z-0">
         <img
-          src={IMAGES.ctaBg}
+          src={siteImages.homeCta}
           alt=""
           aria-hidden="true"
           className="w-full h-full object-cover object-center"

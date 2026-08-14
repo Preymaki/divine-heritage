@@ -16,7 +16,7 @@
 import { useState, useEffect, useRef, useCallback, type FormEvent, type ChangeEvent } from 'react'
 import { X, Pencil, CheckCircle, AlertTriangle, ImagePlus, Loader2 } from 'lucide-react'
 import type { GalleryItem, GalleryItemPatch, ActionState, UploadState } from '@appTypes/gallery'
-import { GALLERY_GROUP_LABELS } from '@appTypes/gallery'
+import { GALLERY_GROUP_LABELS, GALLERY_GROUP_BADGES } from '@appTypes/gallery'
 
 // ---------------------------------------------------------------------------
 // Props
@@ -58,22 +58,24 @@ export default function EditModal({
   onReset,
   onResetUpload,
 }: EditModalProps) {
-  const [title,       setTitle]       = useState('')
-  const [altText,     setAltText]     = useState('')
-  const [caption,     setCaption]     = useState('')
+  // ── Form state ───────────────────────────────────────────────────────────
+  const [title, setTitle]         = useState('')
+  const [altText, setAltText]     = useState('')
+  const [caption, setCaption]     = useState('')
   const [isPublished, setIsPublished] = useState(true)
 
   // Image replacement state
   const [newFile,      setNewFile]      = useState<File | null>(null)
   const [previewURL,   setPreviewURL]   = useState<string | null>(null)
   const [fileError,    setFileError]    = useState<string | null>(null)
-  const fileRef = useRef<HTMLInputElement>(null)
+  const fileRef  = useRef<HTMLInputElement>(null)
+  const closeRef = useRef<HTMLButtonElement>(null)
 
-  const closeRef  = useRef<HTMLButtonElement>(null)
   const isBusy    = actionState.phase === 'pending' || uploadState.phase === 'uploading'
   const isSuccess = actionState.phase === 'success' || uploadState.phase === 'success'
   const isError   = actionState.phase === 'error'   || uploadState.phase === 'error'
   const errorMsg  = actionState.error ?? uploadState.error
+  const locationBadge = GALLERY_GROUP_BADGES[item?.group ?? 'other'] ?? 'General'
 
   // Populate fields when item changes
   useEffect(() => {
@@ -193,10 +195,15 @@ export default function EditModal({
       >
         {/* Header */}
         <div className="modal-header">
-          <h2 id="edit-modal-title" className="modal-title">
-            <Pencil size={16} aria-hidden="true" />
-            Edit Image
-          </h2>
+          <div>
+            <h2 id="edit-modal-title" className="modal-title">
+              <Pencil size={16} aria-hidden="true" />
+              Edit Image Slot
+            </h2>
+            <div className="text-[11px] font-bold text-[var(--color-primary-600)] bg-[var(--color-primary-50)] border border-[var(--color-primary-200)] px-2.5 py-0.5 rounded-full w-fit mt-1">
+              Location: {locationBadge} — {GALLERY_GROUP_LABELS[item.group]}
+            </div>
+          </div>
           <button
             ref={closeRef}
             type="button"

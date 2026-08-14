@@ -11,8 +11,8 @@
  */
 
 import type { GalleryItem } from '@appTypes/gallery'
-import { GALLERY_GROUP_LABELS } from '@appTypes/gallery'
-import { Eye, EyeOff, Calendar, Pencil, HardDrive } from 'lucide-react'
+import { GALLERY_GROUP_LABELS, GALLERY_GROUP_BADGES } from '@appTypes/gallery'
+import { Eye, EyeOff, Calendar, Pencil, HardDrive, MapPin } from 'lucide-react'
 
 interface GalleryCardProps {
   item: GalleryItem
@@ -36,6 +36,7 @@ export default function GalleryCard({
   isActionPending = false,
 }: GalleryCardProps) {
   const isStatic = item.storagePath === null
+  const locationBadge = GALLERY_GROUP_BADGES[item.group] ?? 'General'
 
   return (
     <article className="gallery-card" aria-label={item.title}>
@@ -66,8 +67,12 @@ export default function GalleryCard({
 
       {/* Meta */}
       <div className="gallery-card-meta">
+        <div className="flex items-center gap-1 text-[11px] font-bold text-[var(--color-primary-600)] bg-[var(--color-primary-50)] border border-[var(--color-primary-200)] px-2 py-0.5 rounded-full w-fit mb-1.5">
+          <MapPin size={10} aria-hidden="true" />
+          <span>{locationBadge}</span>
+        </div>
         <p className="gallery-card-title" title={item.title}>{item.title}</p>
-        <p className="gallery-card-group">
+        <p className="gallery-card-group" title={GALLERY_GROUP_LABELS[item.group]}>
           {GALLERY_GROUP_LABELS[item.group] ?? item.group}
         </p>
         {item.altText && (

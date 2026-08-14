@@ -15,8 +15,9 @@
  */
 
 import { useState, useCallback } from 'react'
-import { Sparkles } from 'lucide-react'
+import { Sparkles, RefreshCw } from 'lucide-react'
 import { useGallery } from '@hooks/useGallery'
+import { GALLERY_GROUP_ORDER } from '@appTypes/gallery'
 import type { GalleryItem } from '@appTypes/gallery'
 import PageHeader from '@components/admin/PageHeader'
 import GalleryGrid from '@components/admin/gallery/GalleryGrid'
@@ -42,15 +43,35 @@ export default function AdminGallery() {
 
   const isSeedPending = seedState.phase === 'pending'
 
-  // Only show the seed banner when loading is done and there are no items
-  const showSeedBanner = !loading && !error && items.length === 0
+  // Check if any group from GALLERY_GROUP_ORDER has no items in Firestore
+  const missingGroupCount = GALLERY_GROUP_ORDER.filter(
+    (group) => !items.some((item) => item.group === group)
+  ).length
+
+  const showSeedBanner = !loading && !error && (items.length === 0 || missingGroupCount > 0)
 
   return (
     <div className="cms-page">
-      {/* ── Header (no action button — slots are fixed) ── */}
+      {/* ── Header with Sync button ── */}
       <PageHeader
         title="Gallery"
-        subtitle="Click any image to swap or edit it. The layout on the public website stays the same."
+        subtitle="Click any image card to swap or edit it. All 27 picture slots across Home, About, Services, CTA, and Public Gallery are listed below."
+        action={
+          <button
+            type="button"
+            id="gallery-header-sync-btn"
+            onClick={seedItems}
+            disabled={isSeedPending || seedState.phase === 'success'}
+            className="cms-btn-secondary"
+            title="Import or sync missing picture slots into Firestore"
+          >
+            {isSeedPending ? (
+              <><span className="admin-btn-spinner" aria-hidden="true" />Syncing…</>
+            ) : (
+              <><RefreshCw size={14} aria-hidden="true" />Sync Picture Slots</>
+            )}
+          </button>
+        }
       />
 
       {/* ── Firestore error banner ── */}
@@ -65,25 +86,28 @@ export default function AdminGallery() {
         </div>
       )}
 
-      {/* ── Seed banner — shown once when gallery is empty ── */}
+      {/* ── Seed / Sync banner ── */}
       {showSeedBanner && (
         <div className="admin-seed-banner" role="region" aria-label="Gallery initialisation">
           <div className="admin-seed-banner-icon">
             <Sparkles size={22} aria-hidden="true" />
           </div>
           <div className="admin-seed-banner-body">
-            <p className="admin-seed-banner-title">Initialise gallery from existing website images</p>
+            <p className="admin-seed-banner-title">
+              {items.length === 0 ? 'Initialise gallery from website images' : 'Sync missing website picture slots'}
+            </p>
             <p className="admin-seed-banner-desc">
-              Your gallery is empty. Click below to import all existing website photos into
-              the gallery so you can manage them from the admin dashboard. This only needs to be
-              done once.
+              {items.length === 0
+                ? 'Your gallery is empty. Click below to import all existing website photos into the gallery so you can manage them.'
+                : `${missingGroupCount} section(s) have not been initialised in Firestore yet. Click below to import the default photos for Home, About, Services, and CTA page picture slots.`
+              }
             </p>
             {seedState.phase === 'error' && seedState.error && (
               <p className="admin-seed-banner-error" role="alert">{seedState.error}</p>
             )}
             {seedState.phase === 'success' && (
               <p className="admin-seed-banner-success" role="status">
-                Gallery seeded successfully! The images will appear momentarily.
+                Picture slots synced successfully! All sections will now display their photos.
               </p>
             )}
           </div>
@@ -95,9 +119,9 @@ export default function AdminGallery() {
             className="cms-btn-primary admin-seed-btn"
           >
             {isSeedPending ? (
-              <><span className="admin-btn-spinner" aria-hidden="true" />Seeding…</>
+              <><span className="admin-btn-spinner" aria-hidden="true" />Syncing Slots…</>
             ) : (
-              <><Sparkles size={15} aria-hidden="true" />Import Existing Images</>
+              <><Sparkles size={15} aria-hidden="true" />Import / Sync Slots</>
             )}
           </button>
         </div>

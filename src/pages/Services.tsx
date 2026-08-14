@@ -1,10 +1,10 @@
 import { Home, Sparkles, BookOpen, Clock, Check, ArrowRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { SERVICES } from '@data/services'
-import { IMAGES } from '@utils/images'
 import AnimatedSection from '@components/ui/AnimatedSection'
 import SectionWrapper from '@components/ui/SectionWrapper'
 import CTASection from '@components/home/CTASection'
+import { useSiteImages } from '@hooks/useSiteImages'
 
 const iconMap: Record<string, React.ComponentType<{ size?: number }>> = {
   Home,
@@ -24,25 +24,27 @@ const bgMap: Record<string, string> = {
   sage: 'var(--color-sage-50)',
 }
 
-const serviceImages: Record<string, { src: string; alt: string; position: string }> = {
-  childminding: {
-    src: IMAGES.serviceChildminding,
-    alt: 'A toddler absorbed in building a wooden train track in the bright welcoming living room at Divine Heritage — illustrating our cosy home environment',
-    position: 'object-top',
-  },
-  'early-years': {
-    src: IMAGES.serviceEarlyYears,
-    alt: 'A young child sitting independently reading a picture book, demonstrating the love of stories and early literacy encouraged at Divine Heritage',
-    position: 'object-top',
-  },
-  'after-school': {
-    src: IMAGES.serviceAfterSchool,
-    alt: 'A toddler building strength and coordination on foam climbing blocks at a soft play session — one of many active outings arranged by Divine Heritage',
-    position: 'object-center',
-  },
-}
-
 export default function Services() {
+  const siteImages = useSiteImages()
+
+  const serviceImagesMap: Record<string, { src: string; alt: string; position: string }> = {
+    childminding: {
+      src: siteImages.serviceChildminding,
+      alt: 'A toddler absorbed in building a wooden train track in the bright welcoming living room at Divine Heritage — illustrating our cosy home environment',
+      position: 'object-top',
+    },
+    'early-years': {
+      src: siteImages.serviceEarlyYears,
+      alt: 'A young child sitting independently reading a picture book, demonstrating the love of stories and early literacy encouraged at Divine Heritage',
+      position: 'object-top',
+    },
+    'after-school': {
+      src: siteImages.serviceAfterSchool,
+      alt: 'A toddler building strength and coordination on foam climbing blocks at a soft play session — one of many active outings arranged by Divine Heritage',
+      position: 'object-center',
+    },
+  }
+
   return (
     <>
       {/* Page header */}
@@ -81,9 +83,9 @@ export default function Services() {
                   {/* Image */}
                   <div className="rounded-[var(--radius-2xl)] overflow-hidden aspect-[4/3] bg-[var(--color-muted)]">
                     <img
-                      src={serviceImages[service.id]?.src}
-                      alt={serviceImages[service.id]?.alt ?? service.title}
-                      className={`w-full h-full object-cover ${serviceImages[service.id]?.position ?? 'object-center'}`}
+                      src={serviceImagesMap[service.id]?.src ?? siteImages.serviceChildminding}
+                      alt={serviceImagesMap[service.id]?.alt ?? service.title}
+                      className={`w-full h-full object-cover ${serviceImagesMap[service.id]?.position ?? 'object-center'}`}
                       loading="lazy"
                       decoding="async"
                     />

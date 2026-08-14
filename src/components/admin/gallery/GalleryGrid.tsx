@@ -18,19 +18,29 @@ import EmptyState from '@components/admin/EmptyState'
 
 // ── Section colour accents — one per group ──────────────────────────────────
 const GROUP_COLORS: Record<GalleryGroup, string> = {
-  outings:  '#6366f1', // indigo
-  library:  '#0ea5e9', // sky
-  learning: '#10b981', // emerald
-  indoor:   '#f59e0b', // amber
-  other:    '#94a3b8', // slate
+  home_hero:     '#1e56d0', // primary blue
+  home_about:    '#e0289b', // accent pink
+  home_cta:      '#6b9e7a', // sage
+  about_page:    '#8b5cf6', // purple
+  services_page: '#d97706', // amber
+  outings:       '#6366f1', // indigo
+  library:       '#0ea5e9', // sky
+  learning:      '#10b981', // emerald
+  indoor:        '#ec4899', // pink
+  other:         '#64748b', // slate
 }
 
-// ── Section number labels (only the 4 main sections) ───────────────────────
+// ── Section location badges ─────────────────────────────────────────
 const SECTION_NUMBERS: Partial<Record<GalleryGroup, string>> = {
-  outings:  'Section 1',
-  library:  'Section 2',
-  learning: 'Section 3',
-  indoor:   'Section 4',
+  home_hero:     'Home Page',
+  home_about:    'Home Page',
+  home_cta:      'Home & Global',
+  about_page:    'About Page',
+  services_page: 'Services Page',
+  outings:       'Gallery S1',
+  library:       'Gallery S2',
+  learning:      'Gallery S3',
+  indoor:        'Gallery S4',
 }
 
 interface GalleryGridProps {
@@ -48,10 +58,10 @@ interface GalleryGridProps {
 function GallerySkeleton() {
   return (
     <div className="gallery-sections-wrap" aria-busy="true" aria-label="Loading gallery">
-      {[1, 2, 3, 4].map((n) => (
+      {[1, 2, 3, 4, 5, 6].map((n) => (
         <div key={n} className="gallery-section">
           <div className="gallery-section-header">
-            <div className="gallery-skeleton-line gallery-skeleton-line--title" style={{ width: 120 }} />
+            <div className="gallery-skeleton-line gallery-skeleton-line--title" style={{ width: 140 }} />
           </div>
           <div className="gallery-grid">
             {Array.from({ length: 3 }).map((_, i) => (
@@ -109,7 +119,18 @@ export default function GalleryGrid({
       acc[g] = items.filter((item) => item.group === g).sort((a, b) => a.sortOrder - b.sortOrder)
       return acc
     },
-    { outings: [], library: [], learning: [], indoor: [], other: [] },
+    {
+      home_hero: [],
+      home_about: [],
+      home_cta: [],
+      about_page: [],
+      services_page: [],
+      outings: [],
+      library: [],
+      learning: [],
+      indoor: [],
+      other: [],
+    },
   )
 
   const totalPublished = items.filter((i) => i.isPublished).length

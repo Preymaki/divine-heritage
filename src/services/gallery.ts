@@ -20,6 +20,7 @@ import {
   onSnapshot,
   writeBatch,
   doc,
+  getDocs,
   serverTimestamp,
   type Unsubscribe,
 } from 'firebase/firestore'
@@ -206,7 +207,80 @@ export async function seedGallery(uploadedBy: string): Promise<void> {
   }
 
   const seeds: SeedItem[] = [
-    // ── Outings ──────────────────────────────────────────────────────────
+    // ── Home Page — Hero Banner ─────────────────────────────────────────
+    {
+      group: 'home_hero', sortOrder: 1,
+      downloadURL: '/images/outdoor-spinning-ride.jpeg',
+      title: 'Home Page — Hero Background Banner',
+      altText: 'Two happy children smiling on swings at the park — main home page hero banner frame',
+      caption: 'Main background banner displayed at the top of the home page.',
+    },
+
+    // ── Home Page — About Childminder Preview ───────────────────────────
+    {
+      group: 'home_about', sortOrder: 1,
+      downloadURL: '/images/about-childminder-group.jpeg',
+      title: 'Home Page — About Childminder Frame',
+      altText: 'Divine Heritage childminder sitting on the floor with four children in sensory play',
+      caption: 'Featured portrait of the childminder in the home page About section.',
+    },
+
+    // ── Home Page & Global CTA — Book a Visit ───────────────────────────
+    {
+      group: 'home_cta', sortOrder: 1,
+      downloadURL: '/images/hero-library-bubbles.jpeg',
+      title: 'Home Page — CTA Callout Banner',
+      altText: 'Children playing with bubbles at library — call to action banner background',
+      caption: 'Background banner image for the Book a Visit callout section.',
+    },
+
+    // ── About Page — Founder & Care Environment ────────────────────────
+    {
+      group: 'about_page', sortOrder: 1,
+      downloadURL: '/images/about-childminder-group.jpeg',
+      title: 'About Page — Founder Profile Frame',
+      altText: 'Divine Heritage founder and childminder nurturing children in home setup',
+      caption: 'Featured photo on the dedicated /about page.',
+    },
+
+    // ── Services Page — Service Cards ──────────────────────────────────
+    {
+      group: 'services_page', sortOrder: 1,
+      downloadURL: '/images/indoor-train-track.jpeg',
+      title: 'Services Page — Childminding Cover',
+      altText: 'Child building wooden train track in home nursery',
+      caption: 'Cover photo for Full & Part-Time Childminding service card.',
+    },
+    {
+      group: 'services_page', sortOrder: 2,
+      downloadURL: '/images/reading-book.jpeg',
+      title: 'Services Page — Early Years EYFS Cover',
+      altText: 'Young child reading picture book independently',
+      caption: 'Cover photo for Early Years Foundation Stage (EYFS) card.',
+    },
+    {
+      group: 'services_page', sortOrder: 3,
+      downloadURL: '/images/outing-softplay-blocks.jpeg',
+      title: 'Services Page — After-School Care Cover',
+      altText: 'Toddler playing with climbing blocks',
+      caption: 'Cover photo for After-School & Holiday Care card.',
+    },
+    {
+      group: 'services_page', sortOrder: 4,
+      downloadURL: '/images/arts-painting-easel.jpeg',
+      title: 'Services Page — Arts & Crafts Cover',
+      altText: 'Child wearing apron painting at easel',
+      caption: 'Cover photo for Creative Arts & Crafts sessions card.',
+    },
+    {
+      group: 'services_page', sortOrder: 5,
+      downloadURL: '/images/outdoor-nature-tree.jpeg',
+      title: 'Services Page — Outdoor Nature Play Cover',
+      altText: 'Children exploring around tree in park',
+      caption: 'Cover photo for Outdoor Nature Exploration card.',
+    },
+
+    // ── Public Gallery Page — Outings ───────────────────────────────────
     {
       group: 'outings', sortOrder: 1,
       downloadURL: '/images/outdoor-spinning-ride.jpeg',
@@ -250,7 +324,7 @@ export async function seedGallery(uploadedBy: string): Promise<void> {
       caption: '',
     },
 
-    // ── Library ───────────────────────────────────────────────────────────
+    // ── Public Gallery Page — Library ──────────────────────────────────
     {
       group: 'library', sortOrder: 1,
       downloadURL: '/images/outing-library-bubbles-1.jpeg',
@@ -273,7 +347,7 @@ export async function seedGallery(uploadedBy: string): Promise<void> {
       caption: '',
     },
 
-    // ── Learning ──────────────────────────────────────────────────────────
+    // ── Public Gallery Page — Learning ─────────────────────────────────
     {
       group: 'learning', sortOrder: 1,
       downloadURL: '/images/reading-book.jpeg',
@@ -296,7 +370,7 @@ export async function seedGallery(uploadedBy: string): Promise<void> {
       caption: '',
     },
 
-    // ── Indoor ────────────────────────────────────────────────────────────
+    // ── Public Gallery Page — Indoor ───────────────────────────────────
     {
       group: 'indoor', sortOrder: 1,
       downloadURL: '/images/indoor-train-track.jpeg',
@@ -341,10 +415,25 @@ export async function seedGallery(uploadedBy: string): Promise<void> {
     },
   ]
 
+  const q = query(collection(db, GALLERY_COLLECTION))
+  const snapshot = await getDocs(q)
+  const existingKeys = new Set(
+    snapshot.docs.map((docSnap: { data: () => { group?: string; sortOrder?: number } }) => {
+      const data = docSnap.data()
+      return `${data.group}_${data.sortOrder}`
+    })
+  )
+
+  const seedsToInsert = seeds.filter(
+    (seed) => !existingKeys.has(`${seed.group}_${seed.sortOrder}`)
+  )
+
+  if (seedsToInsert.length === 0) return
+
   const batch = writeBatch(db)
   const now = serverTimestamp()
 
-  for (const seed of seeds) {
+  for (const seed of seedsToInsert) {
     const ref = doc(collection(db, GALLERY_COLLECTION))
     batch.set(ref, {
       storagePath:  null,

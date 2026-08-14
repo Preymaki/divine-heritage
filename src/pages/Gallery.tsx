@@ -27,7 +27,6 @@ import CTASection from '@components/home/CTASection'
 import { IMAGES, VIDEOS } from '@utils/images'
 import { subscribeToPublishedGallery } from '@services/gallery'
 import {
-  GALLERY_GROUP_ORDER,
   GALLERY_GROUP_LABELS,
   GALLERY_GROUP_SUBTITLES,
 } from '@appTypes/gallery'
@@ -118,6 +117,8 @@ function GallerySkeleton() {
 // ─── Main component ────────────────────────────────────────────────────────────
 
 export default function Gallery() {
+  const PUBLIC_GALLERY_GROUPS: GalleryGroup[] = ['outings', 'library', 'learning', 'indoor', 'other']
+
   // ── Firestore subscription ───────────────────────────────────────────────
   const [allItems,   setAllItems]   = useState<GalleryItem[]>([])
   const [cmsLoading, setCmsLoading] = useState(true)
@@ -132,7 +133,7 @@ export default function Gallery() {
   }, [])
 
   // ── Group items by gallery group ──────────────────────────────────────────
-  const grouped = GALLERY_GROUP_ORDER.reduce<Record<GalleryGroup, GalleryItem[]>>(
+  const grouped = PUBLIC_GALLERY_GROUPS.reduce<Record<string, GalleryItem[]>>(
     (acc, g) => {
       acc[g] = allItems.filter((item) => item.group === g)
       return acc
@@ -142,12 +143,14 @@ export default function Gallery() {
 
   // ── Build flat lightbox list ─────────────────────────────────────────────
   // Order: 2 videos → then each group in display order
-  const videoItems: LightboxItem[] = [
-    { src: VIDEOS.libraryClip1, alt: 'Children playing with bubbles at the library — video clip 1', type: 'video' },
-    { src: VIDEOS.libraryClip2, alt: 'Children enjoying a bubble play session at the local library', type: 'video' },
+  const VIDEO_ITEMS = [
+    { src: VIDEOS.libraryClip1, poster: IMAGES.galleryLibrary1, alt: 'Children playing with bubbles at the library — video clip 1', idx: 0 },
+    { src: VIDEOS.libraryClip2, poster: IMAGES.galleryLibrary2, alt: 'Children enjoying a bubble play session at the library — video clip 2', idx: 1 },
   ]
-  const imageItems: LightboxItem[] = GALLERY_GROUP_ORDER.flatMap((g) =>
-    grouped[g].map((item) => ({
+  const videoItems: LightboxItem[] = VIDEO_ITEMS.map(v => ({ src: v.src, alt: v.alt, type: 'video' }))
+
+  const imageItems: LightboxItem[] = PUBLIC_GALLERY_GROUPS.flatMap((g) =>
+    (grouped[g] || []).map((item) => ({
       src: item.downloadURL,
       alt: item.altText,
       caption: item.caption || undefined,
@@ -166,12 +169,12 @@ export default function Gallery() {
 
   // Compute the lightbox start index for each group
   let groupOffset = VIDEO_COUNT
-  const groupOffsets: Record<GalleryGroup, number> = {
+  const groupOffsets: Record<string, number> = {
     outings: 0, library: 0, learning: 0, indoor: 0, other: 0,
   }
-  for (const g of GALLERY_GROUP_ORDER) {
+  for (const g of PUBLIC_GALLERY_GROUPS) {
     groupOffsets[g] = groupOffset
-    groupOffset += grouped[g].length
+    groupOffset += (grouped[g] || []).length
   }
 
   return (
@@ -190,52 +193,53 @@ export default function Gallery() {
         />
       )}
 
-      {/* Page hero */}
+      {/* Hero */}
       <div className="bg-[var(--color-primary-900)] pt-32 pb-16">
         <div className="container-site">
           <AnimatedSection>
             <p className="text-[var(--color-accent-400)] text-xs font-semibold uppercase tracking-[0.15em] mb-3 font-[var(--font-family-heading)]">
-              Gallery
+              Photo &amp; Video Gallery
             </p>
             <h1 className="font-[var(--font-family-heading)] font-bold text-white text-4xl md:text-5xl leading-tight tracking-tight max-w-2xl">
-              A Glimpse Into Divine Heritage
+              Moments of Joy, Growth &amp; Discovery
             </h1>
             <p className="mt-4 text-white/65 text-base md:text-lg leading-relaxed max-w-xl">
-              Real moments from a typical week at Divine Heritage — happy children, enriching
-              activities, and a warm, welcoming home environment.
+              Explore daily life at Divine Heritage — from library visits and park outings to 
+              sensory play, arts and crafts, and cosy home play.
             </p>
           </AnimatedSection>
         </div>
       </div>
 
-      {/* Videos */}
-      <SectionWrapper background="muted">
+      {/* Video Highlights Section */}
+      <SectionWrapper background="white">
         <AnimatedSection className="text-center flex justify-center mb-10">
           <SectionHeader
-            eyebrow="In Motion"
-            title="See the Joy for Yourself"
-            subtitle="Short clips from the library outing — click to watch."
+            eyebrow="Video Highlights"
+            title="Watch Divine Heritage in Action"
+            subtitle="Short video clips captured during local library outings and bubble play sessions."
             centered
           />
         </AnimatedSection>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl mx-auto">
-          {[
-            { src: VIDEOS.libraryClip1, poster: IMAGES.galleryLibrary1, alt: 'Children playing with bubbles at the library — video clip 1', idx: 0 },
-            { src: VIDEOS.libraryClip2, poster: IMAGES.galleryLibrary2, alt: 'Children enjoying a bubble play session at the library — video clip 2', idx: 1 },
-          ].map((v) => (
-            <AnimatedSection key={v.src} delay={v.idx * 0.1}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+          {VIDEO_ITEMS.map((v) => (
+            <AnimatedSection key={v.idx} delay={v.idx * 0.1}>
               <button
-                aria-label={v.alt}
+                type="button"
+                aria-label={`Play video: ${v.alt}`}
                 onClick={() => setLightboxIndex(v.idx)}
-                className="relative w-full rounded-[var(--radius-xl)] overflow-hidden aspect-[9/16] sm:aspect-[4/3] group focus-visible:ring-2 focus-visible:ring-[var(--color-primary-400)]"
+                className="w-full relative aspect-video rounded-[var(--radius-xl)] overflow-hidden group focus-visible:ring-2 focus-visible:ring-[var(--color-primary-400)] block border border-[var(--color-muted)] shadow-[var(--shadow-card)]"
               >
                 <img src={v.poster} alt="" aria-hidden="true" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" />
-                <div className="absolute inset-0 bg-black/35 flex items-center justify-center transition-colors duration-200 group-hover:bg-black/20">
-                  <div className="w-14 h-14 rounded-full bg-white/90 flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform duration-200">
-                    <Play size={22} className="text-[var(--color-primary-600)] ml-1" aria-hidden="true" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="w-14 h-14 rounded-full bg-[var(--color-accent-500)] text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-200">
+                    <Play size={24} className="ml-1" fill="currentColor" />
                   </div>
                 </div>
-                <span className="sr-only">{v.alt}</span>
+                <div className="absolute bottom-3 left-3 right-3 text-left">
+                  <p className="text-white text-xs font-semibold drop-shadow">{v.alt}</p>
+                </div>
               </button>
             </AnimatedSection>
           ))}
@@ -257,7 +261,7 @@ export default function Gallery() {
       {/* Gallery groups — rendered from Firestore */}
       {!cmsLoading && !cmsError && (
         <>
-          {GALLERY_GROUP_ORDER.filter((g) => grouped[g].length > 0).map((g, gi, filteredGroups) => {
+          {PUBLIC_GALLERY_GROUPS.filter((g) => (grouped[g] || []).length > 0).map((g, gi, filteredGroups) => {
             const images = grouped[g]
             const baseOffset = groupOffsets[g]
             return (

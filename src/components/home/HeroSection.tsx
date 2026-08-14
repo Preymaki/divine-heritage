@@ -13,8 +13,8 @@ import { useReducedMotion } from 'framer-motion'
 import { motion } from 'framer-motion'
 import { ArrowRight, ShieldCheck, Star, Clock } from 'lucide-react'
 import { Link } from 'react-router-dom'
-import { IMAGES } from '@utils/images'
 import { useHeroSettings } from '@hooks/useHeroSettings'
+import { useSiteImages } from '@hooks/useSiteImages'
 
 const TRUST_BADGES = [
   { icon: ShieldCheck, label: 'Ofsted Registered' },
@@ -25,6 +25,7 @@ const TRUST_BADGES = [
 export default function HeroSection() {
   const prefersReducedMotion = useReducedMotion()
   const { hero } = useHeroSettings()
+  const siteImages = useSiteImages()
 
   // Build the heading — the accentWord is highlighted within the heading text
   function renderHeading(heading: string, accentWord: string) {
@@ -65,7 +66,7 @@ export default function HeroSection() {
         },
       }
 
-  const bgSrc = hero.bgImageUrl || IMAGES.hero
+  const bgSrc = hero.bgImageUrl || siteImages.hero
 
   return (
     <section

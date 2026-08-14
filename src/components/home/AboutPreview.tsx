@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import AnimatedSection from '@components/ui/AnimatedSection'
 import SectionWrapper from '@components/ui/SectionWrapper'
 import SectionHeader from '@components/ui/SectionHeader'
-import { IMAGES } from '@utils/images'
+import { useSiteImages } from '@hooks/useSiteImages'
 
 
 const HIGHLIGHTS = [
@@ -14,6 +14,8 @@ const HIGHLIGHTS = [
 ]
 
 export default function AboutPreview() {
+  const siteImages = useSiteImages()
+
   return (
     <SectionWrapper id="about-preview" background="white">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
@@ -22,7 +24,7 @@ export default function AboutPreview() {
           <div className="relative">
             <div className="rounded-[var(--radius-2xl)] overflow-hidden aspect-[4/5] sm:aspect-[5/4] lg:aspect-[4/5] shadow-[var(--shadow-elevated)]">
               <img
-                src={IMAGES.aboutChildminder}
+                src={siteImages.homeAbout}
                 alt="Divine Heritage childminder sitting on the playroom floor with four children engaged in hands-on learning and sensory play"
                 className="w-full h-full object-cover object-top"
                 loading="lazy"

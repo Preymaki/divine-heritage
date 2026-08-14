@@ -12,29 +12,62 @@ import type { Timestamp } from 'firebase/firestore'
 // ---------------------------------------------------------------------------
 
 export type GalleryGroup =
-  | 'outings'    // Adventures Out & About
-  | 'library'    // Library & Learning Trips
-  | 'learning'   // Play, Learning & Creativity
-  | 'indoor'     // Our Home Environment
-  | 'other'      // Uncategorised / new uploads
+  | 'home_hero'      // Home Page — Main Hero Banner
+  | 'home_about'     // Home Page — About Childminder Preview
+  | 'home_cta'       // Home Page & Global CTA — Book a Visit Banner
+  | 'about_page'     // About Page — Founder & Care Environment
+  | 'services_page'  // Services Page — Service Card Covers
+  | 'outings'        // Public Gallery Page — Adventures Out & About
+  | 'library'        // Public Gallery Page — Library Trips
+  | 'learning'       // Public Gallery Page — Play & Learning
+  | 'indoor'         // Public Gallery Page — Home Environment
+  | 'other'          // Uncategorised / extra uploads
 
 export const GALLERY_GROUP_LABELS: Record<GalleryGroup, string> = {
-  outings:  'Adventures Out & About',
-  library:  'Library & Learning Trips',
-  learning: 'Play, Learning & Creativity',
-  indoor:   'The Home Environment',
-  other:    'Other',
+  home_hero:     'Home Page — Main Hero Banner',
+  home_about:    'Home Page — About Childminder Preview',
+  home_cta:      'Home Page & Global CTA — Book a Visit Banner',
+  about_page:    'About Page — Founder & Care Environment',
+  services_page: 'Services Page — Service Cards & Activity Covers',
+  outings:       'Public Gallery Page — Section 1: Adventures Out & About',
+  library:       'Public Gallery Page — Section 2: Library & Learning Trips',
+  learning:      'Public Gallery Page — Section 3: Play, Learning & Creativity',
+  indoor:        'Public Gallery Page — Section 4: The Home Environment',
+  other:         'Other / Uncategorised',
 }
 
 export const GALLERY_GROUP_SUBTITLES: Record<GalleryGroup, string> = {
-  outings:  'Exploration across London — parks, playgrounds, libraries, and beyond.',
-  library:  'Regular library visits nurture a love of books, stories, and imagination.',
-  learning: 'Every day brings rich, hands-on experiences that spark curiosity and growth.',
-  indoor:   'A warm, stimulating home full of age-appropriate toys and learning resources.',
-  other:    '',
+  home_hero:     'Controls the large top background image displayed at the very top of the website home page.',
+  home_about:    'Controls the featured portrait photo of the childminder in the Home Page "About Us" section.',
+  home_cta:      'Controls the background banner frame in the "Book a Visit" callout box on the home page and footer CTA.',
+  about_page:    'Controls the primary photo of the childminder and home nursery setup on the dedicated /about page.',
+  services_page: 'Controls the 5 service card covers on the /services page (Childminding, Early Years, After-School Care, Arts, Outdoor Play).',
+  outings:       'Appears in Section 1 on the public /gallery page: London park trips, playgrounds, and outdoor outings.',
+  library:       'Appears in Section 2 on the public /gallery page: Local library visits, story time, and bubble play sessions.',
+  learning:      'Appears in Section 3 on the public /gallery page: Hands-on sensory play, painting, building, and literacy.',
+  indoor:        'Appears in Section 4 on the public /gallery page: Warm home nursery setup, toys, and learning spaces.',
+  other:         'Uncategorised photos or additional uploads.',
+}
+
+export const GALLERY_GROUP_BADGES: Record<GalleryGroup, string> = {
+  home_hero:     'Home Page (Hero)',
+  home_about:    'Home Page (About)',
+  home_cta:      'Home & Global (CTA)',
+  about_page:    'About Page',
+  services_page: 'Services Page',
+  outings:       'Public Gallery (S1)',
+  library:       'Public Gallery (S2)',
+  learning:      'Public Gallery (S3)',
+  indoor:        'Public Gallery (S4)',
+  other:         'General',
 }
 
 export const GALLERY_GROUP_ORDER: GalleryGroup[] = [
+  'home_hero',
+  'home_about',
+  'home_cta',
+  'about_page',
+  'services_page',
   'outings',
   'library',
   'learning',
