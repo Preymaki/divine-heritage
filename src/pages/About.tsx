@@ -4,6 +4,7 @@ import SectionWrapper from '@components/ui/SectionWrapper'
 import SectionHeader from '@components/ui/SectionHeader'
 import CTASection from '@components/home/CTASection'
 import { useSiteImages } from '@hooks/useSiteImages'
+import { useAboutSettings } from '@hooks/useAboutSettings'
 
 const QUALIFICATIONS = [
   { icon: Award, label: 'Ofsted Registered', detail: 'Fully registered childminder' },
@@ -14,7 +15,7 @@ const QUALIFICATIONS = [
   { icon: Award, label: 'Public Liability Insurance', detail: 'Full professional cover' },
 ]
 
-const VALUES = [
+const DEFAULT_VALUES = [
   {
     title: 'Safety First',
     description:
@@ -39,6 +40,19 @@ const VALUES = [
 
 export default function About() {
   const siteImages = useSiteImages()
+  const { about } = useAboutSettings()
+
+  const storyParagraphs = about.storyParagraphs && about.storyParagraphs.length > 0
+    ? about.storyParagraphs
+    : [
+        'Divine Heritage Childcare Service is a professional home-based childminding service where children can learn, play, and grow safely. A loving, familiar home environment provides the very best foundation for early childhood development.',
+        'Children are welcomed from 5/6 months to 5 years old, as well as school-age children for after-school care — covering toddlers, pre-schoolers, and school-age groups. Every child is treated as an individual and cared for at their own pace.',
+        'The large playroom is thoughtfully equipped with age-appropriate resources to spark curiosity and creativity. The setting features a spacious, secure garden, allowing for daily outdoor play and physical development.',
+        'Regular outings are made to the local playground, library, and community playgroups — giving children rich social experiences and a connection to their local community. True partnership is maintained with families, with open and honest communication every step of the way.',
+      ]
+
+  const valuesList = about.values && about.values.length > 0 ? about.values : DEFAULT_VALUES
+  const aboutImageSrc = about.aboutImageUrl || siteImages.aboutPage
 
   return (
     <>
@@ -66,7 +80,7 @@ export default function About() {
           <AnimatedSection direction="left">
             <div className="rounded-[var(--radius-2xl)] overflow-hidden aspect-[4/5]">
               <img
-                src={siteImages.aboutPage}
+                src={aboutImageSrc}
                 alt="Divine Heritage childminder sitting on the floor with four children doing hands-on sensory and vegetable play, illustrating the nurturing and interactive approach at Divine Heritage"
                 className="w-full h-full object-cover object-top"
                 loading="lazy"
@@ -82,27 +96,9 @@ export default function About() {
               maxWidth="max-w-full"
             />
             <div className="space-y-4 mt-5 text-[var(--color-text-secondary)] text-sm md:text-base leading-relaxed">
-              <p>
-                Divine Heritage Childcare Service is a professional home-based childminding service 
-                where children can learn, play, and grow safely. A loving, familiar 
-                home environment provides the very best foundation for early childhood development.
-              </p>
-              <p>
-                Children are welcomed from 5/6 months to 5 years old, as well as school-age children for 
-                after-school care — covering toddlers, pre-schoolers, and school-age groups. 
-                Every child is treated as an individual and cared for at their own pace.
-              </p>
-              <p>
-                The large playroom is thoughtfully equipped with age-appropriate resources to spark 
-                curiosity and creativity. The setting features a spacious, secure garden, allowing for 
-                daily outdoor play and physical development.
-              </p>
-              <p>
-                Regular outings are made to the local playground, library, and community playgroups — 
-                giving children rich social experiences and a connection to their local community. 
-                True partnership is maintained with families, with open and honest communication 
-                every step of the way.
-              </p>
+              {storyParagraphs.map((p, i) => (
+                <p key={i}>{p}</p>
+              ))}
             </div>
 
             {/* Qualifications grid */}
@@ -144,7 +140,7 @@ export default function About() {
           />
         </AnimatedSection>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-          {VALUES.map((v, i) => (
+          {valuesList.map((v, i) => (
             <AnimatedSection key={v.title} delay={i * 0.1}>
               <div className="bg-white p-7 rounded-[var(--radius-xl)] border border-[var(--color-muted)] shadow-[var(--shadow-soft)] h-full">
                 <div className="w-8 h-1 bg-[var(--color-primary-500)] rounded-full mb-4" />
@@ -169,7 +165,7 @@ export default function About() {
             </p>
             <blockquote>
               <p className="text-2xl md:text-3xl font-[var(--font-family-heading)] font-medium text-[var(--color-text-primary)] leading-relaxed italic">
-                "Every child deserves to feel safe, loved, and celebrated. Divine Heritage provides a warm, nurturing space where children can explore, discover, and grow with confidence."
+                "{about.missionQuote || 'Every child deserves to feel safe, loved, and celebrated. Divine Heritage provides a warm, nurturing space where children can explore, discover, and grow with confidence.'}"
               </p>
               <cite className="block mt-6 text-sm text-[var(--color-text-muted)] not-italic font-medium">
                 — Divine Heritage Childcare Service

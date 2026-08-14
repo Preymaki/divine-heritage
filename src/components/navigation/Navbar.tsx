@@ -3,10 +3,12 @@ import { Link, NavLink } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Menu, X } from 'lucide-react'
 import { NAV_LINKS, SITE, CTA } from '@constants/site'
+import { useContactSettings } from '@hooks/useContactSettings'
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
+  const { contact } = useContactSettings()
 
   // Scroll detection for frosted glass effect
   useEffect(() => {
@@ -219,10 +221,10 @@ export default function Navbar() {
                 <p className="text-center text-xs text-[var(--color-text-muted)] mt-3">
                   or call us on{' '}
                   <a
-                    href={`tel:${SITE.phone.replace(/\s/g, '')}`}
+                    href={`tel:${contact.phone.replace(/\s/g, '')}`}
                     className="text-[var(--color-primary-500)] font-medium hover:underline"
                   >
-                    {SITE.phone}
+                    {contact.phone}
                   </a>
                 </p>
               </div>

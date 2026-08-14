@@ -14,7 +14,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import {
   Phone, Clock, Globe, ArrowRight, AlignLeft,
-  Type, Image, CheckCircle, AlertTriangle, Save, Loader2,
+  Type, Image, CheckCircle, AlertTriangle, Save, Loader2, Upload,
 } from 'lucide-react'
 import PageHeader from '@components/admin/PageHeader'
 import {
@@ -22,6 +22,7 @@ import {
   subscribeToContact, subscribeToHero, subscribeToAbout,
   saveContactSettings, saveHeroSettings, saveAboutSettings,
 } from '@services/settings'
+import { uploadFile } from '@services/firebase/storage'
 import type {
   ContactSettings, HeroSettings, AboutSettings,
   SaveState,
@@ -187,6 +188,8 @@ function ContactTab() {
 function HeroTab() {
   const [form, setForm] = useState<HeroSettings>(DEFAULT_HERO)
   const [saveState, setSaveState] = useState<SaveState>({ phase: 'idle', error: null })
+  const [uploading, setUploading] = useState(false)
+  const [uploadProgress, setUploadProgress] = useState(0)
 
   useEffect(() => {
     return subscribeToHero((data) => setForm(data))
@@ -194,6 +197,21 @@ function HeroTab() {
 
   const set = useCallback((field: keyof HeroSettings) => (val: string) =>
     setForm((f) => ({ ...f, [field]: val })), [])
+
+  async function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setUploading(true)
+    setUploadProgress(0)
+    try {
+      const { downloadURL } = await uploadFile('hero', file, (p) => setUploadProgress(p))
+      setForm((f) => ({ ...f, bgImageUrl: downloadURL }))
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Image upload failed')
+    } finally {
+      setUploading(false)
+    }
+  }
 
   async function handleSave() {
     setSaveState({ phase: 'saving', error: null })
@@ -207,7 +225,7 @@ function HeroTab() {
     }
   }
 
-  const busy = saveState.phase === 'saving'
+  const busy = saveState.phase === 'saving' || uploading
 
   return (
     <div className="settings-tab-content">
@@ -269,6 +287,22 @@ function HeroTab() {
             hint="Leave blank to use the default hero image. Paste a Firebase Storage URL or a /images/ path."
             disabled={busy}
           />
+          <div className="admin-form-group mt-3">
+            <label className="admin-form-label">Or upload image file to Firebase Storage</label>
+            <div className="flex items-center gap-3">
+              <label className="cms-btn-secondary cursor-pointer inline-flex items-center gap-2">
+                <Upload size={14} />
+                {uploading ? `Uploading (${uploadProgress}%)` : 'Upload File'}
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileUpload}
+                  disabled={busy}
+                  className="hidden"
+                />
+              </label>
+            </div>
+          </div>
         </section>
       </div>
 
@@ -284,6 +318,8 @@ function HeroTab() {
 function AboutTab() {
   const [form, setForm] = useState<AboutSettings>(DEFAULT_ABOUT)
   const [saveState, setSaveState] = useState<SaveState>({ phase: 'idle', error: null })
+  const [uploading, setUploading] = useState(false)
+  const [uploadProgress, setUploadProgress] = useState(0)
 
   useEffect(() => {
     return subscribeToAbout((data) => setForm(data))
@@ -303,6 +339,21 @@ function AboutTab() {
     setForm((f) => ({ ...f, bioParagraphs: val.split(/\n{2,}/).map((p) => p.trim()).filter(Boolean) }))
   }
 
+  async function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setUploading(true)
+    setUploadProgress(0)
+    try {
+      const { downloadURL } = await uploadFile('about', file, (p) => setUploadProgress(p))
+      setForm((f) => ({ ...f, aboutImageUrl: downloadURL }))
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Image upload failed')
+    } finally {
+      setUploading(false)
+    }
+  }
+
   async function handleSave() {
     setSaveState({ phase: 'saving', error: null })
     try {
@@ -315,7 +366,7 @@ function AboutTab() {
     }
   }
 
-  const busy = saveState.phase === 'saving'
+  const busy = saveState.phase === 'saving' || uploading
 
   return (
     <div className="settings-tab-content">
@@ -384,6 +435,22 @@ function AboutTab() {
             hint="Leave blank to use the default image. Paste a Firebase Storage URL or /images/ path."
             disabled={busy}
           />
+          <div className="admin-form-group mt-3">
+            <label className="admin-form-label">Or upload image file to Firebase Storage</label>
+            <div className="flex items-center gap-3">
+              <label className="cms-btn-secondary cursor-pointer inline-flex items-center gap-2">
+                <Upload size={14} />
+                {uploading ? `Uploading (${uploadProgress}%)` : 'Upload File'}
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileUpload}
+                  disabled={busy}
+                  className="hidden"
+                />
+              </label>
+            </div>
+          </div>
         </section>
       </div>
 

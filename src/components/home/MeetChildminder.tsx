@@ -4,6 +4,7 @@ import AnimatedSection from '@components/ui/AnimatedSection'
 import SectionWrapper from '@components/ui/SectionWrapper'
 import SectionHeader from '@components/ui/SectionHeader'
 import { IMAGES } from '@utils/images'
+import { useAboutSettings } from '@hooks/useAboutSettings'
 
 const CREDENTIALS = [
   'Ofsted registered childminder',
@@ -15,6 +16,9 @@ const CREDENTIALS = [
 ]
 
 export default function MeetChildminder() {
+  const { about } = useAboutSettings()
+  const imageSrc = about.aboutImageUrl || IMAGES.meetChildminder
+
   return (
     <SectionWrapper id="meet-your-childminder" background="muted">
       {/* Decorative top accent */}
@@ -33,7 +37,7 @@ export default function MeetChildminder() {
             {/* Main portrait */}
             <div className="rounded-[var(--radius-2xl)] overflow-hidden aspect-[3/4] shadow-[var(--shadow-elevated)]">
               <img
-                src={IMAGES.meetChildminder}
+                src={imageSrc}
                 alt="Divine Heritage childminder on the floor with four children exploring vegetables and natural materials together, demonstrating her hands-on nurturing approach"
                 className="w-full h-full object-cover object-top"
                 loading="lazy"
@@ -74,24 +78,32 @@ export default function MeetChildminder() {
         <AnimatedSection direction="left" delay={0.12} className="order-2 lg:order-1">
           <SectionHeader
             eyebrow="Professional Childminder"
-            title="A Familiar Face You Can Trust"
+            title={about.bioName ? `Meet ${about.bioName}` : 'A Familiar Face You Can Trust'}
             maxWidth="max-w-full"
           />
 
           <div className="mt-5 space-y-4 text-[var(--color-text-secondary)] text-sm md:text-base leading-relaxed">
-            <p>
-              At Divine Heritage, children are cared for by the same warm, familiar childminder 
-              every day. Consistency matters enormously to young children — and to parents.
-            </p>
-            <p>
-              With over 9 years of professional home childminding experience in London, the setting 
-              brings genuine passion, formal qualifications, and a deep commitment to every child's 
-              individual growth and happiness.
-            </p>
-            <p>
-              The home environment provides a welcoming second home for children, where safety, 
-              celebration, and inspiration are at the heart of daily care.
-            </p>
+            {about.bioParagraphs && about.bioParagraphs.length > 0 ? (
+              about.bioParagraphs.map((paragraph, index) => (
+                <p key={index}>{paragraph}</p>
+              ))
+            ) : (
+              <>
+                <p>
+                  At Divine Heritage, children are cared for by the same warm, familiar childminder 
+                  every day. Consistency matters enormously to young children — and to parents.
+                </p>
+                <p>
+                  With over 9 years of professional home childminding experience in London, the setting 
+                  brings genuine passion, formal qualifications, and a deep commitment to every child's 
+                  individual growth and happiness.
+                </p>
+                <p>
+                  The home environment provides a welcoming second home for children, where safety, 
+                  celebration, and inspiration are at the heart of daily care.
+                </p>
+              </>
+            )}
           </div>
 
           {/* Credentials */}
@@ -116,7 +128,7 @@ export default function MeetChildminder() {
           {/* Quote */}
           <blockquote className="mt-7 pl-4 border-l-2 border-[var(--color-accent-400)]">
             <p className="text-[var(--color-text-secondary)] text-sm italic leading-relaxed">
-              "Every child who enters Divine Heritage is welcomed into a family-centred environment where happiness, safety, and development remain the absolute priority."
+              "{about.bioQuote || 'Every child who enters Divine Heritage is welcomed into a family-centred environment where happiness, safety, and development remain the absolute priority.'}"
             </p>
           </blockquote>
 

@@ -165,14 +165,13 @@ export default function Contact() {
                   <div>
                     <p className="text-xs text-[var(--color-text-muted)] mb-0.5">Business Hours</p>
                     <p className="text-[var(--color-text-primary)] font-medium text-sm">
-                      Mon – Thu, 8:00am – 6:00pm
+                      {contact.hours.weekdays}
                     </p>
-                    <p className="text-[var(--color-text-primary)] font-medium text-sm">
-                      Fri, 8:00am – 5:00pm
-                    </p>
-                    <p className="text-[var(--color-text-muted)] text-xs mt-0.5">
-                      Closed weekends & bank holidays
-                    </p>
+                    {contact.hours.notes && (
+                      <p className="text-[var(--color-text-muted)] text-xs mt-0.5">
+                        {contact.hours.notes}
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>

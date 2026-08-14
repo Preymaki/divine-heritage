@@ -4,9 +4,9 @@ import AnimatedSection from '@components/ui/AnimatedSection'
 import SectionWrapper from '@components/ui/SectionWrapper'
 import SectionHeader from '@components/ui/SectionHeader'
 import { useSiteImages } from '@hooks/useSiteImages'
+import { useAboutSettings } from '@hooks/useAboutSettings'
 
-
-const HIGHLIGHTS = [
+const DEFAULT_HIGHLIGHTS = [
   'Family-centred approach since 2017',
   'Experienced, qualified, and passionate',
   'Every child treated as an individual',
@@ -15,6 +15,13 @@ const HIGHLIGHTS = [
 
 export default function AboutPreview() {
   const siteImages = useSiteImages()
+  const { about } = useAboutSettings()
+
+  const highlightList = about.highlights && about.highlights.length > 0
+    ? about.highlights.map((h) => h.description ? `${h.title} — ${h.description}` : h.title)
+    : DEFAULT_HIGHLIGHTS
+
+  const previewImageSrc = about.aboutImageUrl || siteImages.homeAbout
 
   return (
     <SectionWrapper id="about-preview" background="white">
@@ -24,7 +31,7 @@ export default function AboutPreview() {
           <div className="relative">
             <div className="rounded-[var(--radius-2xl)] overflow-hidden aspect-[4/5] sm:aspect-[5/4] lg:aspect-[4/5] shadow-[var(--shadow-elevated)]">
               <img
-                src={siteImages.homeAbout}
+                src={previewImageSrc}
                 alt="Divine Heritage childminder sitting on the playroom floor with four children engaged in hands-on learning and sensory play"
                 className="w-full h-full object-cover object-top"
                 loading="lazy"
@@ -53,12 +60,12 @@ export default function AboutPreview() {
         <AnimatedSection direction="right" delay={0.15}>
           <SectionHeader
             eyebrow="About Divine Heritage"
-            title="A Home Away From Home"
-            subtitle="Every child deserves to feel safe, loved, and celebrated. Divine Heritage provides a warm, nurturing space where children can explore, discover, and grow with confidence."
+            title={about.previewTitle || 'A Home Away From Home'}
+            subtitle={about.previewSubtitle || 'Every child deserves to feel safe, loved, and celebrated. Divine Heritage provides a warm, nurturing space where children can explore, discover, and grow with confidence.'}
           />
 
           <ul className="mt-7 space-y-3.5" role="list">
-            {HIGHLIGHTS.map((item) => (
+            {highlightList.map((item) => (
               <li key={item} className="flex items-start gap-3">
                 <CheckCircle
                   size={18}
@@ -72,9 +79,7 @@ export default function AboutPreview() {
 
           <blockquote className="mt-8 pl-4 border-l-2 border-[var(--color-accent-400)]">
             <p className="text-[var(--color-text-secondary)] text-sm md:text-base italic leading-relaxed">
-              "The mission of Divine Heritage is to provide a safe, nurturing, and family-centered environment where every 
-              child feels loved, valued, and encouraged to foster curiosity, independence, and 
-              resilience at their own pace."
+              "{about.missionQuote || 'Every child deserves to feel safe, loved, and celebrated. Divine Heritage provides a warm, nurturing space where children can explore, discover, and grow with confidence.'}"
             </p>
             <cite className="block mt-2 text-xs text-[var(--color-text-muted)] not-italic font-medium">
               — Divine Heritage Childcare Service
