@@ -30,9 +30,9 @@ const STATUS_LABELS: Record<EnquiryStatus, string> = {
 }
 
 const STATUS_PILL: Record<EnquiryStatus, string> = {
-  unread:   'bg-blue-100 text-blue-700 border border-blue-200',
-  read:     'bg-[var(--color-sage-50)] text-[var(--color-sage-600)] border border-[var(--color-sage-200)]',
-  archived: 'bg-[var(--color-muted)] text-[var(--color-text-muted)] border border-[var(--color-muted)]',
+  unread:   'bg-[var(--color-primary-50)] text-[var(--color-primary-600)] border border-[var(--color-primary-200)] font-semibold',
+  read:     'bg-[var(--color-sage-50)] text-[var(--color-sage-700)] border border-[var(--color-sage-200)] font-medium',
+  archived: 'bg-[#f1f5f9] text-[#64748b] border border-[#cbd5e1] font-medium',
 }
 
 // ---------------------------------------------------------------------------
@@ -68,7 +68,7 @@ export default function AdminMessages() {
 
   const btnBase = 'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed'
   const btnSecondary = `${btnBase} bg-[var(--color-primary-50)] text-[var(--color-primary-600)] border border-[var(--color-primary-200)] hover:bg-[var(--color-primary-100)]`
-  const btnGhost     = `${btnBase} bg-white text-[var(--color-text-secondary)] border border-[var(--color-muted)] hover:bg-[var(--color-background)]`
+  const btnGhost     = `${btnBase} bg-white text-[#64748b] border border-[#e2e8f0] hover:bg-[#f8fafc] hover:text-[#0f172a]`
 
   return (
     <div className="cms-page">
@@ -101,8 +101,8 @@ export default function AdminMessages() {
               onClick={() => setFilter(f)}
               className={`px-4 py-2 rounded-xl text-sm font-medium capitalize transition-all duration-150 ${
                 filter === f
-                  ? 'bg-[var(--color-primary-500)] text-white shadow-sm'
-                  : 'bg-white text-[var(--color-text-secondary)] border border-[var(--color-muted)] hover:border-[var(--color-primary-300)]'
+                  ? 'bg-gradient-to-r from-[var(--color-primary-500)] to-[var(--color-primary-600)] text-white shadow-sm font-semibold'
+                  : 'bg-white text-[#475569] border border-[#e2e8f0] hover:bg-[#f8fafc] hover:border-[var(--color-primary-300)]'
               }`}
             >
               {f === 'all'    ? `All (${enquiries.length})` :
@@ -117,7 +117,7 @@ export default function AdminMessages() {
       {loading && (
         <div className="space-y-4">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-36 rounded-[var(--radius-xl)] bg-[var(--color-muted)] animate-pulse" />
+            <div key={i} className="h-36 rounded-2xl bg-[#e2e8f0] animate-pulse border border-[#cbd5e1]" />
           ))}
         </div>
       )}
@@ -141,23 +141,23 @@ export default function AdminMessages() {
           {filtered.map((enquiry) => (
             <div
               key={enquiry.id}
-              className={`bg-white rounded-[var(--radius-xl)] border shadow-[var(--shadow-soft)] p-5 md:p-6 ${
+              className={`bg-white rounded-2xl border p-5 md:p-6 transition-all duration-200 shadow-sm ${
                 enquiry.status === 'unread'
-                  ? 'border-l-4 border-l-[var(--color-primary-400)] border-t-[var(--color-muted)] border-r-[var(--color-muted)] border-b-[var(--color-muted)]'
-                  : 'border-[var(--color-muted)]'
+                  ? 'border-l-4 border-l-[var(--color-primary-500)] border-t-[#e2e8f0] border-r-[#e2e8f0] border-b-[#e2e8f0] bg-[var(--color-primary-50)]/30'
+                  : 'border-[#e2e8f0] hover:border-[var(--color-primary-200)]'
               }`}
             >
               {/* Header */}
               <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4">
                 <div className="flex items-start gap-3">
-                  <div className="w-9 h-9 rounded-xl bg-[var(--color-primary-50)] flex items-center justify-center shrink-0">
-                    <User size={16} className="text-[var(--color-primary-500)]" />
+                  <div className="w-9 h-9 rounded-xl bg-[var(--color-primary-50)] border border-[var(--color-primary-200)] flex items-center justify-center shrink-0">
+                    <User size={16} className="text-[var(--color-primary-600)]" />
                   </div>
                   <div>
-                    <p className="font-semibold text-[var(--color-text-primary)] text-sm leading-tight mb-1">
+                    <p className="font-semibold text-[#0f172a] text-sm leading-tight mb-1">
                       {enquiry.parentName}
                     </p>
-                    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${STATUS_PILL[enquiry.status]}`}>
+                    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs ${STATUS_PILL[enquiry.status]}`}>
                       {STATUS_LABELS[enquiry.status]}
                     </span>
                   </div>
@@ -199,17 +199,17 @@ export default function AdminMessages() {
               </div>
 
               {/* Meta row */}
-              <div className="flex flex-wrap gap-x-5 gap-y-1.5 mb-3 text-xs text-[var(--color-text-muted)]">
+              <div className="flex flex-wrap gap-x-5 gap-y-1.5 mb-3 text-xs text-[#64748b]">
                 <a
                   href={`mailto:${enquiry.email}`}
-                  className="flex items-center gap-1.5 hover:text-[var(--color-primary-500)] transition-colors"
+                  className="flex items-center gap-1.5 hover:text-[var(--color-primary-600)] transition-colors"
                 >
                   <Mail size={12} aria-hidden="true" /> {enquiry.email}
                 </a>
                 {enquiry.phone && (
                   <a
                     href={`tel:${enquiry.phone.replace(/\s/g, '')}`}
-                    className="flex items-center gap-1.5 hover:text-[var(--color-primary-500)] transition-colors"
+                    className="flex items-center gap-1.5 hover:text-[var(--color-primary-600)] transition-colors"
                   >
                     <Phone size={12} aria-hidden="true" /> {enquiry.phone}
                   </a>
@@ -223,12 +223,12 @@ export default function AdminMessages() {
               </div>
 
               {/* Child age */}
-              <p className="text-xs text-[var(--color-text-muted)] mb-3">
-                Child's age: <span className="font-medium text-[var(--color-text-secondary)]">{enquiry.childAge}</span>
+              <p className="text-xs text-[#64748b] mb-3">
+                Child's age: <span className="font-medium text-[#1e293b]">{enquiry.childAge}</span>
               </p>
 
               {/* Message */}
-              <p className="text-sm text-[var(--color-text-secondary)] leading-relaxed bg-[var(--color-background)] rounded-lg p-3.5 border border-[var(--color-muted)] whitespace-pre-wrap">
+              <p className="text-sm text-[#1e293b] leading-relaxed bg-[#f8fafc] rounded-xl p-3.5 border border-[#e2e8f0] whitespace-pre-wrap">
                 {enquiry.message}
               </p>
             </div>
