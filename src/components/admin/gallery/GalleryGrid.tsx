@@ -32,15 +32,15 @@ const GROUP_COLORS: Record<GalleryGroup, string> = {
 
 // ── Section location badges ─────────────────────────────────────────
 const SECTION_NUMBERS: Partial<Record<GalleryGroup, string>> = {
-  home_hero:     'Home Page',
-  home_about:    'Home Page',
-  home_cta:      'Home & Global',
+  home_hero:     'Home Hero',
+  home_about:    'Home About',
+  home_cta:      'Home CTA',
   about_page:    'About Page',
   services_page: 'Services Page',
-  outings:       'Gallery S1',
-  library:       'Gallery S2',
-  learning:      'Gallery S3',
-  indoor:        'Gallery S4',
+  outings:       'Gallery Section 1',
+  library:       'Gallery Section 2',
+  learning:      'Gallery Section 3',
+  indoor:        'Gallery Section 4',
 }
 
 interface GalleryGridProps {

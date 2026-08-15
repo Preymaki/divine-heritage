@@ -23,17 +23,76 @@ export type GalleryGroup =
   | 'indoor'         // Public Gallery Page — Home Environment
   | 'other'          // Uncategorised / extra uploads
 
+export interface PublicGallerySectionInfo {
+  eyebrow: string
+  title: string
+  subtitle: string
+}
+
+export const PUBLIC_GALLERY_SECTIONS: Record<GalleryGroup, PublicGallerySectionInfo> = {
+  outings: {
+    eyebrow: 'Outdoor Play',
+    title: 'Outdoor Play & Garden Fun',
+    subtitle: 'Active outdoor adventures, garden play, and exploring nature in a safe, engaging environment.',
+  },
+  library: {
+    eyebrow: 'Community Trips',
+    title: 'Library Visits & Bubble Play',
+    subtitle: 'Interactive story time, socialising with peers, and fun sensory bubble play sessions at the local library.',
+  },
+  learning: {
+    eyebrow: 'Play & Discovery',
+    title: 'Play, Learning & Creativity',
+    subtitle: 'Hands-on sensory exploration, arts and crafts, painting, and early developmental activities.',
+  },
+  indoor: {
+    eyebrow: 'Our Setting',
+    title: 'The Home Environment',
+    subtitle: 'A warm, welcoming home nursery with child-accessible toys, cosy reading corners, and creative spaces.',
+  },
+  other: {
+    eyebrow: 'More Moments',
+    title: 'Extra Memories & Activities',
+    subtitle: 'Special moments, seasonal activities, and everyday learning at Divine Heritage.',
+  },
+  home_hero: {
+    eyebrow: 'Home Page',
+    title: 'Hero Banner',
+    subtitle: 'Main banner at the top of the homepage.',
+  },
+  home_about: {
+    eyebrow: 'Home Page',
+    title: 'About Preview',
+    subtitle: 'Childminder portrait in the homepage about section.',
+  },
+  home_cta: {
+    eyebrow: 'Home & CTA',
+    title: 'Call to Action Banner',
+    subtitle: 'Background banner in the booking callout section.',
+  },
+  about_page: {
+    eyebrow: 'About Page',
+    title: 'Founder & Environment',
+    subtitle: 'Featured photo on the About Us page.',
+  },
+  services_page: {
+    eyebrow: 'Services Page',
+    title: 'Service Covers',
+    subtitle: 'Cover photos for service cards on the Services page.',
+  },
+}
+
 export const GALLERY_GROUP_LABELS: Record<GalleryGroup, string> = {
-  home_hero:     'Home Page (Main Hero Banner)',
-  home_about:    'Home Page (About Childminder Preview)',
-  home_cta:      'Home Page & Global CTA (Book a Visit Banner)',
+  home_hero:     'Home Page (Hero Banner)',
+  home_about:    'Home Page (About Preview)',
+  home_cta:      'Home & Global CTA (Book a Visit Banner)',
   about_page:    'About Page (Founder & Care Environment)',
-  services_page: 'Services Page (Service Cards & Activity Covers)',
-  outings:       'Public Gallery Page (Section 1: Outdoor Play & Garden Fun)',
-  library:       'Public Gallery Page (Section 2: Library & Learning Trips)',
-  learning:      'Public Gallery Page (Section 3: Play, Learning & Creativity)',
-  indoor:        'Public Gallery Page (Section 4: The Home Environment)',
-  other:         'Other / Uncategorised',
+  services_page: 'Services Page (Service Card Covers)',
+  outings:       'Gallery: Outdoor Play & Garden Fun',
+  library:       'Gallery: Library Trips & Bubble Play',
+  learning:      'Gallery: Play, Learning & Creativity',
+  indoor:        'Gallery: The Home Environment',
+  other:         'Other / Extra Uploads',
 }
 
 export const GALLERY_GROUP_SUBTITLES: Record<GalleryGroup, string> = {
@@ -42,23 +101,23 @@ export const GALLERY_GROUP_SUBTITLES: Record<GalleryGroup, string> = {
   home_cta:      'Controls the background banner frame in the "Book a Visit" callout box on the home page and footer CTA.',
   about_page:    'Controls the primary photo of the childminder and home nursery setup on the dedicated /about page.',
   services_page: 'Controls the 5 service card covers on the /services page (Childminding, Early Years, After-School Care, Arts, Outdoor Play).',
-  outings:       'Appears in Section 1 on the public /gallery page: Outdoor play, garden activities, and local exploration.',
-  library:       'Appears in Section 2 on the public /gallery page: Local library visits, story time, and bubble play sessions.',
-  learning:      'Appears in Section 3 on the public /gallery page: Hands-on sensory play, painting, building, and literacy.',
-  indoor:        'Appears in Section 4 on the public /gallery page: Warm home nursery setup, toys, and learning spaces.',
+  outings:       'Outdoor play, garden activities, and local exploration photos displayed on the /gallery page.',
+  library:       'Local library visits, story time, and bubble play photos displayed on the /gallery page.',
+  learning:      'Hands-on sensory play, painting, building, and literacy photos displayed on the /gallery page.',
+  indoor:        'Warm home nursery setup, toys, and learning spaces photos displayed on the /gallery page.',
   other:         'Uncategorised photos or additional uploads.',
 }
 
 export const GALLERY_GROUP_BADGES: Record<GalleryGroup, string> = {
-  home_hero:     'Home Page (Hero)',
-  home_about:    'Home Page (About)',
-  home_cta:      'Home & Global (CTA)',
+  home_hero:     'Home (Hero)',
+  home_about:    'Home (About)',
+  home_cta:      'Home & CTA',
   about_page:    'About Page',
   services_page: 'Services Page',
-  outings:       'Public Gallery (S1)',
-  library:       'Public Gallery (S2)',
-  learning:      'Public Gallery (S3)',
-  indoor:        'Public Gallery (S4)',
+  outings:       'Gallery: Outings',
+  library:       'Gallery: Library',
+  learning:      'Gallery: Learning',
+  indoor:        'Gallery: Indoor',
   other:         'General',
 }
 

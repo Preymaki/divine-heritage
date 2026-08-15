@@ -27,8 +27,7 @@ import CTASection from '@components/home/CTASection'
 import { IMAGES, VIDEOS } from '@utils/images'
 import { subscribeToPublishedGallery } from '@services/gallery'
 import {
-  GALLERY_GROUP_LABELS,
-  GALLERY_GROUP_SUBTITLES,
+  PUBLIC_GALLERY_SECTIONS,
 } from '@appTypes/gallery'
 import type { GalleryItem, GalleryGroup } from '@appTypes/gallery'
 
@@ -261,16 +260,17 @@ export default function Gallery() {
       {/* Gallery groups — rendered from Firestore */}
       {!cmsLoading && !cmsError && (
         <>
-          {PUBLIC_GALLERY_GROUPS.filter((g) => (grouped[g] || []).length > 0).map((g, gi, filteredGroups) => {
+          {PUBLIC_GALLERY_GROUPS.filter((g) => (grouped[g] || []).length > 0).map((g, gi) => {
             const images = grouped[g]
             const baseOffset = groupOffsets[g]
+            const section = PUBLIC_GALLERY_SECTIONS[g]
             return (
               <SectionWrapper key={g} background={gi % 2 === 0 ? 'muted' : 'white'}>
                 <AnimatedSection className="text-center flex justify-center mb-10">
                   <SectionHeader
-                    eyebrow={`${gi + 1} of ${filteredGroups.length}`}
-                    title={GALLERY_GROUP_LABELS[g]}
-                    subtitle={GALLERY_GROUP_SUBTITLES[g]}
+                    eyebrow={section?.eyebrow}
+                    title={section?.title || 'Gallery'}
+                    subtitle={section?.subtitle}
                     centered
                   />
                 </AnimatedSection>
