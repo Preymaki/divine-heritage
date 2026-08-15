@@ -33,7 +33,7 @@ const iconMap: Record<string, LucideIcon> = {
 const DAILY_SCHEDULE = [
   { time: '8:00 – 9:00am', activity: 'Welcome & indoor free play' },
   { time: '9:00 – 10:30am', activity: 'Planned learning activity (EYFS-linked)' },
-  { time: '10:30 – 11:30am', activity: 'Indoor & outdoor play — garden exploration' },
+  { time: '10:30 – 11:30am', activity: 'Indoor & outdoor play and garden exploration' },
   { time: '11:30am – 12:30pm', activity: 'Story time, music & movement' },
   { time: '12:30 – 1:30pm', activity: 'Lunch (packed meals) & rest / quiet time' },
   { time: '1:30 – 3:00pm', activity: 'Arts & crafts, sensory play, or library visit' },
@@ -49,7 +49,7 @@ export default function DailyActivities() {
         <SectionHeader
           eyebrow="A Typical Day"
           title="Rich Experiences, Every Day"
-          subtitle="The daily programme balances structured learning with free play, outdoor time, creative activities, and essential rest — keeping every day exciting, varied, and developmentally rich."
+          subtitle="The daily programme balances structured learning with free play, outdoor time, creative activities, and essential rest, keeping every day exciting, varied, and developmentally rich."
           centered
           maxWidth="max-w-2xl"
         />

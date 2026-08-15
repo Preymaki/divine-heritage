@@ -119,7 +119,7 @@ export default function DeleteConfirmDialog({
             {isStatic ? (
               <p>
                 This will <strong>remove</strong> this image from the gallery. The original
-                image file will remain in the website's public folder — only the gallery
+                image file will remain in the website's public folder; only the gallery
                 record will be deleted.
               </p>
             ) : (

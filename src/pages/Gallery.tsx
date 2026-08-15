@@ -144,8 +144,8 @@ export default function Gallery() {
   // ── Build flat lightbox list ─────────────────────────────────────────────
   // Order: 2 videos → then each group in display order
   const VIDEO_ITEMS = [
-    { src: VIDEOS.libraryClip1, poster: IMAGES.galleryLibrary1, alt: 'Children playing with bubbles at the library — video clip 1', idx: 0 },
-    { src: VIDEOS.libraryClip2, poster: IMAGES.galleryLibrary2, alt: 'Children enjoying a bubble play session at the library — video clip 2', idx: 1 },
+    { src: VIDEOS.libraryClip1, poster: IMAGES.galleryLibrary1, alt: 'Children playing with bubbles at the library (video clip 1)', idx: 0 },
+    { src: VIDEOS.libraryClip2, poster: IMAGES.galleryLibrary2, alt: 'Children enjoying a bubble play session at the library (video clip 2)', idx: 1 },
   ]
   const videoItems: LightboxItem[] = VIDEO_ITEMS.map(v => ({ src: v.src, alt: v.alt, type: 'video' }))
 
@@ -204,7 +204,7 @@ export default function Gallery() {
               Moments of Joy, Growth &amp; Discovery
             </h1>
             <p className="mt-4 text-white/65 text-base md:text-lg leading-relaxed max-w-xl">
-              Explore daily life at Divine Heritage — from library visits and creative activities to 
+              Explore daily life at Divine Heritage through library visits, creative activities, 
               sensory play, arts and crafts, and indoor and outdoor play.
             </p>
           </AnimatedSection>

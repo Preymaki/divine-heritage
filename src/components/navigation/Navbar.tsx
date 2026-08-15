@@ -55,7 +55,7 @@ export default function Navbar() {
       <Link
         to="/"
         className="fixed top-3 left-4 z-50 flex items-center group"
-        aria-label={`${SITE.name} — Home`}
+        aria-label={`${SITE.name} Home`}
       >
         <img
           src="/logo.png"
@@ -162,7 +162,7 @@ export default function Navbar() {
                 <Link
                   to="/"
                   onClick={() => setIsOpen(false)}
-                  aria-label={`${SITE.name} — Home`}
+                  aria-label={`${SITE.name} Home`}
                 >
                   <img
                     src="/logo.png"

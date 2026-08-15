@@ -59,7 +59,7 @@ export default function GalleryCard({
         </div>
         {/* Static asset badge */}
         {isStatic && (
-          <div className="gallery-card-badge gallery-card-badge--static" title="Original website image — stored in public/, not Firebase Storage">
+          <div className="gallery-card-badge gallery-card-badge--static" title="Original website image stored in public/, not Firebase Storage">
             <HardDrive size={11} aria-hidden="true" /> Static
           </div>
         )}

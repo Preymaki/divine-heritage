@@ -24,15 +24,15 @@ export type GalleryGroup =
   | 'other'          // Uncategorised / extra uploads
 
 export const GALLERY_GROUP_LABELS: Record<GalleryGroup, string> = {
-  home_hero:     'Home Page — Main Hero Banner',
-  home_about:    'Home Page — About Childminder Preview',
-  home_cta:      'Home Page & Global CTA — Book a Visit Banner',
-  about_page:    'About Page — Founder & Care Environment',
-  services_page: 'Services Page — Service Cards & Activity Covers',
-  outings:       'Public Gallery Page — Section 1: Outdoor Play & Garden Fun',
-  library:       'Public Gallery Page — Section 2: Library & Learning Trips',
-  learning:      'Public Gallery Page — Section 3: Play, Learning & Creativity',
-  indoor:        'Public Gallery Page — Section 4: The Home Environment',
+  home_hero:     'Home Page (Main Hero Banner)',
+  home_about:    'Home Page (About Childminder Preview)',
+  home_cta:      'Home Page & Global CTA (Book a Visit Banner)',
+  about_page:    'About Page (Founder & Care Environment)',
+  services_page: 'Services Page (Service Cards & Activity Covers)',
+  outings:       'Public Gallery Page (Section 1: Outdoor Play & Garden Fun)',
+  library:       'Public Gallery Page (Section 2: Library & Learning Trips)',
+  learning:      'Public Gallery Page (Section 3: Play, Learning & Creativity)',
+  indoor:        'Public Gallery Page (Section 4: The Home Environment)',
   other:         'Other / Uncategorised',
 }
 

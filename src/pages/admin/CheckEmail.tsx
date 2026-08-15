@@ -74,7 +74,7 @@ export default function CheckEmail() {
           </li>
           <li>
             <span className="admin-step-num" aria-hidden="true">3</span>
-            You'll be signed in automatically — the link is valid for 1 hour
+            You'll be signed in automatically. The link is valid for 1 hour.
           </li>
         </ul>
 

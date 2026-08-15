@@ -60,7 +60,7 @@ export const ACTIVITIES: Activity[] = [
     id: 'sensory-play',
     icon: 'Sparkles',
     title: 'Sensory Play',
-    description: 'Carefully planned sensory activities — sand, water, dough, and textures — to stimulate curiosity.',
+    description: 'Carefully planned sensory activities with sand, water, dough, and textured materials to stimulate curiosity.',
     colour: '#3a6be7',  // blue
   },
   {
@@ -74,7 +74,7 @@ export const ACTIVITIES: Activity[] = [
     id: 'quiet-time',
     icon: 'Moon',
     title: 'Quiet & Rest Time',
-    description: 'Calm, restorative periods with puzzles, books, and relaxation — essential for emotional balance.',
+    description: 'Calm, restorative periods with puzzles, books, and quiet relaxation to support emotional balance.',
     colour: '#1e56d0',  // blue
   },
 ]

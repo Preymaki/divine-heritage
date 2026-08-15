@@ -201,7 +201,7 @@ export default function EditModal({
               Edit Image Slot
             </h2>
             <div className="text-[11px] font-bold text-[var(--color-primary-600)] bg-[var(--color-primary-50)] border border-[var(--color-primary-200)] px-2.5 py-0.5 rounded-full w-fit mt-1">
-              Location: {locationBadge} — {GALLERY_GROUP_LABELS[item.group]}
+              Location: {locationBadge} ({GALLERY_GROUP_LABELS[item.group]})
             </div>
           </div>
           <button
@@ -404,7 +404,7 @@ export default function EditModal({
               {newFile && (
                 <p className="edit-swap-info">
                   The existing image will be replaced. Title, alt text and caption
-                  will stay unchanged — you can update them after saving.
+                  will stay unchanged and can be updated after saving.
                 </p>
               )}
 

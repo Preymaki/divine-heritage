@@ -207,75 +207,75 @@ export async function seedGallery(uploadedBy: string): Promise<void> {
   }
 
   const seeds: SeedItem[] = [
-    // ── Home Page — Hero Banner ─────────────────────────────────────────
+    // ── Home Page: Hero Banner ─────────────────────────────────────────
     {
       group: 'home_hero', sortOrder: 1,
       downloadURL: '/images/outdoor-spinning-ride.jpeg',
-      title: 'Home Page — Hero Background Banner',
-      altText: 'Two happy children smiling on swings during outdoor play — main home page hero banner frame',
+      title: 'Home Page: Hero Background Banner',
+      altText: 'Two happy children smiling on swings during outdoor play on the main home page hero banner',
       caption: 'Main background banner displayed at the top of the home page.',
     },
 
-    // ── Home Page — About Childminder Preview ───────────────────────────
+    // ── Home Page: About Childminder Preview ───────────────────────────
     {
       group: 'home_about', sortOrder: 1,
       downloadURL: '/images/about-childminder-group.jpeg',
-      title: 'Home Page — About Childminder Frame',
+      title: 'Home Page: About Childminder Frame',
       altText: 'Divine Heritage childminder sitting on the floor with four children in sensory play',
       caption: 'Featured portrait of the childminder in the home page About section.',
     },
 
-    // ── Home Page & Global CTA — Book a Visit ───────────────────────────
+    // ── Home Page & Global CTA: Book a Visit ───────────────────────────
     {
       group: 'home_cta', sortOrder: 1,
       downloadURL: '/images/hero-library-bubbles.jpeg',
-      title: 'Home Page — CTA Callout Banner',
-      altText: 'Children playing with bubbles at library — call to action banner background',
+      title: 'Home Page: CTA Callout Banner',
+      altText: 'Children playing with bubbles at the library as the call to action banner background',
       caption: 'Background banner image for the Book a Visit callout section.',
     },
 
-    // ── About Page — Founder & Care Environment ────────────────────────
+    // ── About Page: Founder & Care Environment ────────────────────────
     {
       group: 'about_page', sortOrder: 1,
       downloadURL: '/images/about-childminder-group.jpeg',
-      title: 'About Page — Founder Profile Frame',
+      title: 'About Page: Founder Profile Frame',
       altText: 'Divine Heritage founder and childminder nurturing children in home setup',
       caption: 'Featured photo on the dedicated /about page.',
     },
 
-    // ── Services Page — Service Cards ──────────────────────────────────
+    // ── Services Page: Service Cards ──────────────────────────────────
     {
       group: 'services_page', sortOrder: 1,
       downloadURL: '/images/indoor-train-track.jpeg',
-      title: 'Services Page — Childminding Cover',
+      title: 'Services Page: Childminding Cover',
       altText: 'Child building wooden train track in home nursery',
       caption: 'Cover photo for Full & Part-Time Childminding service card.',
     },
     {
       group: 'services_page', sortOrder: 2,
       downloadURL: '/images/reading-book.jpeg',
-      title: 'Services Page — Early Years EYFS Cover',
+      title: 'Services Page: Early Years EYFS Cover',
       altText: 'Young child reading picture book independently',
       caption: 'Cover photo for Early Years Foundation Stage (EYFS) card.',
     },
     {
       group: 'services_page', sortOrder: 3,
       downloadURL: '/images/outing-softplay-blocks.jpeg',
-      title: 'Services Page — After-School Care Cover',
+      title: 'Services Page: After-School Care Cover',
       altText: 'Toddler playing with climbing blocks',
       caption: 'Cover photo for After-School Care card.',
     },
     {
       group: 'services_page', sortOrder: 4,
       downloadURL: '/images/arts-painting-easel.jpeg',
-      title: 'Services Page — Arts & Crafts Cover',
+      title: 'Services Page: Arts & Crafts Cover',
       altText: 'Child wearing apron painting at easel',
       caption: 'Cover photo for Creative Arts & Crafts sessions card.',
     },
     {
       group: 'services_page', sortOrder: 5,
       downloadURL: '/images/outdoor-nature-tree.jpeg',
-      title: 'Services Page — Outdoor Nature Play Cover',
+      title: 'Services Page: Outdoor Nature Play Cover',
       altText: 'Children exploring outdoors in nature',
       caption: 'Cover photo for Outdoor Nature Exploration card.',
     },

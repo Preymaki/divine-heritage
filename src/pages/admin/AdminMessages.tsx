@@ -79,7 +79,7 @@ export default function AdminMessages() {
             ? 'Loading enquiries…'
             : unreadCount > 0
               ? `${unreadCount} unread enquir${unreadCount === 1 ? 'y' : 'ies'} from families.`
-              : 'All caught up — no unread messages.'
+              : 'All caught up with no unread messages.'
         }
       />
 

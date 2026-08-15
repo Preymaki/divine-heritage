@@ -80,7 +80,7 @@ export default function AdminGallery() {
           <strong>Could not load gallery:</strong> {error}
           <br />
           <span style={{ fontSize: '0.8125rem', opacity: 0.8 }}>
-            Check your Firestore Security Rules — authenticated reads from{' '}
+            Check your Firestore Security Rules to ensure authenticated reads from{' '}
             <code>gallery/**</code> must be allowed.
           </span>
         </div>

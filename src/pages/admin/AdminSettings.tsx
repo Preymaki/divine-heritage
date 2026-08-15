@@ -384,7 +384,7 @@ function AboutTab() {
         {/* Story */}
         <section className="settings-form-section">
           <h3 className="settings-form-section-title">
-            <AlignLeft size={15} /> About Page — Story
+            <AlignLeft size={15} /> About Page: Story
           </h3>
           <div className="admin-form-group">
             <label htmlFor="about-story" className="admin-form-label">Story paragraphs</label>

@@ -56,7 +56,7 @@ export default function GalleryPreview() {
           pagination={{ clickable: true }}
           loop
           className="pb-10"
-          aria-label="Gallery preview — a selection of activities and the childcare environment"
+          aria-label="Gallery preview of activities and the childcare environment"
           a11y={{
             prevSlideMessage: 'Previous image',
             nextSlideMessage: 'Next image',

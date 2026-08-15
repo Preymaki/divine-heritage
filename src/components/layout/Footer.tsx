@@ -24,7 +24,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-8">
           {/* Brand column */}
           <div className="lg:col-span-2">
-            <Link to="/" className="group w-fit block" aria-label="Divine Heritage — Home">
+            <Link to="/" className="group w-fit block" aria-label="Divine Heritage Home">
               <div className="bg-white rounded-2xl px-4 py-3 inline-flex items-center transition-transform duration-200 group-hover:scale-[1.02] shadow-[0_2px_12px_rgba(0,0,0,0.12)]">
                 <img
                   src="/logo.png"

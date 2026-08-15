@@ -30,7 +30,7 @@ export default function Services() {
   const serviceImagesMap: Record<string, { src: string; alt: string; position: string }> = {
     childminding: {
       src: siteImages.serviceChildminding,
-      alt: 'A toddler absorbed in building a wooden train track in the bright welcoming living room at Divine Heritage — illustrating the cosy home environment',
+      alt: 'A toddler absorbed in building a wooden train track in the bright welcoming living room at Divine Heritage, illustrating the cosy home environment',
       position: 'object-top',
     },
     'early-years': {
@@ -40,7 +40,7 @@ export default function Services() {
     },
     'after-school': {
       src: siteImages.serviceAfterSchool,
-      alt: 'A toddler building strength and coordination on foam climbing blocks at a soft play session — one of many active outings arranged by Divine Heritage',
+      alt: 'A toddler building strength and coordination on foam climbing blocks at a soft play session during an active outing arranged by Divine Heritage',
       position: 'object-center',
     },
   }

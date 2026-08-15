@@ -70,7 +70,7 @@ export const DEFAULT_HERO: HeroSettings = {
   eyebrow:      'London-Based Childminding',
   heading:      'Where Every Child Thrives, Grows, and Belongs',
   accentWord:   'Thrives',
-  subtitle:     'Professional, nurturing home-based childcare in London. A safe, loving environment where your child is valued, inspired, and encouraged to flourish — every single day.',
+  subtitle:     'Professional, nurturing home-based childcare in London. A safe, loving environment where your child is valued, inspired, and encouraged to flourish every single day.',
   bgImageUrl:   '',
   ctaPrimary:   'Book a Visit',
   ctaSecondary: 'Learn More',
@@ -83,9 +83,8 @@ export const DEFAULT_ABOUT: AboutSettings = {
   previewSubtitle: 'Founded in 2017, Divine Heritage provides warm, professional home-based childminding for families across South East London.',
   highlights: [
     { title: 'Child-Led Learning',      description: 'Activities are inspired by each child\'s interests and developmental stage.' },
-    { title: 'Family Partnership',      description: 'Close collaboration is maintained with parents with regular updates.' },
-    { title: 'Safe & Stimulating',      description: 'The home environment is fully Ofsted registered and richly resourced.' },
-    { title: 'Indoor & Outdoor Play',   description: 'Spacious indoor learning areas and secure outdoor play.' },
+    { title: 'Family Partnership',      description: 'Working closely with parents to provide consistent, joined-up care.' },
+    { title: 'Safe & Stimulating',      description: 'Offering a fully Ofsted-registered home environment, exceptionally well-resourced for every stage of learning.' },
   ],
   storyParagraphs: [
     'Divine Heritage Childcare Service was founded in 2017 with a clear vision: to create a warm, loving home-from-home where every child is seen, valued, and inspired to reach their full potential.',
@@ -93,7 +92,7 @@ export const DEFAULT_ABOUT: AboutSettings = {
     'The approach is rooted in the Early Years Foundation Stage (EYFS) framework, guiding everything from activity planning to observation and documentation of child growth. Beyond routine documentation, key developmental milestones and friendships formed make the environment uniquely enriching.',
     'Every family joining the setting becomes part of the Divine Heritage community. Open, honest communication, regular updates, and collaborative support guide each child\'s unique journey.',
   ],
-  missionQuote: 'Every child deserves to feel safe, loved, and celebrated. Divine Heritage provides a warm, nurturing space where children can explore, discover, and grow with confidence.',
+  missionQuote: 'Creating a warm, nurturing space where every child feels safe, loved, and celebrated.',
   values: [
     { title: 'Love & Belonging',    description: 'Every child is welcomed as part of the family environment. Warm, secure relationships help children feel confident and valued.' },
     { title: 'Learning Through Play', description: 'A play-based approach aligned with EYFS is followed, where curiosity is celebrated and every activity serves a developmental purpose.' },
@@ -113,13 +112,12 @@ export const DEFAULT_ABOUT: AboutSettings = {
 // Helpers
 // ---------------------------------------------------------------------------
 
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-
 function replaceLegacyYears<T>(val: T): T {
   if (typeof val === 'string') {
-    return val.replace(/\b2018\b/g, '2017') as unknown as T
+    return val
+      .replace(/\b2018\b/g, '2017')
+      .replace(/,\s*,/g, ', ')
+      .replace(/,\s*\./g, '.') as unknown as T
   }
   if (Array.isArray(val)) {
     return val.map(replaceLegacyYears) as unknown as T
@@ -132,6 +130,52 @@ function replaceLegacyYears<T>(val: T): T {
     return res as T
   }
   return val
+}
+
+function sanitiseAboutSettings(raw: AboutSettings): AboutSettings {
+  const data = replaceLegacyYears(raw)
+  let highlights = data.highlights && data.highlights.length > 0
+    ? [...data.highlights]
+    : [...DEFAULT_ABOUT.highlights]
+
+  // Remove any nutritional / meal highlights
+  highlights = highlights.filter(
+    (h) => !/nutriti|meal/i.test(h.title) && !/nutriti|meal/i.test(h.description)
+  )
+
+  // Update specific highlights to current text
+  highlights = highlights.map((h) => {
+    if (/family.*partnership/i.test(h.title)) {
+      return {
+        ...h,
+        title: 'Family Partnership',
+        description: 'Working closely with parents to provide consistent, joined-up care.',
+      }
+    }
+    if (/safe.*stimulating/i.test(h.title)) {
+      return {
+        ...h,
+        title: 'Safe & Stimulating',
+        description: 'Offering a fully Ofsted-registered home environment, exceptionally well-resourced for every stage of learning.',
+      }
+    }
+    return h
+  })
+
+  if (highlights.length === 0) {
+    highlights = DEFAULT_ABOUT.highlights
+  }
+
+  let missionQuote = data.missionQuote
+  if (!missionQuote || /Every child deserves to feel/i.test(missionQuote)) {
+    missionQuote = 'Creating a warm, nurturing space where every child feels safe, loved, and celebrated.'
+  }
+
+  return {
+    ...data,
+    highlights,
+    missionQuote,
+  }
 }
 
 function settingsRef(docId: string) {
@@ -196,8 +240,8 @@ export function subscribeToHero(
 
 export async function getAboutSettings(): Promise<AboutSettings> {
   const snap = await getDoc(settingsRef(DOC_ABOUT))
-  if (!snap.exists()) return replaceLegacyYears({ ...DEFAULT_ABOUT })
-  return replaceLegacyYears({ ...DEFAULT_ABOUT, ...(snap.data() as Partial<AboutSettings>) })
+  if (!snap.exists()) return sanitiseAboutSettings({ ...DEFAULT_ABOUT })
+  return sanitiseAboutSettings({ ...DEFAULT_ABOUT, ...(snap.data() as Partial<AboutSettings>) })
 }
 
 export function subscribeToAbout(
@@ -210,7 +254,7 @@ export function subscribeToAbout(
       const raw: AboutSettings = snap.exists()
         ? { ...DEFAULT_ABOUT, ...(snap.data() as Partial<AboutSettings>) }
         : { ...DEFAULT_ABOUT }
-      callback(replaceLegacyYears(raw))
+      callback(sanitiseAboutSettings(raw))
     },
     (err) => { console.error('[settings/about]', err); onError?.(err) },
   )

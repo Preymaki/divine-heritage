@@ -46,9 +46,9 @@ export default function About() {
     ? about.storyParagraphs
     : [
         'Divine Heritage Childcare Service was founded in 2017 as a professional home-based childminding service where children can learn, play, and grow safely. A loving, familiar home environment provides the very best foundation for early childhood development.',
-        'Children are welcomed from 5/6 months to 5 years old, as well as school-age children for after-school care — covering toddlers, pre-schoolers, and school-age groups. Every child is treated as an individual and cared for at their own pace.',
+        'Children are welcomed from 5/6 months to 5 years old, as well as school-age children for after-school care, covering toddlers, pre-schoolers, and school-age groups. Every child is treated as an individual and cared for at their own pace.',
         'The large playroom is thoughtfully equipped with age-appropriate resources to spark curiosity and creativity. The setting features a spacious, secure garden, allowing for daily outdoor play and physical development.',
-        'Regular outings are made to the local playground, library, and community playgroups — giving children rich social experiences and a connection to their local community. True partnership is maintained with families, with open and honest communication every step of the way.',
+        'Regular outings are made to the local playground, library, and community playgroups, giving children rich social experiences and a connection to their local community. True partnership is maintained with families, with open and honest communication every step of the way.',
       ]
 
   const valuesList = about.values && about.values.length > 0 ? about.values : DEFAULT_VALUES
@@ -165,10 +165,10 @@ export default function About() {
             </p>
             <blockquote>
               <p className="text-2xl md:text-3xl font-[var(--font-family-heading)] font-medium text-[var(--color-text-primary)] leading-relaxed italic">
-                "{about.missionQuote || 'Every child deserves to feel safe, loved, and celebrated. Divine Heritage provides a warm, nurturing space where children can explore, discover, and grow with confidence.'}"
+                "{about.missionQuote || 'Creating a warm, nurturing space where every child feels safe, loved, and celebrated.'}"
               </p>
               <cite className="block mt-6 text-sm text-[var(--color-text-muted)] not-italic font-medium">
-                — Divine Heritage Childcare Service
+                Divine Heritage Childcare Service
               </cite>
             </blockquote>
           </div>

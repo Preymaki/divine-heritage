@@ -7,19 +7,22 @@ import { useSiteImages } from '@hooks/useSiteImages'
 import { useAboutSettings } from '@hooks/useAboutSettings'
 
 const DEFAULT_HIGHLIGHTS = [
-  'Family-centred approach since 2017',
-  'Experienced, qualified, and passionate',
-  'Every child treated as an individual',
-  'Transparent communication with parents',
+  { title: 'Child-Led Learning', description: "Activities are inspired by each child's interests and developmental stage." },
+  { title: 'Family Partnership', description: 'Working closely with parents to provide consistent, joined-up care.' },
+  { title: 'Safe & Stimulating', description: 'Offering a fully Ofsted-registered home environment, exceptionally well-resourced for every stage of learning.' },
 ]
 
 export default function AboutPreview() {
   const siteImages = useSiteImages()
   const { about } = useAboutSettings()
 
-  const highlightList = about.highlights && about.highlights.length > 0
-    ? about.highlights.map((h) => h.description ? `${h.title} — ${h.description}` : h.title)
+  const rawHighlights = about.highlights && about.highlights.length > 0
+    ? about.highlights
     : DEFAULT_HIGHLIGHTS
+
+  const highlightList = rawHighlights
+    .filter((h) => !/nutriti|meal/i.test(h.title) && !/nutriti|meal/i.test(h.description))
+    .map((h) => h.description ? `${h.title} — ${h.description}` : h.title)
 
   const previewImageSrc = about.aboutImageUrl || siteImages.homeAbout
 
@@ -60,8 +63,8 @@ export default function AboutPreview() {
         <AnimatedSection direction="right" delay={0.15}>
           <SectionHeader
             eyebrow="About Divine Heritage"
-            title={about.previewTitle || 'A Home Away From Home'}
-            subtitle={about.previewSubtitle || 'Every child deserves to feel safe, loved, and celebrated. Divine Heritage provides a warm, nurturing space where children can explore, discover, and grow with confidence.'}
+            title={about.previewTitle || 'A Childcare Service Built on Love & Trust'}
+            subtitle={about.previewSubtitle || 'Founded in 2017, Divine Heritage provides warm, professional home-based childminding for families across South East London.'}
           />
 
           <ul className="mt-7 space-y-3.5" role="list">
@@ -79,10 +82,10 @@ export default function AboutPreview() {
 
           <blockquote className="mt-8 pl-4 border-l-2 border-[var(--color-accent-400)]">
             <p className="text-[var(--color-text-secondary)] text-sm md:text-base italic leading-relaxed">
-              "{about.missionQuote || 'Every child deserves to feel safe, loved, and celebrated. Divine Heritage provides a warm, nurturing space where children can explore, discover, and grow with confidence.'}"
+              "{about.missionQuote || 'Creating a warm, nurturing space where every child feels safe, loved, and celebrated.'}"
             </p>
             <cite className="block mt-2 text-xs text-[var(--color-text-muted)] not-italic font-medium">
-              — Divine Heritage Childcare Service
+              Divine Heritage Childcare Service
             </cite>
           </blockquote>
 
