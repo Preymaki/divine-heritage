@@ -30,7 +30,7 @@ const WHY_ITEMS: WhyItem[] = [
   },
   {
     icon: TreePine,
-    title: 'Setting & Garden',
+    title: 'The Setting',
     description:
       'The childcare environment is designed for independence and exploration, featuring:',
     bullets: [

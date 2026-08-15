@@ -17,24 +17,24 @@ const QUALIFICATIONS = [
 
 const DEFAULT_VALUES = [
   {
-    title: 'Safety First',
+    title: 'Love & Belonging',
     description:
-      'The setting is fully risk-assessed and equipped to the highest safety standards. Every corner, every outing, and every activity is planned with child safety as the absolute priority.',
+      'A family-centered setting where warm, secure relationships inspire confidence and a true sense of belonging.',
   },
   {
-    title: 'Nurturing Environment',
+    title: 'Learning Through Play',
     description:
-      'A warm, loving, and consistent environment is provided that helps children develop secure attachments, emotional resilience, and a deep sense of belonging.',
+      'Following a play-based, EYFS-aligned approach ensures curiosity is celebrated and every activity is meaningful.',
   },
   {
-    title: 'Individualised Attention',
+    title: 'Partnership',
     description:
-      'With a small, carefully managed number of children, every child receives the personalised attention and care required.',
+      "Parental Collaboration: Hand-in-hand support, daily updates, and shared celebration of every child's milestones.",
   },
   {
-    title: 'Family Partnership',
+    title: 'Respect & Inclusion',
     description:
-      'Close collaboration is maintained with parents and carers through daily updates, photos, and progress reports. Families are true partners in each child\'s development.',
+      'Diversity is celebrated every day, guiding children to respect, appreciate, and embrace the wonderful world around them.',
   },
 ]
 
@@ -42,7 +42,7 @@ export default function About() {
   const siteImages = useSiteImages()
   const { about } = useAboutSettings()
 
-  const storyParagraphs = about.storyParagraphs && about.storyParagraphs.length > 0
+  const rawStoryParagraphs = about.storyParagraphs && about.storyParagraphs.length > 0
     ? about.storyParagraphs
     : [
         'Divine Heritage Childcare Service was founded in 2017 as a professional home-based childminding service where children can learn, play, and grow safely. A loving, familiar home environment provides the very best foundation for early childhood development.',
@@ -50,6 +50,14 @@ export default function About() {
         'The large playroom is thoughtfully equipped with age-appropriate resources to spark curiosity and creativity. The setting features a spacious, secure garden, allowing for daily outdoor play and physical development.',
         'Regular outings are made to the local playground, library, and community playgroups, giving children rich social experiences and a connection to their local community. True partnership is maintained with families, with open and honest communication every step of the way.',
       ]
+
+  const storyParagraphs = rawStoryParagraphs.map((p) =>
+    p
+      .replace(/\s*—\s*the first independent steps,\s*the proud smile after completing a puzzle,\s*the friendships formed\s*—\s*/gi, ', like the first independent steps, the proud smile after completing a puzzle, and the friendships formed, ')
+      .replace(/\s*—\s*/g, ', ')
+      .replace(/,\s*,/g, ', ')
+      .replace(/,\s*\./g, '.')
+  )
 
   const valuesList = about.values && about.values.length > 0 ? about.values : DEFAULT_VALUES
   const aboutImageSrc = about.aboutImageUrl || siteImages.aboutPage

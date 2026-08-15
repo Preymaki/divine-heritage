@@ -94,10 +94,22 @@ export const DEFAULT_ABOUT: AboutSettings = {
   ],
   missionQuote: 'Creating a warm, nurturing space where every child feels safe, loved, and celebrated.',
   values: [
-    { title: 'Love & Belonging',    description: 'Every child is welcomed as part of the family environment. Warm, secure relationships help children feel confident and valued.' },
-    { title: 'Learning Through Play', description: 'A play-based approach aligned with EYFS is followed, where curiosity is celebrated and every activity serves a developmental purpose.' },
-    { title: 'Partnership',         description: 'Collaboration with parents is central, with updates and milestones shared together as a team.' },
-    { title: 'Respect & Inclusion', description: 'Diversity is celebrated, guiding children to respect and appreciate the world around them.' },
+    {
+      title: 'Love & Belonging',
+      description: 'A family-centered setting where warm, secure relationships inspire confidence and a true sense of belonging.',
+    },
+    {
+      title: 'Learning Through Play',
+      description: 'Following a play-based, EYFS-aligned approach ensures curiosity is celebrated and every activity is meaningful.',
+    },
+    {
+      title: 'Partnership',
+      description: "Parental Collaboration: Hand-in-hand support, daily updates, and shared celebration of every child's milestones.",
+    },
+    {
+      title: 'Respect & Inclusion',
+      description: 'Diversity is celebrated every day, guiding children to respect, appreciate, and embrace the wonderful world around them.',
+    },
   ],
   bioName:       '',
   bioParagraphs: [
@@ -166,6 +178,63 @@ function sanitiseAboutSettings(raw: AboutSettings): AboutSettings {
     highlights = DEFAULT_ABOUT.highlights
   }
 
+  let values = data.values && data.values.length > 0
+    ? [...data.values]
+    : [...DEFAULT_ABOUT.values]
+
+  values = values.map((v) => {
+    if (/love.*belonging/i.test(v.title)) {
+      return {
+        ...v,
+        title: 'Love & Belonging',
+        description: 'A family-centered setting where warm, secure relationships inspire confidence and a true sense of belonging.',
+      }
+    }
+    if (/learning.*play/i.test(v.title)) {
+      return {
+        ...v,
+        title: 'Learning Through Play',
+        description: 'Following a play-based, EYFS-aligned approach ensures curiosity is celebrated and every activity is meaningful.',
+      }
+    }
+    if (/partnership/i.test(v.title)) {
+      return {
+        ...v,
+        title: 'Partnership',
+        description: "Parental Collaboration: Hand-in-hand support, daily updates, and shared celebration of every child's milestones.",
+      }
+    }
+    if (/respect.*inclusion/i.test(v.title)) {
+      return {
+        ...v,
+        title: 'Respect & Inclusion',
+        description: 'Diversity is celebrated every day, guiding children to respect, appreciate, and embrace the wonderful world around them.',
+      }
+    }
+    return v
+  })
+
+  let storyParagraphs = (data.storyParagraphs && data.storyParagraphs.length > 0
+    ? data.storyParagraphs
+    : DEFAULT_ABOUT.storyParagraphs
+  ).map((p) =>
+    p
+      .replace(/\s*—\s*the first independent steps,\s*the proud smile after completing a puzzle,\s*the friendships formed\s*—\s*/gi, ', like the first independent steps, the proud smile after completing a puzzle, and the friendships formed, ')
+      .replace(/\s*—\s*/g, ', ')
+      .replace(/,\s*,/g, ', ')
+      .replace(/,\s*\./g, '.')
+  )
+
+  let bioParagraphs = (data.bioParagraphs && data.bioParagraphs.length > 0
+    ? data.bioParagraphs
+    : DEFAULT_ABOUT.bioParagraphs
+  ).map((p) =>
+    p
+      .replace(/\s*—\s*/g, ', ')
+      .replace(/,\s*,/g, ', ')
+      .replace(/,\s*\./g, '.')
+  )
+
   let missionQuote = data.missionQuote
   if (!missionQuote || /Every child deserves to feel/i.test(missionQuote)) {
     missionQuote = 'Creating a warm, nurturing space where every child feels safe, loved, and celebrated.'
@@ -174,6 +243,9 @@ function sanitiseAboutSettings(raw: AboutSettings): AboutSettings {
   return {
     ...data,
     highlights,
+    values,
+    storyParagraphs,
+    bioParagraphs,
     missionQuote,
   }
 }
