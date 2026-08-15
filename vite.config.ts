@@ -27,7 +27,4 @@ export default defineConfig({
       '@appTypes': resolve(__dirname, './src/types'),
     },
   },
-  build: {
-    minify: 'esbuild',
-  },
 })
