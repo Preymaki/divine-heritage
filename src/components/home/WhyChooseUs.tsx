@@ -4,7 +4,6 @@ import {
   Heart,
   BookOpen,
   Users,
-  ShieldCheck,
   Star,
   MessageSquare,
 } from 'lucide-react'
@@ -60,20 +59,7 @@ const WHY_ITEMS: WhyItem[] = [
       'Regular visits to playgroups, the library, and local parks give children rich social experiences outside the home.',
     colour: '#f054af',  // soft pink
   },
-  {
-    icon: ShieldCheck,
-    title: 'Professional Credentials & Safety Standards',
-    description:
-      'Complete peace of mind is assured through full compliance and up-to-date professional qualifications, including:',
-    bullets: [
-      { label: 'Ofsted Inspected', text: 'Fully registered and regularly inspected.' },
-      { label: 'Enhanced DBS Checked', text: 'Cleared for working safely with children.' },
-      { label: 'Paediatric First Aid', text: 'Certified to handle medical situations confidently.' },
-      { label: 'Safeguarding Trained', text: 'Up-to-date certification in child protection.' },
-      { label: 'Fully Insured', text: 'Comprehensive public liability insurance in place.' },
-    ],
-    colour: '#1845aa',  // dark blue
-  },
+
   {
     icon: Star,
     title: 'Consistent Routine',
