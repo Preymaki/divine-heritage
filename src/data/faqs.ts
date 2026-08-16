@@ -15,16 +15,16 @@ export const FAQS: FAQ[] = [
   },
   {
     id: 'ages',
-    question: 'What ages are cared for?',
+    question: 'What ages and sessions are cared for?',
     answer:
-      'Care is provided for babies, toddlers, pre-school children, and school-age children (from 5/6 months to 11 years). After-school care is also available. Numbers are carefully managed to maintain an exceptional standard of individualised care for every child.',
+      'Full-time and part-time sessions are provided for Babies & Toddlers (5/6 months – 3 years) and Preschoolers (3 – 5 years), as well as After-School Care for children aged 5 – 11 years. Numbers are carefully managed to maintain an exceptional standard of individualised care for every child.',
     category: 'general',
   },
   {
     id: 'hours',
     question: 'What are the hours of operation?',
     answer:
-      'Standard operating hours are Monday to Thursday, 8:00am to 6:00pm, and Friday 8:00am to 5:00pm. Flexible arrangements, including part-time, term-time only, and before or after school care, can be arranged based on availability. Weekend or overnight care is not currently offered.',
+      'Operating hours are Monday to Thursday 8:00am to 6:00pm, and Friday 8:00am to 5:00pm. Full-time and part-time flexible sessions are available across the week, subject to availability. Weekend or overnight care is not currently offered.',
     category: 'general',
   },
   {

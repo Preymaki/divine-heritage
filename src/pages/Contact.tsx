@@ -17,17 +17,20 @@ interface FormData {
 }
 
 const AGE_OPTIONS = [
-  '5/6 months – 2 years (Baby / Toddler)',
-  '2 – 3 years (Toddler)',
-  '3 – 4 years (Pre-school)',
-  '4 – 5 years (Pre-school)',
-  'School age (after school care)',
+  'Babies – Toddlers (5/6 months – 3 years)',
+  'Preschoolers (3 – 5 years)',
+  'School Age (5 – 11 years / After School)',
+  'Full-Time Sessions (Babies – Toddlers)',
+  'Part-Time Sessions (Babies – Toddlers)',
+  'Full-Time Sessions (Preschoolers)',
+  'Part-Time Sessions (Preschoolers)',
 ]
 
 const SERVICE_OPTIONS = [
   'Childminding (Full-Day)',
   'Early Years Care',
   'After School Care',
+  'Part-Time & Flexible Hours',
   'Not sure yet',
 ]
 

@@ -13,11 +13,11 @@ export const SERVICES: Service[] = [
   {
     id: 'childminding',
     icon: 'Home',
-    title: 'Full-Day Childminding',
+    title: 'Childminding (Full-Day)',
     ageRange: 'Babies & Toddlers – Pre-school (5/6 months – 5 years)',
     availability: 'Mon – Thu 8:00am – 6:00pm, Fri 8:00am – 5:00pm',
     description:
-      'The core service provides full-day care in a warm, home-from-home setting. Children benefit from a consistent routine, personalised attention, and a rich variety of activities tailored to their developmental stage.',
+      'The core service provides full-day care in a warm, home-from-home setting. Children benefit from a consistent routine, personalized attention, and a rich variety of activities tailored to their developmental stage.',
     features: [
       'Children bring in their own food',
       'Indoor and outdoor play',
@@ -49,7 +49,7 @@ export const SERVICES: Service[] = [
     icon: 'BookOpen',
     title: 'After School Care',
     ageRange: '5 – 11 years',
-    availability: 'Mon – Thu to 6:00pm, Fri to 5:00pm',
+    availability: 'Mon – Thu 8:00am – 6:00pm, Fri 8:00am – 5:00pm',
     description:
       'A relaxed, supportive after-school environment where children can unwind, have their snacks, enjoy indoor and outdoor play, and socialise before heading home. School pickups available.',
     features: [
@@ -61,4 +61,23 @@ export const SERVICES: Service[] = [
     ],
     colour: 'sage',
   },
+  {
+    id: 'flexible-hours',
+    icon: 'Clock',
+    title: 'Part-Time & Flexible Hours',
+    ageRange: 'Babies, Toddlers & Pre-school – 5/6 months – 5 years',
+    availability: 'Flexible sessions available Monday – Friday, subject to availability',
+    description:
+      'A flexible childcare option designed around the needs of busy families. Parents can choose shorter sessions or selected days throughout the week, while children continue to enjoy a nurturing home-from-home environment with opportunities to learn, play and develop at their own pace.',
+    features: [
+      'Flexible morning or afternoon sessions',
+      'Personalised care and attention',
+      'Indoor and outdoor play',
+      'Age-appropriate learning and creative activities',
+      'EYFS-aligned learning and development',
+      'Regular updates for parents',
+    ],
+    colour: 'primary',
+  },
 ]
+

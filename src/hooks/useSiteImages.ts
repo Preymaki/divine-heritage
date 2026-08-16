@@ -22,6 +22,7 @@ export interface SiteImagesMap {
   serviceChildminding: string
   serviceEarlyYears: string
   serviceAfterSchool: string
+  serviceFlexible: string
   serviceArts: string
   serviceOutdoor: string
 }
@@ -35,6 +36,7 @@ export function useSiteImages(): SiteImagesMap {
     serviceChildminding:  IMAGES.serviceChildminding,
     serviceEarlyYears:    IMAGES.serviceEarlyYears,
     serviceAfterSchool:   IMAGES.serviceAfterSchool,
+    serviceFlexible:      IMAGES.serviceFlexible,
     serviceArts:          IMAGES.serviceArts,
     serviceOutdoor:       IMAGES.serviceOutdoor,
   })
@@ -62,6 +64,7 @@ export function useSiteImages(): SiteImagesMap {
           serviceChildminding:  getServiceUrl(1, IMAGES.serviceChildminding),
           serviceEarlyYears:    getServiceUrl(2, IMAGES.serviceEarlyYears),
           serviceAfterSchool:   getServiceUrl(3, IMAGES.serviceAfterSchool),
+          serviceFlexible:      getServiceUrl(4, IMAGES.serviceFlexible),
           serviceArts:          getServiceUrl(4, IMAGES.serviceArts),
           serviceOutdoor:       getServiceUrl(5, IMAGES.serviceOutdoor),
         })

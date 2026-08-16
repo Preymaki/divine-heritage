@@ -249,7 +249,7 @@ export async function seedGallery(uploadedBy: string): Promise<void> {
       downloadURL: '/images/indoor-train-track.jpeg',
       title: 'Services Page: Childminding Cover',
       altText: 'Child building wooden train track in home nursery',
-      caption: 'Cover photo for Full & Part-Time Childminding service card.',
+      caption: 'Cover photo for Childminding (Full-Day) service card.',
     },
     {
       group: 'services_page', sortOrder: 2,
@@ -268,9 +268,9 @@ export async function seedGallery(uploadedBy: string): Promise<void> {
     {
       group: 'services_page', sortOrder: 4,
       downloadURL: '/images/arts-painting-easel.jpeg',
-      title: 'Services Page: Arts & Crafts Cover',
+      title: 'Services Page: Part-Time & Flexible Hours Cover',
       altText: 'Child wearing apron painting at easel',
-      caption: 'Cover photo for Creative Arts & Crafts sessions card.',
+      caption: 'Cover photo for Part-Time & Flexible Hours service card.',
     },
     {
       group: 'services_page', sortOrder: 5,

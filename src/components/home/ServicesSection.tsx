@@ -9,6 +9,7 @@ const iconMap: Record<string, React.ComponentType<{ size?: number; className?: s
   Home,
   Sparkles,
   BookOpen,
+  Clock,
 }
 
 const colourMap: Record<string, string> = {
@@ -35,7 +36,7 @@ export default function ServicesSection() {
         />
       </AnimatedSection>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-12">
         {SERVICES.map((service, i) => {
           const Icon = iconMap[service.icon] ?? Home
           const iconColour = colourMap[service.colour] ?? colourMap.primary

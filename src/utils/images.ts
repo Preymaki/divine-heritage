@@ -27,6 +27,7 @@ export const IMAGES = {
   serviceChildminding:  '/images/indoor-train-track.jpeg',       // cosy home play
   serviceEarlyYears:    '/images/reading-book.jpeg',             // child reading independently
   serviceAfterSchool:   '/images/outing-softplay-blocks.jpeg',   // physical activity outing
+  serviceFlexible:      '/images/arts-painting-easel.jpeg',      // creative and flexible play
   serviceArts:          '/images/arts-painting-easel.jpeg',      // painting at easel
   serviceOutdoor:       '/images/outdoor-nature-tree.jpeg',      // nature exploration
 

@@ -10,6 +10,7 @@ const iconMap: Record<string, React.ComponentType<{ size?: number }>> = {
   Home,
   Sparkles,
   BookOpen,
+  Clock,
 }
 
 const colourMap: Record<string, string> = {
@@ -41,6 +42,11 @@ export default function Services() {
     'after-school': {
       src: siteImages.serviceAfterSchool,
       alt: 'A toddler building strength and coordination on foam climbing blocks at a soft play session during an active outing arranged by Divine Heritage',
+      position: 'object-center',
+    },
+    'flexible-hours': {
+      src: siteImages.serviceFlexible || siteImages.serviceArts,
+      alt: 'Children engaged in creative learning activities and flexible play in a warm home environment at Divine Heritage',
       position: 'object-center',
     },
   }

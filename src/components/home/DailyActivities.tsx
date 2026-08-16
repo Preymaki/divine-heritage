@@ -31,14 +31,14 @@ const iconMap: Record<string, LucideIcon> = {
 }
 
 const DAILY_SCHEDULE = [
-  { time: '8:00 – 9:00am', activity: 'Welcome & indoor free play' },
-  { time: '9:00 – 10:30am', activity: 'Planned learning activity (EYFS-linked)' },
-  { time: '10:30 – 11:30am', activity: 'Indoor & outdoor play and garden exploration' },
-  { time: '11:30am – 12:30pm', activity: 'Story time, music & movement' },
-  { time: '12:30 – 1:30pm', activity: 'Lunch (packed meals) & rest / quiet time' },
-  { time: '1:30 – 3:00pm', activity: 'Arts & crafts, sensory play, or library visit' },
-  { time: '3:00 – 4:00pm', activity: 'School pickups & afternoon snack time' },
-  { time: '4:00 – 6:00pm', activity: 'Indoor and outdoor play, creative play, and wind-down' },
+  { time: '8:00 – 9:30am', activity: 'Welcome, breakfast & free play' },
+  { time: '9:30 – 10:00am', activity: 'Circle time — register, stories, songs & rhymes' },
+  { time: '10:00am – 12:00pm', activity: 'Outdoor play & EYFS-linked learning activities' },
+  { time: '12:00 – 1:00pm', activity: 'Lunch — packed meals' },
+  { time: '1:00 – 3:00pm', activity: 'Rest / quiet time' },
+  { time: '3:00 – 3:45pm', activity: 'School pick-ups' },
+  { time: '3:45 – 4:30pm', activity: 'Tea time' },
+  { time: '4:30 – 6:00pm', activity: 'Adult-led activities, free play & wind-down' },
 ]
 
 export default function DailyActivities() {
@@ -69,7 +69,7 @@ export default function DailyActivities() {
                 className="flex items-start gap-4 p-3.5 rounded-xl bg-white border border-[var(--color-muted)] group hover:border-[var(--color-primary-200)] hover:shadow-[var(--shadow-soft)] transition-all duration-200 focus-within:border-[var(--color-primary-300)]"
               >
                 <time
-                  className="text-[11px] font-semibold text-[var(--color-primary-500)] shrink-0 w-28 leading-snug pt-0.5 font-[var(--font-family-heading)]"
+                  className="text-[11px] font-semibold text-[var(--color-primary-500)] shrink-0 w-32 sm:w-36 leading-snug pt-0.5 font-[var(--font-family-heading)]"
                   aria-label={time}
                 >
                   {time}
@@ -81,7 +81,7 @@ export default function DailyActivities() {
             ))}
           </div>
           <p className="text-xs text-[var(--color-text-muted)] mt-3 italic">
-            Routines are flexible and adapted to each child's needs and age.
+            Routines are flexible and adapted to each child's individual needs, age and interests.
           </p>
         </AnimatedSection>
 
