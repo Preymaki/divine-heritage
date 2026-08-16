@@ -45,63 +45,67 @@ export default function ServicesSection() {
           return (
             <AnimatedSection key={service.id} delay={i * 0.1}>
               <article
-                className="bg-white rounded-[var(--radius-xl)] p-7 shadow-[var(--shadow-soft)] border border-[var(--color-muted)] card-hover h-full flex flex-col"
+                className="bg-white rounded-[var(--radius-xl)] p-6 shadow-[var(--shadow-soft)] border border-[var(--color-muted)] transition-all duration-300 hover:shadow-[var(--shadow-card)] hover:-translate-y-1 h-full flex flex-col group"
                 aria-label={service.title}
               >
                 {/* Icon */}
                 <div
-                  className="rounded-2xl flex items-center justify-center mb-5 shrink-0"
-                  style={{ backgroundColor: iconBg, width: 52, height: 52, color: iconColour }}
+                  className="rounded-2xl flex items-center justify-center mb-4 shrink-0 transition-transform duration-300 group-hover:scale-105"
+                  style={{ backgroundColor: iconBg, width: 48, height: 48, color: iconColour }}
                   aria-hidden="true"
                 >
-                  <Icon size={24} /></div>
+                  <Icon size={22} />
+                </div>
 
-                {/* Title + meta */}
-                <h3 className="font-[var(--font-family-heading)] font-semibold text-lg text-[var(--color-text-primary)] leading-snug">
+                {/* Title + meta badges */}
+                <h3 className="font-[var(--font-family-heading)] font-bold text-lg text-[var(--color-text-primary)] leading-snug">
                   {service.title}
                 </h3>
-                <div className="flex flex-wrap gap-2 mt-2.5 mb-4">
-                  <span className="text-xs text-[var(--color-text-muted)] bg-[var(--color-muted)] rounded-full px-3 py-1">
-                    {service.ageRange}
+                <div className="flex flex-wrap gap-2 mt-2 mb-3.5">
+                  <span className="text-xs font-medium text-[var(--color-text-muted)] bg-[var(--color-muted)] rounded-full px-3 py-1">
+                    {service.shortAge}
                   </span>
-                  <span className="text-xs text-[var(--color-text-muted)] bg-[var(--color-muted)] rounded-full px-3 py-1 flex items-center gap-1">
-                    <Clock size={11} /> {service.availability}
+                  <span className="text-xs font-medium text-[var(--color-text-muted)] bg-[var(--color-muted)] rounded-full px-3 py-1">
+                    {service.shortAvailability}
                   </span>
                 </div>
 
-                {/* Description */}
-                <p className="text-[var(--color-text-secondary)] text-sm leading-relaxed flex-1">
-                  {service.description}
+                {/* Short catchy description */}
+                <p className="text-[var(--color-text-secondary)] text-sm leading-relaxed mb-4">
+                  {service.shortDescription}
                 </p>
 
-                {/* Feature list */}
-                <ul className="mt-5 space-y-2" role="list">
-                  {service.features.slice(0, 4).map((f) => (
-                    <li key={f} className="flex items-start gap-2.5 text-sm text-[var(--color-text-secondary)]">
+                {/* Top 3 highlights */}
+                <ul className="mt-auto space-y-2 mb-5 pt-2" role="list">
+                  {service.highlights.map((h) => (
+                    <li key={h} className="flex items-center gap-2 text-xs text-[var(--color-text-secondary)]">
                       <Check
-                        size={14}
-                        className="mt-0.5 shrink-0"
+                        size={13}
+                        className="shrink-0 font-bold"
                         style={{ color: iconColour }}
                         aria-hidden="true"
                       />
-                      {f}
+                      <span>{h}</span>
                     </li>
                   ))}
                 </ul>
 
-                {/* Link */}
-                <Link
-                  to="/services"
-                  className="inline-flex items-center gap-1.5 mt-6 text-sm font-semibold group"
-                  style={{ color: iconColour }}
-                  aria-label={`Learn more about ${service.title}`}
-                >
-                  Learn More
-                  <ArrowRight
-                    size={14}
-                    className="group-hover:translate-x-0.5 transition-transform duration-200"
-                  />
-                </Link>
+                {/* Learn More Action Link */}
+                <div className="pt-3.5 border-t border-[var(--color-muted)]">
+                  <Link
+                    to={`/services#${service.id}`}
+                    className="inline-flex items-center gap-1.5 text-sm font-semibold transition-colors duration-200 group/link"
+                    style={{ color: iconColour }}
+                    aria-label={`Learn more about ${service.title}`}
+                  >
+                    <span>Learn More</span>
+                    <ArrowRight
+                      size={14}
+                      className="group-hover/link:translate-x-0.5 transition-transform duration-200"
+                      aria-hidden="true"
+                    />
+                  </Link>
+                </div>
               </article>
             </AnimatedSection>
           )

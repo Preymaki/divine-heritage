@@ -4,6 +4,7 @@ import { useRef } from 'react'
 
 interface AnimatedSectionProps {
   children: ReactNode
+  id?: string
   className?: string
   delay?: number
   direction?: 'up' | 'down' | 'left' | 'right' | 'none'
@@ -21,6 +22,7 @@ interface AnimatedSectionProps {
  */
 export default function AnimatedSection({
   children,
+  id,
   className = '',
   delay = 0,
   direction = 'up',
@@ -35,7 +37,7 @@ export default function AnimatedSection({
   // When reduced motion is preferred, show content immediately with no transform
   if (prefersReducedMotion) {
     return (
-      <div ref={ref} className={className} role={role}>
+      <div ref={ref} id={id} className={className} role={role}>
         {children}
       </div>
     )
@@ -65,6 +67,7 @@ export default function AnimatedSection({
         delay,
         ease: 'easeOut',
       }}
+      id={id}
       className={className}
       role={role}
     >

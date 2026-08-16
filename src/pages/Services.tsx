@@ -81,7 +81,7 @@ export default function Services() {
             const isReversed = i % 2 !== 0
 
             return (
-              <AnimatedSection key={service.id} delay={i * 0.08}>
+              <AnimatedSection key={service.id} delay={i * 0.08} id={service.id} className="scroll-mt-32">
                 <div
                   className={`grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center ${
                     isReversed ? 'lg:[&>*:first-child]:order-2' : ''
