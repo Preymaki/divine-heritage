@@ -4,6 +4,7 @@ import { SERVICES } from '@data/services'
 import AnimatedSection from '@components/ui/AnimatedSection'
 import SectionWrapper from '@components/ui/SectionWrapper'
 import CTASection from '@components/home/CTASection'
+import FundedHoursSection from '@components/services/FundedHoursSection'
 import { useSiteImages } from '@hooks/useSiteImages'
 
 const iconMap: Record<string, React.ComponentType<{ size?: number }>> = {
@@ -160,7 +161,8 @@ export default function Services() {
         </div>
       </SectionWrapper>
 
-
+      {/* Funded Childcare Hours Section */}
+      <FundedHoursSection />
 
       <CTASection />
     </>
