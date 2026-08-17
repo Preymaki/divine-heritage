@@ -24,8 +24,6 @@ const AccessDenied = lazy(() => import('@pages/admin/AccessDenied'))
 // ── Admin CMS pages (lazy — kept out of the public bundle) ──────────────────
 const AdminDashboard = lazy(() => import('@pages/admin/AdminDashboard'))
 const AdminGallery   = lazy(() => import('@pages/admin/AdminGallery'))
-const AdminReviews   = lazy(() => import('@pages/admin/AdminReviews'))
-const AdminBlog      = lazy(() => import('@pages/admin/AdminBlog'))
 const AdminMessages  = lazy(() => import('@pages/admin/AdminMessages'))
 const AdminSettings  = lazy(() => import('@pages/admin/AdminSettings'))
 
@@ -97,8 +95,8 @@ export default function App() {
             <Route element={<DashboardLayout />}>
               <Route path="dashboard" element={<AdminPage page={AdminDashboard} />} />
               <Route path="gallery"   element={<AdminPage page={AdminGallery} />} />
-              <Route path="reviews"   element={<AdminPage page={AdminReviews} />} />
-              <Route path="blog"      element={<AdminPage page={AdminBlog} />} />
+              <Route path="reviews"   element={<Navigate to="/admin/dashboard" replace />} />
+              <Route path="blog"      element={<Navigate to="/admin/dashboard" replace />} />
               <Route path="messages"  element={<AdminPage page={AdminMessages} />} />
               <Route path="settings"  element={<AdminPage page={AdminSettings} />} />
             </Route>

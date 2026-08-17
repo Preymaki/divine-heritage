@@ -16,8 +16,6 @@ function usePageTitle(): string {
   const titleMap: Record<string, string> = {
     dashboard: 'Dashboard',
     gallery:   'Gallery',
-    reviews:   'Reviews',
-    blog:      'Blog',
     messages:  'Messages',
     settings:  'Settings',
   }

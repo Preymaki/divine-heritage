@@ -1,4 +1,4 @@
-import { Star, Quote } from 'lucide-react'
+import { Star, Quote, ExternalLink } from 'lucide-react'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Autoplay, Pagination } from 'swiper/modules'
 import 'swiper/css'
@@ -7,6 +7,8 @@ import { TESTIMONIALS } from '@data/testimonials'
 import AnimatedSection from '@components/ui/AnimatedSection'
 import SectionWrapper from '@components/ui/SectionWrapper'
 import SectionHeader from '@components/ui/SectionHeader'
+import Button from '@components/ui/Button'
+import { SITE } from '@constants/site'
 
 function StarRating({ rating }: { rating: number }) {
   return (
@@ -98,6 +100,21 @@ export default function TestimonialsSection() {
             </SwiperSlide>
           ))}
         </Swiper>
+      </AnimatedSection>
+
+      <AnimatedSection delay={0.3} className="mt-4 flex justify-center">
+        <Button
+          as="a"
+          href={SITE.social.childcare}
+          target="_blank"
+          rel="noopener noreferrer"
+          variant="outline"
+          size="md"
+          id="see-more-reviews-btn"
+        >
+          <span>See More Reviews</span>
+          <ExternalLink size={16} aria-hidden="true" />
+        </Button>
       </AnimatedSection>
     </SectionWrapper>
   )

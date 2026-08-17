@@ -1,75 +1,95 @@
 /**
  * AdminDashboard — /admin/dashboard
  *
- * Dashboard home page. Shows a welcome header, summary stat cards,
+ * Dashboard home page. Shows a welcome header, summary stat cards
+ * backed by real-time Firestore data (Gallery & Messages),
  * and quick-action links to each CMS section.
- *
- * All values are placeholders — Firestore integration is Milestone 4+.
  */
 
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import {
   Images,
-  Star,
-  BookOpen,
   MessageSquare,
+  Settings,
   ArrowRight,
   Sparkles,
 } from 'lucide-react'
 import { useAuth } from '@hooks/useAuth'
+import { useGallery } from '@hooks/useGallery'
+import { subscribeToEnquiries } from '@services/enquiries'
+import type { Enquiry } from '@appTypes/enquiry'
 import StatCard from '@components/admin/StatCard'
 import PageHeader from '@components/admin/PageHeader'
-
-// ── Stat card data ───────────────────────────────────────────────────────────
-
-const STATS = [
-  {
-    id:     'stat-gallery',
-    icon:   Images,
-    label:  'Gallery Images',
-    value:  '—',
-    subtext: 'Connect Firestore to see count',
-    color:  'blue',
-  },
-  {
-    id:     'stat-reviews',
-    icon:   Star,
-    label:  'Pending Reviews',
-    value:  '—',
-    subtext: 'Awaiting moderation',
-    color:  'pink',
-  },
-  {
-    id:     'stat-blog',
-    icon:   BookOpen,
-    label:  'Blog Posts',
-    value:  '—',
-    subtext: 'Published + drafts',
-    color:  'sage',
-  },
-  {
-    id:     'stat-messages',
-    icon:   MessageSquare,
-    label:  'New Messages',
-    value:  '—',
-    subtext: 'Unread contact enquiries',
-    color:  'amber',
-  },
-] as const
 
 // ── Quick links ──────────────────────────────────────────────────────────────
 
 const QUICK_LINKS = [
   { href: '/admin/gallery',  icon: Images,         label: 'Manage Gallery',  desc: 'Upload and organise photos' },
-  { href: '/admin/reviews',  icon: Star,            label: 'Moderate Reviews',desc: 'Approve parent reviews' },
-  { href: '/admin/blog',     icon: BookOpen,        label: 'Write a Post',    desc: 'Create and edit blog content' },
   { href: '/admin/messages', icon: MessageSquare,   label: 'View Messages',   desc: 'Respond to enquiries' },
+  { href: '/admin/settings', icon: Settings,        label: 'Site Settings',   desc: 'Update contact info & content' },
 ] as const
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
 export default function AdminDashboard() {
   const { user } = useAuth()
+
+  // Live Gallery data
+  const { items: galleryItems, loading: galleryLoading, error: galleryError } = useGallery()
+
+  // Live Enquiries / Messages data
+  const [enquiries, setEnquiries]               = useState<Enquiry[]>([])
+  const [enquiriesLoading, setEnquiriesLoading] = useState(true)
+  const [enquiriesError, setEnquiriesError]     = useState<string | null>(null)
+
+  useEffect(() => {
+    const unsub = subscribeToEnquiries(
+      (data) => {
+        setEnquiries(data)
+        setEnquiriesLoading(false)
+        setEnquiriesError(null)
+      },
+      (err) => {
+        setEnquiriesError(err.message)
+        setEnquiriesLoading(false)
+      },
+    )
+    return unsub
+  }, [])
+
+  // Derived stats
+  const publishedGalleryCount = galleryItems.filter((item) => item.isPublished).length
+  const unreadEnquiriesCount  = enquiries.filter((e) => e.status === 'unread').length
+
+  const stats = [
+    {
+      id: 'stat-gallery',
+      icon: Images,
+      label: 'Gallery Images',
+      value: galleryLoading ? '…' : galleryError ? '—' : galleryItems.length,
+      subtext: galleryLoading
+        ? 'Loading gallery count…'
+        : galleryError
+          ? 'Unable to load count'
+          : `${publishedGalleryCount} published on website`,
+      color: 'blue' as const,
+    },
+    {
+      id: 'stat-messages',
+      icon: MessageSquare,
+      label: 'New Messages',
+      value: enquiriesLoading ? '…' : enquiriesError ? '—' : unreadEnquiriesCount,
+      subtext: enquiriesLoading
+        ? 'Loading message count…'
+        : enquiriesError
+          ? 'Unable to load count'
+          : unreadEnquiriesCount === 0
+            ? 'No unread enquiries'
+            : `${unreadEnquiriesCount} unread enquir${unreadEnquiriesCount === 1 ? 'y' : 'ies'} (${enquiries.length} total)`,
+      color: 'amber' as const,
+    },
+  ]
 
   // Derive first name / greeting
   const displayName = user?.email?.split('@')[0] ?? 'Admin'
@@ -84,7 +104,7 @@ export default function AdminDashboard() {
         <div className="dashboard-welcome-text">
           <PageHeader
             title={`${greeting}, ${displayName} 👋`}
-            subtitle="Here's a snapshot of your site content. Connect Firestore in Milestone 4 to see live data."
+            subtitle="Here's a snapshot of your site content, gallery images, and parent enquiries."
           />
         </div>
         <div className="dashboard-welcome-badge" aria-hidden="true">
@@ -96,7 +116,7 @@ export default function AdminDashboard() {
       {/* Stat cards */}
       <section aria-label="Summary statistics">
         <div className="stat-cards-grid">
-          {STATS.map(({ id, icon, label, value, subtext, color }) => (
+          {stats.map(({ id, icon, label, value, subtext, color }) => (
             <StatCard
               key={id}
               id={id}
@@ -104,7 +124,7 @@ export default function AdminDashboard() {
               label={label}
               value={value}
               subtext={subtext}
-              color={color as 'blue' | 'pink' | 'sage' | 'amber'}
+              color={color}
             />
           ))}
         </div>

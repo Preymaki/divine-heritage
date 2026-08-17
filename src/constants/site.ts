@@ -12,6 +12,7 @@ export const SITE = {
   social: {
     facebook: 'https://facebook.com/divineheritagechildcare',
     instagram: 'https://instagram.com/divineheritagechildcare',
+    childcare: 'https://www.childcare.co.uk/profile/2305993',
   },
 } as const
 
