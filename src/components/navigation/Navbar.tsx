@@ -33,12 +33,14 @@ export default function Navbar() {
   }, [isOpen])
 
   const navLinkClass = ({ isActive }: { isActive: boolean }) =>
-    `relative text-sm font-medium transition-colors duration-200 py-1 ${
+    `relative text-sm font-semibold transition-colors duration-200 py-1 ${
       isActive
-        ? isScrolled ? 'text-[var(--color-primary-500)]' : 'text-[var(--color-primary-400)] drop-shadow-[0_1px_3px_rgba(0,0,0,0.6)]'
+        ? isScrolled
+          ? 'text-[var(--color-primary-600)]'
+          : 'text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]'
         : isScrolled
-          ? 'text-[var(--color-text-secondary)] hover:text-[var(--color-primary-500)]'
-          : 'text-white/90 hover:text-[var(--color-primary-400)] drop-shadow-[0_1px_3px_rgba(0,0,0,0.5)]'
+          ? 'text-slate-700 hover:text-[var(--color-primary-600)]'
+          : 'text-white/95 hover:text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.7)]'
     }`
 
   return (

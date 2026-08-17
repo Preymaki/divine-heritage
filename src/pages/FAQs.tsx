@@ -89,7 +89,7 @@ export default function FAQs() {
             <h1 className="font-[var(--font-family-heading)] font-bold text-white text-4xl md:text-5xl leading-tight tracking-tight max-w-2xl">
               Frequently Asked Questions
             </h1>
-            <p className="mt-4 text-white/65 text-base md:text-lg leading-relaxed max-w-xl">
+            <p className="mt-4 text-white/90 text-base md:text-lg leading-relaxed max-w-xl drop-shadow-[0_1px_2px_rgba(0,0,0,0.4)]">
               Everything to know about the childcare service, from settling in to fees 
               and safety.
             </p>

@@ -131,7 +131,7 @@ export default function HeroSection() {
             {/* Subtitle */}
             <motion.p
               variants={itemVariants}
-              className="mt-4 text-white/75 text-base md:text-lg leading-relaxed max-w-xl"
+              className="mt-4 text-white/90 text-base md:text-lg leading-relaxed max-w-xl font-normal drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]"
             >
               {hero.subtitle}
             </motion.p>
@@ -156,7 +156,7 @@ export default function HeroSection() {
               <Link
                 to="/about"
                 id="hero-cta-learn-more"
-                className="inline-flex items-center gap-2 px-7 py-3.5 bg-white/12 hover:bg-white/20 backdrop-blur-sm border border-white/25 text-white font-semibold rounded-xl text-base transition-all duration-200 hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2"
+                className="inline-flex items-center gap-2 px-7 py-3.5 bg-white/15 hover:bg-white/25 backdrop-blur-sm border border-white/30 text-white font-semibold rounded-xl text-base transition-all duration-200 hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2 shadow-xs"
               >
                 {hero.ctaSecondary}
               </Link>
@@ -171,12 +171,12 @@ export default function HeroSection() {
               {TRUST_BADGES.map(({ icon: Icon, label }) => (
                 <div key={label} className="flex items-center gap-2">
                   <div
-                    className="w-7 h-7 rounded-lg bg-white/12 backdrop-blur-sm flex items-center justify-center shrink-0"
+                    className="w-7 h-7 rounded-lg bg-white/15 backdrop-blur-sm flex items-center justify-center shrink-0 border border-white/20"
                     aria-hidden="true"
                   >
                     <Icon size={14} className="text-[var(--color-accent-300)]" />
                   </div>
-                  <span className="text-white/80 text-sm">{label}</span>
+                  <span className="text-white font-medium text-sm drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]">{label}</span>
                 </div>
               ))}
             </motion.div>

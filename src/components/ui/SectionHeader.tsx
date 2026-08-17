@@ -44,7 +44,7 @@ export default function SectionHeader({
       {subtitle && (
         <p
           className={`mt-4 text-base md:text-lg leading-relaxed ${
-            light ? 'text-white/70' : 'text-[var(--color-text-secondary)]'
+            light ? 'text-white/90 drop-shadow-[0_1px_2px_rgba(0,0,0,0.4)]' : 'text-[var(--color-text-secondary)]'
           }`}
         >
           {subtitle}

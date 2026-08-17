@@ -51,7 +51,7 @@ export default function CTASection() {
             style={{ fontSize: 'clamp(2rem, 4vw, 3rem)' }}>
             Give Your Child the Best Possible Start
           </h2>
-          <p className="mt-4 text-white/70 text-base md:text-lg leading-relaxed max-w-xl mx-auto">
+          <p className="mt-4 text-white/90 text-base md:text-lg leading-relaxed max-w-xl mx-auto drop-shadow-[0_1px_2px_rgba(0,0,0,0.4)]">
             Book a free introductory visit to explore the setting and see why families 
             trust Divine Heritage Childcare Service.
           </p>
@@ -68,7 +68,7 @@ export default function CTASection() {
             <a
               href={`tel:${contact.phone.replace(/\s/g, '')}`}
               id="cta-section-call"
-              className="inline-flex items-center gap-2.5 px-8 py-4 bg-white/10 hover:bg-white/18 backdrop-blur-sm border border-white/25 text-white font-semibold rounded-xl text-base transition-all duration-200 hover:-translate-y-0.5 group"
+              className="inline-flex items-center gap-2.5 px-8 py-4 bg-white/12 hover:bg-white/20 backdrop-blur-sm border border-white/25 text-white font-semibold rounded-xl text-base transition-all duration-200 hover:-translate-y-0.5 group shadow-xs"
             >
               <Phone size={18} className="group-hover:scale-110 transition-transform" />
               {contact.phone}
@@ -81,12 +81,12 @@ export default function CTASection() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.8 }}
-              className="mt-6 text-white/40 text-sm"
+              className="mt-6 text-white/80 text-sm drop-shadow-[0_1px_2px_rgba(0,0,0,0.4)]"
             >
               No obligation. All questions are welcome.
             </motion.p>
           ) : (
-            <p className="mt-6 text-white/40 text-sm">
+            <p className="mt-6 text-white/80 text-sm drop-shadow-[0_1px_2px_rgba(0,0,0,0.4)]">
               No obligation. All questions are welcome.
             </p>
           )}

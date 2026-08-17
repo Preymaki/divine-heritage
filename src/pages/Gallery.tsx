@@ -202,7 +202,7 @@ export default function Gallery() {
             <h1 className="font-[var(--font-family-heading)] font-bold text-white text-4xl md:text-5xl leading-tight tracking-tight max-w-2xl">
               Moments of Joy, Growth &amp; Discovery
             </h1>
-            <p className="mt-4 text-white/65 text-base md:text-lg leading-relaxed max-w-xl">
+            <p className="mt-4 text-white/90 text-base md:text-lg leading-relaxed max-w-xl drop-shadow-[0_1px_2px_rgba(0,0,0,0.4)]">
               Explore daily life at Divine Heritage through library visits, creative activities, 
               sensory play, arts and crafts, and indoor and outdoor play.
             </p>
