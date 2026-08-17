@@ -6,6 +6,7 @@
  * - Mobile: off-canvas drawer, toggled by `isOpen` prop
  */
 
+import { useState, useEffect } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import {
   LayoutDashboard,
@@ -18,6 +19,7 @@ import {
   X,
 } from 'lucide-react'
 import { useAuth } from '@hooks/useAuth'
+import { subscribeToEnquiries } from '@services/enquiries'
 
 // ── Nav item definition ──────────────────────────────────────────────────────
 
@@ -58,6 +60,14 @@ export default function AdminSidebar({
 }: SidebarProps) {
   const navigate = useNavigate()
   const { user, logout } = useAuth()
+  const [unreadCount, setUnreadCount] = useState(0)
+
+  useEffect(() => {
+    const unsub = subscribeToEnquiries((items) => {
+      setUnreadCount(items.filter((i) => i.status === 'unread').length)
+    })
+    return unsub
+  }, [])
 
   async function handleLogout() {
     onClose()
@@ -132,11 +142,25 @@ export default function AdminSidebar({
                   className={({ isActive }) =>
                     ['admin-nav-link', isActive ? 'admin-nav-link--active' : ''].filter(Boolean).join(' ')
                   }
-                  title={isCollapsed ? label : undefined}
-                  aria-label={isCollapsed ? label : undefined}
+                  title={isCollapsed ? (id === 'nav-messages' && unreadCount > 0 ? `${label} (${unreadCount})` : label) : undefined}
+                  aria-label={isCollapsed ? (id === 'nav-messages' && unreadCount > 0 ? `${label} (${unreadCount} unread)` : label) : undefined}
                 >
-                  <Icon size={18} className="admin-nav-link-icon" aria-hidden="true" />
-                  {!isCollapsed && <span className="admin-nav-link-label">{label}</span>}
+                  <div className="relative flex items-center justify-center">
+                    <Icon size={18} className="admin-nav-link-icon" aria-hidden="true" />
+                    {isCollapsed && id === 'nav-messages' && unreadCount > 0 && (
+                      <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-amber-500 rounded-full ring-2 ring-slate-900" />
+                    )}
+                  </div>
+                  {!isCollapsed && (
+                    <div className="admin-nav-link-label flex-1 flex items-center justify-between">
+                      <span>{label}</span>
+                      {id === 'nav-messages' && unreadCount > 0 && (
+                        <span className="ml-2 px-2 py-0.5 text-[11px] font-bold bg-amber-400 text-slate-900 rounded-full leading-none">
+                          {unreadCount}
+                        </span>
+                      )}
+                    </div>
+                  )}
                 </NavLink>
               </li>
             ))}

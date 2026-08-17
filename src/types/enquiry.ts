@@ -1,7 +1,8 @@
 /**
  * Enquiry types
  *
- * Represents a contact form submission saved to the `enquiries` Firestore collection.
+ * Represents a contact form submission saved to the `enquiries` Firestore collection
+ * or synced with local persistence.
  */
 
 import type { Timestamp } from 'firebase/firestore'
@@ -25,10 +26,18 @@ export interface Enquiry {
   serviceType: string
   message: string
   status: EnquiryStatus
-  /** Server timestamp — set on creation */
-  createdAt: Timestamp | null
-  updatedAt: Timestamp | null
+  /** Firestore Timestamp, ISO date string, or epoch timestamp */
+  createdAt: Timestamp | string | number | null
+  updatedAt: Timestamp | string | number | null
 }
 
-/** Shape written to Firestore on form submit (no id / timestamps — those are injected) */
-export type EnquiryInput = Omit<Enquiry, 'id' | 'createdAt' | 'updatedAt'>
+/** Shape written to Firestore / store on form submit (no id / timestamps — those are injected) */
+export interface EnquiryInput {
+  parentName: string
+  email: string
+  phone?: string
+  childAge: string
+  serviceType: string
+  message: string
+  status?: EnquiryStatus
+}

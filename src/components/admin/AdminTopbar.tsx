@@ -2,12 +2,14 @@
  * AdminTopbar
  *
  * Sticky top bar for the admin dashboard.
- * Shows: mobile hamburger, current page title, user chip.
+ * Shows: mobile hamburger, current page title, notification bell with unread count, user chip.
  */
 
+import { useState, useEffect } from 'react'
 import { Menu, Bell } from 'lucide-react'
-import { useLocation } from 'react-router-dom'
+import { useLocation, Link } from 'react-router-dom'
 import { useAuth } from '@hooks/useAuth'
+import { subscribeToEnquiries } from '@services/enquiries'
 
 // Derive a human-readable page title from the pathname
 function usePageTitle(): string {
@@ -16,7 +18,7 @@ function usePageTitle(): string {
   const titleMap: Record<string, string> = {
     dashboard: 'Dashboard',
     gallery:   'Gallery',
-    messages:  'Messages',
+    messages:  'Messages & Enquiries',
     settings:  'Settings',
   }
   return titleMap[segment] ?? 'Admin'
@@ -30,6 +32,14 @@ interface TopbarProps {
 export default function AdminTopbar({ onToggleSidebar, isSidebarOpen }: TopbarProps) {
   const { user } = useAuth()
   const pageTitle = usePageTitle()
+  const [unreadCount, setUnreadCount] = useState(0)
+
+  useEffect(() => {
+    const unsub = subscribeToEnquiries((items) => {
+      setUnreadCount(items.filter((i) => i.status === 'unread').length)
+    })
+    return unsub
+  }, [])
 
   return (
     <header className="admin-topbar-bar" role="banner">
@@ -51,16 +61,21 @@ export default function AdminTopbar({ onToggleSidebar, isSidebarOpen }: TopbarPr
 
       {/* Right — actions */}
       <div className="admin-topbar-right">
-        {/* Notification bell — placeholder */}
-        <button
-          type="button"
+        {/* Notification bell linking to messages */}
+        <Link
+          to="/admin/messages"
           id="admin-topbar-notifications"
-          className="admin-topbar-icon-btn"
-          aria-label="Notifications"
-          title="Notifications (coming soon)"
+          className="admin-topbar-icon-btn relative"
+          aria-label={unreadCount > 0 ? `${unreadCount} unread messages` : 'Messages'}
+          title={unreadCount > 0 ? `${unreadCount} unread messages` : 'Messages'}
         >
           <Bell size={18} />
-        </button>
+          {unreadCount > 0 && (
+            <span className="absolute -top-1 -right-1 w-4 h-4 bg-amber-500 text-slate-900 font-bold text-[10px] rounded-full flex items-center justify-center border-2 border-white leading-none">
+              {unreadCount > 9 ? '9+' : unreadCount}
+            </span>
+          )}
+        </Link>
 
         {/* User chip */}
         <div className="admin-topbar-user-chip" aria-label={`Signed in as ${user?.email}`}>

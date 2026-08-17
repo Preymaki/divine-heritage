@@ -64,7 +64,7 @@ export default function Contact() {
       await submitEnquiry({
         parentName:  data.parentName,
         email:       data.email,
-        phone:       data.phone,
+        phone:       data.phone ? data.phone.trim() : '',
         childAge:    data.childAge,
         serviceType: data.serviceType,
         message:     data.message,
@@ -72,7 +72,8 @@ export default function Contact() {
       })
       setSubmitted(true)
       reset()
-    } catch {
+    } catch (err: unknown) {
+      console.error('Contact form submission error:', err)
       setSubmitError('The message could not be sent. Please try again or make contact directly by phone.')
     } finally {
       setSubmitting(false)
@@ -278,10 +279,11 @@ export default function Contact() {
                       placeholder="07700 000 000"
                       className={inputClass(!!errors.phone)}
                       {...register('phone', {
-                        pattern: {
-                          value: /^[\d\s+()-]{7,15}$/,
-                          message: 'Please enter a valid phone number.',
-                        },
+                        validate: (val) =>
+                          !val ||
+                          val.trim() === '' ||
+                          /^[\d\s+()-]{7,15}$/.test(val.trim()) ||
+                          'Please enter a valid phone number (7–15 digits).',
                       })}
                     />
                     <FieldError message={errors.phone?.message} />
