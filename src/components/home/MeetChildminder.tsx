@@ -1,3 +1,4 @@
+import React from 'react'
 import { ArrowRight, CheckCircle, Heart } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import AnimatedSection from '@components/ui/AnimatedSection'
@@ -14,6 +15,35 @@ const CREDENTIALS = [
   'Enhanced DBS checked',
   'Passionate advocate for play-based learning',
 ]
+
+/** Renders a flat string[] into paragraphs, grouping consecutive '• '-prefixed items into a <ul>. */
+function renderBio(paragraphs: string[]) {
+  const elements: React.ReactNode[] = []
+  let i = 0
+  while (i < paragraphs.length) {
+    if (paragraphs[i].startsWith('\u2022 ') || paragraphs[i].startsWith('• ')) {
+      const bullets: string[] = []
+      while (i < paragraphs.length && (paragraphs[i].startsWith('\u2022 ') || paragraphs[i].startsWith('• '))) {
+        bullets.push(paragraphs[i].replace(/^[•\u2022]\s*/, ''))
+        i++
+      }
+      elements.push(
+        <ul key={`list-${i}`} className="space-y-1.5 pl-1" role="list">
+          {bullets.map((b, bi) => (
+            <li key={bi} className="flex items-start gap-2">
+              <span className="mt-2 w-1.5 h-1.5 rounded-full bg-[var(--color-accent-400)] shrink-0" aria-hidden="true" />
+              <span>{b}</span>
+            </li>
+          ))}
+        </ul>
+      )
+    } else {
+      elements.push(<p key={i}>{paragraphs[i]}</p>)
+      i++
+    }
+  }
+  return elements
+}
 
 export default function MeetChildminder() {
   const { about } = useAboutSettings()
@@ -78,23 +108,35 @@ export default function MeetChildminder() {
         <AnimatedSection direction="left" delay={0.12} className="order-2 lg:order-1">
           <SectionHeader
             eyebrow="Professional Childminder"
-            title={about.bioName && about.bioName !== 'The Childminder' ? `Meet ${about.bioName}` : 'A Familiar Face You Can Trust'}
+            title="Welcome to Divine Heritage Childcare"
             maxWidth="max-w-full"
           />
 
           <div className="mt-5 space-y-4 text-[var(--color-text-secondary)] text-sm md:text-base leading-relaxed">
             {about.bioParagraphs && about.bioParagraphs.length > 0 ? (
-              about.bioParagraphs.map((paragraph, index) => (
-                <p key={index}>{paragraph}</p>
-              ))
+              renderBio(about.bioParagraphs)
             ) : (
               <>
                 <p>
-                  Divine Heritage offers young children the consistency of seeing the same warm, familiar childminder every day.
+                  With over a decade of dedicated early years experience, I launched Divine Heritage Childcare in 2017 to create something truly special: a vibrant, home-from-home environment where children don’t just stay—they thrive.
                 </p>
                 <p>
-                  With over 9 years of qualified home childminding experience in London, the setting delivers dedicated, individualised care designed to foster growth and happiness. It provides a safe, welcoming second home where children are celebrated and inspired daily.
+                  My journey began at sixteen, babysitting for friends and family. That early spark grew into a lifelong calling, ultimately inspiring me to step away from my previous career and pour my heart into professional childminding full-time.
                 </p>
+                <p>When I’m not planning personalised learning journeys, you’ll find me:</p>
+                <ul className="space-y-1.5 pl-1" role="list">
+                  {[
+                    'Designing mind-stimulating activities tailored to spark natural curiosity.',
+                    'Setting up sensory play stations in the garden for hands-on exploration.',
+                    'Curling up on the sofa reading stories that fuel young imaginations.',
+                  ].map((b, i) => (
+                    <li key={i} className="flex items-start gap-2">
+                      <span className="mt-2 w-1.5 h-1.5 rounded-full bg-[var(--color-accent-400)] shrink-0" aria-hidden="true" />
+                      <span>{b}</span>
+                    </li>
+                  ))}
+                </ul>
+                <p>This is a warm, loving home, which is exactly what makes the care here so extraordinary.</p>
               </>
             )}
           </div>

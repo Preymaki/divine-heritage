@@ -27,7 +27,7 @@ const AGE_OPTIONS = [
 ]
 
 const SERVICE_OPTIONS = [
-  'Childminding (Full-Day)',
+  'Full-Day Care',
   'Early Years Care',
   'After School Care',
   'Part-Time & Flexible Hours',
