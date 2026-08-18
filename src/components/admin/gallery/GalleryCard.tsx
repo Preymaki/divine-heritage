@@ -67,8 +67,8 @@ export default function GalleryCard({
 
       {/* Meta */}
       <div className="gallery-card-meta">
-        <div className="flex items-center gap-1 text-[11px] font-bold text-[var(--color-primary-600)] bg-[var(--color-primary-50)] border border-[var(--color-primary-200)] px-2 py-0.5 rounded-full w-fit mb-1.5">
-          <MapPin size={10} aria-hidden="true" />
+        <div className="gallery-card-location-badge">
+          <MapPin size={9} aria-hidden="true" />
           <span>{locationBadge}</span>
         </div>
         <p className="gallery-card-title" title={item.title}>{item.title}</p>
