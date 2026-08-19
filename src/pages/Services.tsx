@@ -151,7 +151,7 @@ export default function Services() {
                     </div>
 
                     <Link
-                      to="/contact"
+                      to={`/contact?service=${service.id}`}
                       className="inline-flex items-center gap-2 mt-6 px-6 py-3 rounded-xl font-semibold text-sm text-white transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[var(--shadow-card)] group focus-visible:outline-2 focus-visible:outline-offset-2"
                       style={{ backgroundColor: iconColour }}
                       id={`service-${service.id}-enquire`}

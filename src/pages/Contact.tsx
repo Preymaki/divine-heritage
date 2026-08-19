@@ -1,6 +1,7 @@
 import { useForm } from 'react-hook-form'
-import { useState } from 'react'
-import { Phone, Mail, MapPin, Clock, CheckCircle, AlertCircle } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { useSearchParams } from 'react-router-dom'
+import { Phone, Mail, MapPin, Clock, CheckCircle, AlertCircle, Info } from 'lucide-react'
 import AnimatedSection from '@components/ui/AnimatedSection'
 import SectionWrapper from '@components/ui/SectionWrapper'
 import SectionHeader from '@components/ui/SectionHeader'
@@ -17,13 +18,19 @@ interface FormData {
 }
 
 const AGE_OPTIONS = [
-  'Babies – Toddlers (5/6 months – 3 years)',
-  'Preschoolers (3 – 5 years)',
-  'School Age (5 – 11 years / After School)',
-  'Full-Time Sessions (Babies – Toddlers)',
-  'Part-Time Sessions (Babies – Toddlers)',
-  'Full-Time Sessions (Preschoolers)',
-  'Part-Time Sessions (Preschoolers)',
+  '5 Months+',
+  '1 Year Old',
+  '2 Years Old',
+  '3 Years Old',
+  '4 Years Old',
+  '5 Years Old',
+  '6 Years Old',
+  '7 Years Old',
+  '8 Years Old',
+  '9 Years Old',
+  '10 Years Old',
+  '11 Years Old',
+  'Expecting / Planning Ahead',
 ]
 
 const SERVICE_OPTIONS = [
@@ -31,8 +38,22 @@ const SERVICE_OPTIONS = [
   'Part-Time & Flexible Hours',
   'After School Care',
   'Holiday Care (5 mths – 5 yrs)',
-  'Not sure yet',
+  'Government Funded Childcare (15 / 30 Hours)',
+  'Not sure yet / General Enquiry',
 ]
+
+const SERVICE_PARAM_MAP: Record<string, string> = {
+  'funded': 'Government Funded Childcare (15 / 30 Hours)',
+  'funded-hours': 'Government Funded Childcare (15 / 30 Hours)',
+  'full-day': 'Full Day Care',
+  'full-day-care': 'Full Day Care',
+  'childminding': 'Full Day Care',
+  'flexible': 'Part-Time & Flexible Hours',
+  'flexible-hours': 'Part-Time & Flexible Hours',
+  'after-school': 'After School Care',
+  'holiday': 'Holiday Care (5 mths – 5 yrs)',
+  'holiday-care': 'Holiday Care (5 mths – 5 yrs)',
+}
 
 function FieldError({ message }: { message?: string }) {
   if (!message) return null
@@ -46,16 +67,39 @@ function FieldError({ message }: { message?: string }) {
 
 export default function Contact() {
   const { contact } = useContactSettings()
+  const [searchParams] = useSearchParams()
   const [submitted, setSubmitted] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState<string | null>(null)
 
+  const serviceParam = searchParams.get('service')
+  const initialService = serviceParam ? SERVICE_PARAM_MAP[serviceParam.toLowerCase()] || '' : ''
+
   const {
     register,
     handleSubmit,
+    setValue,
+    watch,
     formState: { errors },
     reset,
-  } = useForm<FormData>()
+  } = useForm<FormData>({
+    defaultValues: {
+      parentName: '',
+      email: '',
+      phone: '',
+      childAge: '',
+      serviceType: initialService,
+      message: '',
+    },
+  })
+
+  useEffect(() => {
+    if (initialService) {
+      setValue('serviceType', initialService)
+    }
+  }, [initialService, setValue])
+
+  const selectedService = watch('serviceType')
 
   const onSubmit = async (data: FormData) => {
     setSubmitting(true)
@@ -102,7 +146,7 @@ export default function Contact() {
               Contact Divine Heritage
             </h1>
             <p className="mt-4 text-white/90 text-base md:text-lg leading-relaxed max-w-xl drop-shadow-[0_1px_2px_rgba(0,0,0,0.4)]">
-              Complete the form below to book a free introductory visit or submit an inquiry. 
+              Complete the form below to book a free introductory visit or submit an enquiry. 
               Responses are provided within one working day.
             </p>
           </AnimatedSection>
@@ -203,7 +247,7 @@ export default function Contact() {
                   Message Sent!
                 </h2>
                 <p className="text-[var(--color-text-secondary)] text-base max-w-sm leading-relaxed">
-                  Thank you for reaching out. Inquiries are reviewed and answered within one working day.
+                  Thank you for reaching out. Enquiries are reviewed and answered within one working day.
                 </p>
                 <button
                   type="button"
@@ -328,6 +372,17 @@ export default function Contact() {
                   </div>
                 </div>
 
+                {/* Funded Childcare Helper Callout */}
+                {selectedService === 'Government Funded Childcare (15 / 30 Hours)' && (
+                  <div className="p-3.5 bg-[var(--color-primary-50)] border border-[var(--color-primary-200)] rounded-xl flex items-start gap-2.5 text-xs text-[var(--color-text-secondary)] leading-relaxed animate-in fade-in duration-200">
+                    <Info size={16} className="text-[var(--color-primary-500)] shrink-0 mt-0.5" aria-hidden="true" />
+                    <div>
+                      <strong className="text-[var(--color-primary-700)] block mb-0.5">Government Funding Welcome</strong>
+                      We offer funded childcare places for eligible 9-month-olds, 2-year-olds, and 3 &amp; 4-year-olds (15 &amp; 30 hours). Feel free to include your child's age and eligibility code in your message below.
+                    </div>
+                  </div>
+                )}
+
                 {/* Message */}
                 <div>
                   <label htmlFor="message" className={labelClass}>
@@ -349,7 +404,7 @@ export default function Contact() {
 
                 {/* Privacy note */}
                 <p className="text-[var(--color-text-muted)] text-xs leading-relaxed">
-                  Information is handled with care and used solely to respond to the inquiry. 
+                  Information is handled with care and used solely to respond to the enquiry. 
                   Details are never shared with third parties.
                 </p>
 

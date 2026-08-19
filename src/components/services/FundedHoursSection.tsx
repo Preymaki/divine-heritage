@@ -281,7 +281,7 @@ export default function FundedHoursSection() {
             If you think your child may be eligible for funded childcare hours, we'd be happy to discuss your requirements and available sessions.
           </p>
           <Link
-            to="/contact"
+            to="/contact?service=funded"
             id="funded-hours-enquire-btn"
             className="inline-flex items-center gap-2.5 px-8 py-3.5 bg-[var(--color-primary-500)] hover:bg-[var(--color-primary-600)] text-white font-semibold rounded-xl text-sm md:text-base transition-all duration-200 hover:shadow-[var(--shadow-card)] hover:-translate-y-0.5 group focus-visible:outline-2 focus-visible:outline-offset-2"
           >
