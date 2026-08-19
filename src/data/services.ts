@@ -15,7 +15,7 @@ export interface Service {
 
 export const SERVICES: Service[] = [
   {
-    id: 'childminding',
+    id: 'full-day-care',
     icon: 'Home',
     title: 'Full Day Care',
     ageRange: 'Babies & Toddlers – Pre-school (5/6 months – 5 years)',
@@ -41,62 +41,10 @@ export const SERVICES: Service[] = [
     colour: 'primary',
   },
   {
-    id: 'early-years',
-    icon: 'Sparkles',
-    title: 'Early Years Care',
-    ageRange: 'Babies & Toddlers (5/6 months – 3 years)',
-    shortAge: '5 mos – 3 yrs',
-    availability: 'Mon – Thu 8:00am – 6:00pm, Fri 8:00am – 5:00pm',
-    shortAvailability: 'Mon – Fri Sessions',
-    shortDescription:
-      'Specialised infant and toddler care nurturing secure bonds, sensory discovery, and early milestones.',
-    description:
-      'Catering to babies and toddlers during their most formative years, this specialised care focuses on secure attachment, sensory exploration, language development, and building a love of learning from day one.',
-    highlights: [
-      'Warm, secure attachment focus',
-      'Sensory play & exploration',
-      'Early speech & language growth',
-    ],
-    features: [
-      'Secure attachment and emotional safety',
-      'Sensory exploration through play',
-      'Indoor and outdoor play',
-      'Language development and communication skills',
-      'Updates for parents',
-    ],
-    colour: 'accent',
-  },
-  {
-    id: 'after-school',
-    icon: 'BookOpen',
-    title: 'After School Care',
-    ageRange: '5 – 11 years',
-    shortAge: '5 – 11 yrs',
-    availability: 'Mon – Thu 8:00am – 6:00pm, Fri 8:00am – 5:00pm',
-    shortAvailability: '3:00pm – 6:00pm',
-    shortDescription:
-      'A fun, calm after-school haven for children to unwind with games, creative crafts, and school pickups.',
-    description:
-      'A relaxed, supportive after-school environment where children can unwind, have their snacks, enjoy indoor and outdoor play, and socialise before heading home. School pickups available.',
-    highlights: [
-      'Local school pickup service',
-      'Arts, crafts & creative play',
-      'Wholesome snack & unwind time',
-    ],
-    features: [
-      'School pickups',
-      'Indoor and outdoor play',
-      'Arts, crafts & creative play',
-      'Updates for parents',
-      'Calm, reassuring environment',
-    ],
-    colour: 'sage',
-  },
-  {
     id: 'flexible-hours',
     icon: 'Clock',
     title: 'Part-Time & Flexible Hours',
-    ageRange: 'Babies, Toddlers & Pre-school – 5/6 months – 5 years',
+    ageRange: 'Babies, Toddlers & Pre-school (5/6 months – 5 years)',
     shortAge: '5 mos – 5 yrs',
     availability: 'Flexible sessions available Monday – Friday, subject to availability',
     shortAvailability: 'Flexible Slots',
@@ -116,6 +64,59 @@ export const SERVICES: Service[] = [
       'Age-appropriate learning and creative activities',
       'EYFS-aligned learning and development',
       'Regular updates for parents',
+    ],
+    colour: 'accent',
+  },
+  {
+    id: 'after-school',
+    icon: 'BookOpen',
+    title: 'After School Care',
+    ageRange: '5 – 11 years',
+    shortAge: '5 – 11 yrs',
+    availability: 'Monday – Friday during school term time',
+    shortAvailability: 'Term Time',
+    shortDescription:
+      'A fun, calm after-school haven for children to unwind with games, creative crafts, and school pickups.',
+    description:
+      'A relaxed, supportive after-school environment where children can unwind, have their snacks, enjoy indoor and outdoor play, and socialise before heading home. School pickups available.',
+    highlights: [
+      'Local school pickup service',
+      'Arts, crafts & creative play',
+      'Wholesome snack & unwind time',
+    ],
+    features: [
+      'School pickups',
+      'Indoor and outdoor play',
+      'Arts, crafts & creative play',
+      'Updates for parents',
+      'Calm, reassuring environment',
+    ],
+    colour: 'sage',
+  },
+  {
+    id: 'holiday-care',
+    icon: 'Sun',
+    title: 'Holiday Care',
+    ageRange: 'Babies, Toddlers & Pre-school (5 months – 5 years)',
+    shortAge: '5 mos – 5 yrs',
+    availability: 'Available during school holidays, Monday – Friday',
+    shortAvailability: 'School Holidays',
+    shortDescription:
+      'Fun, stimulating holiday childcare featuring themed discovery, arts, sensory exploration, and outdoor adventures.',
+    description:
+      'Specialised holiday childcare providing a fun, stimulating, and nurturing environment for babies, toddlers, and pre-schoolers during school breaks. Children enjoy a rich variety of seasonal activities, creative arts and crafts, outdoor play in the secure garden, themed discovery days, and local outings—keeping routines consistent and enriching while schools and nurseries are on break.',
+    highlights: [
+      'Themed discovery & creative arts',
+      'Daily outdoor garden play & trips',
+      'Flexible booking for busy families',
+    ],
+    features: [
+      'Available across all school holiday periods',
+      'Indoor sensory and creative crafts',
+      'Outdoor active play and nature exploration',
+      'Flexible full-day and half-day options',
+      'Snack and meal routines (bring own food)',
+      'Regular photo updates for parents',
     ],
     colour: 'primary',
   },

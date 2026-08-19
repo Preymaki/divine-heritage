@@ -100,7 +100,7 @@ export const GALLERY_GROUP_SUBTITLES: Record<GalleryGroup, string> = {
   home_about:    'Controls the featured portrait photo of the childminder in the Home Page "About" section.',
   home_cta:      'Controls the background banner frame in the "Book a Visit" callout box on the home page and footer CTA.',
   about_page:    'Controls the primary photo of the childminder and home nursery setup on the dedicated /about page.',
-  services_page: 'Controls the 5 service card covers on the /services page (Childminding, Early Years, After-School Care, Arts, Outdoor Play).',
+  services_page: 'Controls the service card covers on the /services page (Full Day Care, Part-Time & Flexible Hours, After School Care, Holiday Care).',
   outings:       'Outdoor play, garden activities, and local exploration photos displayed on the /gallery page.',
   library:       'Local library visits, story time, and bubble play photos displayed on the /gallery page.',
   learning:      'Hands-on sensory play, painting, building, and literacy photos displayed on the /gallery page.',

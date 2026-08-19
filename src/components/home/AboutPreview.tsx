@@ -7,9 +7,10 @@ import { useSiteImages } from '@hooks/useSiteImages'
 import { useAboutSettings } from '@hooks/useAboutSettings'
 
 const DEFAULT_HIGHLIGHTS = [
-  { title: 'Child-Led Learning', description: "Activities are inspired by each child's interests and developmental stage." },
-  { title: 'Family Partnership', description: 'Working closely with parents to provide consistent, joined-up care.' },
-  { title: 'Safe & Stimulating', description: 'Offering a fully Ofsted-registered home environment, exceptionally well-resourced for every stage of learning.' },
+  { title: 'Belonging', description: 'emotional safety, inclusion, and feeling at home.' },
+  { title: 'Growth', description: 'developmental progress, learning, and confidence.' },
+  { title: 'Thrive', description: 'wellbeing, joy, and flourishing.' },
+  { title: 'Partnership', description: 'strong relationships with families.' },
 ]
 
 export default function AboutPreview() {
@@ -62,7 +63,7 @@ export default function AboutPreview() {
         {/* Text side */}
         <AnimatedSection direction="right" delay={0.15}>
           <SectionHeader
-            eyebrow="About Divine Heritage"
+            eyebrow="About Divine Heritage Childcare Services"
             title={about.previewTitle || 'A Childcare Service Built on Love & Trust'}
             subtitle={about.previewSubtitle || 'Founded in 2017, Divine Heritage provides warm, professional home-based childminding for families across South East London.'}
           />

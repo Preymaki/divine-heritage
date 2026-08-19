@@ -69,7 +69,7 @@ export default function About() {
         <div className="container-site">
           <AnimatedSection>
             <p className="text-[var(--color-accent-400)] text-xs font-semibold uppercase tracking-[0.15em] mb-3 font-[var(--font-family-heading)]">
-              About Divine Heritage
+              About Divine Heritage Childcare Services
             </p>
             <h1 className="font-[var(--font-family-heading)] font-bold text-white text-4xl md:text-5xl leading-tight tracking-tight max-w-2xl">
               Dedicated Childminding. Genuine Care.

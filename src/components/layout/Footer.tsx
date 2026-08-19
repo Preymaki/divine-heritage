@@ -4,10 +4,10 @@ import { SITE, NAV_LINKS } from '@constants/site'
 import { useContactSettings } from '@hooks/useContactSettings'
 
 const FOOTER_SERVICES = [
-  { label: 'Full Day Care', href: '/services' },
-  { label: 'Early Years Care', href: '/services' },
-  { label: 'After School Care', href: '/services' },
-  { label: 'Part-Time & Flexible Hours', href: '/services' },
+  { label: 'Full Day Care', href: '/services#full-day-care' },
+  { label: 'Part-Time & Flexible Hours', href: '/services#flexible-hours' },
+  { label: 'After School Care', href: '/services#after-school' },
+  { label: 'Holiday Care', href: '/services#holiday-care' },
 ]
 
 export default function Footer() {

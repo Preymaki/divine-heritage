@@ -1,4 +1,4 @@
-import { Home, Sparkles, BookOpen, Clock, Check, ArrowRight } from 'lucide-react'
+import { Home, Sparkles, BookOpen, Clock, Sun, Check, ArrowRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { SERVICES } from '@data/services'
 import AnimatedSection from '@components/ui/AnimatedSection'
@@ -12,6 +12,7 @@ const iconMap: Record<string, React.ComponentType<{ size?: number }>> = {
   Sparkles,
   BookOpen,
   Clock,
+  Sun,
 }
 
 const colourMap: Record<string, string> = {
@@ -30,24 +31,29 @@ export default function Services() {
   const siteImages = useSiteImages()
 
   const serviceImagesMap: Record<string, { src: string; alt: string; position: string }> = {
+    'full-day-care': {
+      src: siteImages.serviceChildminding,
+      alt: 'A toddler absorbed in building a wooden train track in the bright welcoming living room at Divine Heritage, illustrating the cosy home environment',
+      position: 'object-top',
+    },
     childminding: {
       src: siteImages.serviceChildminding,
       alt: 'A toddler absorbed in building a wooden train track in the bright welcoming living room at Divine Heritage, illustrating the cosy home environment',
       position: 'object-top',
     },
-    'early-years': {
-      src: siteImages.serviceEarlyYears,
-      alt: 'A young child sitting independently reading a picture book, demonstrating the love of stories and early literacy encouraged at Divine Heritage',
-      position: 'object-top',
+    'flexible-hours': {
+      src: siteImages.serviceFlexible || siteImages.serviceArts,
+      alt: 'Children engaged in creative learning activities and flexible play in a warm home environment at Divine Heritage',
+      position: 'object-center',
     },
     'after-school': {
       src: siteImages.serviceAfterSchool,
       alt: 'A toddler building strength and coordination on foam climbing blocks at a soft play session during an active outing arranged by Divine Heritage',
       position: 'object-center',
     },
-    'flexible-hours': {
-      src: siteImages.serviceFlexible || siteImages.serviceArts,
-      alt: 'Children engaged in creative learning activities and flexible play in a warm home environment at Divine Heritage',
+    'holiday-care': {
+      src: siteImages.serviceOutdoor || siteImages.serviceEarlyYears,
+      alt: 'Children enjoying outdoor nature play, seasonal activities, and creative games at Divine Heritage',
       position: 'object-center',
     },
   }

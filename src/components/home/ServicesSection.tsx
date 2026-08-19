@@ -1,4 +1,4 @@
-import { Home, Sparkles, BookOpen, Clock, Check, ArrowRight } from 'lucide-react'
+import { Home, Sparkles, BookOpen, Clock, Sun, Check, ArrowRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { SERVICES } from '@data/services'
 import AnimatedSection from '@components/ui/AnimatedSection'
@@ -10,6 +10,7 @@ const iconMap: Record<string, React.ComponentType<{ size?: number; className?: s
   Sparkles,
   BookOpen,
   Clock,
+  Sun,
 }
 
 const colourMap: Record<string, string> = {

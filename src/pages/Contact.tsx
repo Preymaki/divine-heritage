@@ -28,9 +28,9 @@ const AGE_OPTIONS = [
 
 const SERVICE_OPTIONS = [
   'Full Day Care',
-  'Early Years Care',
-  'After School Care',
   'Part-Time & Flexible Hours',
+  'After School Care',
+  'Holiday Care (5 months – 5 years)',
   'Not sure yet',
 ]
 

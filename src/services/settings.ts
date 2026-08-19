@@ -82,9 +82,10 @@ export const DEFAULT_ABOUT: AboutSettings = {
   previewTitle:    'A Childcare Service Built on Love & Trust',
   previewSubtitle: 'Founded in 2017, Divine Heritage provides warm, professional home-based childminding for families across South East London.',
   highlights: [
-    { title: 'Child-Led Learning',      description: 'Activities are inspired by each child\'s interests and developmental stage.' },
-    { title: 'Family Partnership',      description: 'Working closely with parents to provide consistent, joined-up care.' },
-    { title: 'Safe & Stimulating',      description: 'Offering a fully Ofsted-registered home environment, exceptionally well-resourced for every stage of learning.' },
+    { title: 'Belonging',   description: 'emotional safety, inclusion, and feeling at home.' },
+    { title: 'Growth',      description: 'developmental progress, learning, and confidence.' },
+    { title: 'Thrive',      description: 'wellbeing, joy, and flourishing.' },
+    { title: 'Partnership', description: 'strong relationships with families.' },
   ],
   storyParagraphs: [
     'Divine Heritage Childcare Service was founded in 2017 with a clear vision: to create a warm, loving home-from-home where every child is seen, valued, and inspired to reach their full potential.',
@@ -160,26 +161,9 @@ function sanitiseAboutSettings(raw: AboutSettings): AboutSettings {
     (h) => !/nutriti|meal/i.test(h.title) && !/nutriti|meal/i.test(h.description)
   )
 
-  // Update specific highlights to current text
-  highlights = highlights.map((h) => {
-    if (/family.*partnership/i.test(h.title)) {
-      return {
-        ...h,
-        title: 'Family Partnership',
-        description: 'Working closely with parents to provide consistent, joined-up care.',
-      }
-    }
-    if (/safe.*stimulating/i.test(h.title)) {
-      return {
-        ...h,
-        title: 'Safe & Stimulating',
-        description: 'Offering a fully Ofsted-registered home environment, exceptionally well-resourced for every stage of learning.',
-      }
-    }
-    return h
-  })
-
-  if (highlights.length === 0) {
+  // If highlights contain old defaults or are empty, update to DEFAULT_ABOUT.highlights
+  const hasLegacyHighlights = highlights.some((h) => /child-led|safe.*stimulating/i.test(h.title))
+  if (hasLegacyHighlights || highlights.length === 0) {
     highlights = DEFAULT_ABOUT.highlights
   }
 
