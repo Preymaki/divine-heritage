@@ -4,7 +4,7 @@ import { SITE, NAV_LINKS } from '@constants/site'
 import { useContactSettings } from '@hooks/useContactSettings'
 
 const FOOTER_SERVICES = [
-  { label: 'Childminding (Full-Day)', href: '/services' },
+  { label: 'Full Day Care', href: '/services' },
   { label: 'Early Years Care', href: '/services' },
   { label: 'After School Care', href: '/services' },
   { label: 'Part-Time & Flexible Hours', href: '/services' },

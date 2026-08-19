@@ -17,7 +17,7 @@ export const SERVICES: Service[] = [
   {
     id: 'childminding',
     icon: 'Home',
-    title: 'Childminding (Full-Day)',
+    title: 'Full Day Care',
     ageRange: 'Babies & Toddlers – Pre-school (5/6 months – 5 years)',
     shortAge: '5 mos – 5 yrs',
     availability: 'Mon – Thu 8:00am – 6:00pm, Fri 8:00am – 5:00pm',

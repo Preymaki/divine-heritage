@@ -249,7 +249,7 @@ export async function seedGallery(uploadedBy: string): Promise<void> {
       downloadURL: '/images/indoor-train-track.jpeg',
       title: 'Services Page: Childminding Cover',
       altText: 'Child building wooden train track in home nursery',
-      caption: 'Cover photo for Childminding (Full-Day) service card.',
+      caption: 'Cover photo for Full Day Care service card.',
     },
     {
       group: 'services_page', sortOrder: 2,
