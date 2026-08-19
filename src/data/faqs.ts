@@ -66,7 +66,7 @@ export const FAQS: FAQ[] = [
     id: 'outdoor',
     question: 'Do children get outdoor time every day?',
     answer:
-      'Indoor and outdoor play is a cornerstone of the provision. Children enjoy a large, secure garden every day alongside indoor creative learning, with trips to the local library and community groups. Fresh air and active play are vital for child wellbeing.',
+      'Indoor and outdoor play forms a cornerstone of the provision. Children enjoy a secure garden daily alongside creative indoor learning, complemented by trips to the local library and community groups. Fresh air and active play remain vital for childhood well-being.',
     category: 'daily',
   },
   {
