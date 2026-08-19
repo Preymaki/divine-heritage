@@ -27,8 +27,45 @@ export default function HeroSection() {
   const { hero } = useHeroSettings()
   const siteImages = useSiteImages()
 
-  // Build the heading — the accentWord is highlighted within the heading text
+  // Coloured words: Thrives=pink, Grows=green, Belongs=blue
+  const COLOURED_WORDS: Record<string, string> = {
+    Thrives: '#e0289b',   // accent pink
+    Grows:   '#3dba7a',   // sage/green
+    Belongs: '#4a8ef5',   // sky blue
+  }
+
   function renderHeading(heading: string, accentWord: string) {
+    // Check if any of the special coloured words exist in the heading
+    const hasColouredWords = Object.keys(COLOURED_WORDS).some((w) =>
+      heading.includes(w)
+    )
+
+    if (hasColouredWords) {
+      // Split by all coloured words, preserving them
+      const pattern = new RegExp(`(${Object.keys(COLOURED_WORDS).join('|')})`, 'g')
+      const parts = heading.split(pattern)
+      return (
+        <>
+          {parts.map((part, i) =>
+            COLOURED_WORDS[part] ? (
+              <span
+                key={i}
+                style={{
+                  color: COLOURED_WORDS[part],
+                  textShadow: `0 0 18px ${COLOURED_WORDS[part]}88`,
+                }}
+              >
+                {part}
+              </span>
+            ) : (
+              part
+            )
+          )}
+        </>
+      )
+    }
+
+    // Fallback: single accentWord highlight (original behaviour)
     if (!accentWord || !heading.includes(accentWord)) {
       return <>{heading}</>
     }
@@ -44,6 +81,7 @@ export default function HeroSection() {
       </>
     )
   }
+
 
   const containerVariants = prefersReducedMotion
     ? { hidden: {}, visible: {} }
