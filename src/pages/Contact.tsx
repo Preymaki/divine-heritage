@@ -30,7 +30,7 @@ const SERVICE_OPTIONS = [
   'Full Day Care',
   'Part-Time & Flexible Hours',
   'After School Care',
-  'Holiday Care (5 months – 5 years)',
+  'Holiday Care (5 mths – 5 yrs)',
   'Not sure yet',
 ]
 

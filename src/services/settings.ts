@@ -97,7 +97,7 @@ export const DEFAULT_ABOUT: AboutSettings = {
   values: [
     {
       title: 'Love & Belonging',
-      description: 'A family-centered setting where warm, secure relationships inspire confidence and a true sense of belonging.',
+      description: 'A family-centred setting where warm, secure relationships inspire confidence and a true sense of belonging.',
     },
     {
       title: 'Learning Through Play',
@@ -176,7 +176,7 @@ function sanitiseAboutSettings(raw: AboutSettings): AboutSettings {
       return {
         ...v,
         title: 'Love & Belonging',
-        description: 'A family-centered setting where warm, secure relationships inspire confidence and a true sense of belonging.',
+        description: 'A family-centred setting where warm, secure relationships inspire confidence and a true sense of belonging.',
       }
     }
     if (/learning.*play/i.test(v.title)) {

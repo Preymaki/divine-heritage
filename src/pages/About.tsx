@@ -19,7 +19,7 @@ const DEFAULT_VALUES = [
   {
     title: 'Love & Belonging',
     description:
-      'A family-centered setting where warm, secure relationships inspire confidence and a true sense of belonging.',
+      'A family-centred setting where warm, secure relationships inspire confidence and a true sense of belonging.',
   },
   {
     title: 'Learning Through Play',

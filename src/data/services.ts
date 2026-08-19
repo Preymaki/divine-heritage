@@ -19,13 +19,13 @@ export const SERVICES: Service[] = [
     icon: 'Home',
     title: 'Full Day Care',
     ageRange: 'Babies & Toddlers – Pre-school (5/6 months – 5 years)',
-    shortAge: '5 mos – 5 yrs',
+    shortAge: '5 mths – 5 yrs',
     availability: 'Mon – Thu 8:00am – 6:00pm, Fri 8:00am – 5:00pm',
     shortAvailability: 'Full-Day Care',
     shortDescription:
       'A loving home-from-home setting combining structured daily routines with joyful, EYFS-aligned learning.',
     description:
-      'The core service provides full-day care in a warm, home-from-home setting. Children benefit from a consistent routine, personalized attention, and a rich variety of activities tailored to their developmental stage.',
+      'The core service provides full-day care in a warm, home-from-home setting. Children benefit from a consistent routine, personalised attention, and a rich variety of activities tailored to their developmental stage.',
     highlights: [
       'EYFS-aligned early learning',
       'Daily indoor & garden play',
@@ -45,7 +45,7 @@ export const SERVICES: Service[] = [
     icon: 'Clock',
     title: 'Part-Time & Flexible Hours',
     ageRange: 'Babies, Toddlers & Pre-school (5/6 months – 5 years)',
-    shortAge: '5 mos – 5 yrs',
+    shortAge: '5 mths – 5 yrs',
     availability: 'Flexible sessions available Monday – Friday, subject to availability',
     shortAvailability: 'Flexible Slots',
     shortDescription:
@@ -98,7 +98,7 @@ export const SERVICES: Service[] = [
     icon: 'Sun',
     title: 'Holiday Care',
     ageRange: 'Babies, Toddlers & Pre-school (5 months – 5 years)',
-    shortAge: '5 mos – 5 yrs',
+    shortAge: '5 mths – 5 yrs',
     availability: 'Available during school holidays, Monday – Friday',
     shortAvailability: 'School Holidays',
     shortDescription:
