@@ -65,56 +65,59 @@ export default function GalleryCard({
         )}
       </div>
 
-      {/* Meta */}
-      <div className="gallery-card-meta">
-        <div className="gallery-card-location-badge">
-          <MapPin size={9} aria-hidden="true" />
-          <span>{locationBadge}</span>
-        </div>
-        <p className="gallery-card-title" title={item.title}>{item.title}</p>
-        <p className="gallery-card-group" title={GALLERY_GROUP_LABELS[item.group]}>
-          {GALLERY_GROUP_LABELS[item.group] ?? item.group}
-        </p>
-        {item.altText && (
-          <p className="gallery-card-alt" title={item.altText}>
-            Alt: {item.altText}
+      {/* Right-side body: meta info + action buttons */}
+      <div className="gallery-card-body">
+        {/* Meta */}
+        <div className="gallery-card-meta">
+          <div className="gallery-card-location-badge">
+            <MapPin size={9} aria-hidden="true" />
+            <span>{locationBadge}</span>
+          </div>
+          <p className="gallery-card-title" title={item.title}>{item.title}</p>
+          <p className="gallery-card-group" title={GALLERY_GROUP_LABELS[item.group]}>
+            {GALLERY_GROUP_LABELS[item.group] ?? item.group}
           </p>
-        )}
-        <p className="gallery-card-date">
-          <Calendar size={11} aria-hidden="true" />
-          {formatDate(item.createdAt)}
-        </p>
-      </div>
+          {item.altText && (
+            <p className="gallery-card-alt" title={item.altText}>
+              Alt: {item.altText}
+            </p>
+          )}
+          <p className="gallery-card-date">
+            <Calendar size={11} aria-hidden="true" />
+            {formatDate(item.createdAt)}
+          </p>
+        </div>
 
-      {/* Actions */}
-      <div className="gallery-card-actions">
-        {/* Edit */}
-        <button
-          type="button"
-          onClick={() => onEdit(item)}
-          disabled={isActionPending}
-          className="gallery-action-btn gallery-action-btn--edit"
-          aria-label={`Edit ${item.title}`}
-          title="Edit metadata"
-        >
-          <Pencil size={13} aria-hidden="true" />
-          Edit
-        </button>
+        {/* Actions */}
+        <div className="gallery-card-actions">
+          {/* Edit */}
+          <button
+            type="button"
+            onClick={() => onEdit(item)}
+            disabled={isActionPending}
+            className="gallery-action-btn gallery-action-btn--edit"
+            aria-label={`Edit ${item.title}`}
+            title="Edit metadata"
+          >
+            <Pencil size={13} aria-hidden="true" />
+            Edit
+          </button>
 
-        {/* Publish / Unpublish toggle */}
-        <button
-          type="button"
-          onClick={() => onTogglePublish(item)}
-          disabled={isActionPending}
-          className={`gallery-action-btn ${item.isPublished ? 'gallery-action-btn--unpublish' : 'gallery-action-btn--publish'}`}
-          aria-label={item.isPublished ? `Unpublish ${item.title}` : `Publish ${item.title}`}
-          title={item.isPublished ? 'Move to drafts' : 'Publish to public gallery'}
-        >
-          {item.isPublished
-            ? <><EyeOff size={13} aria-hidden="true" />Unpublish</>
-            : <><Eye size={13} aria-hidden="true" />Publish</>
-          }
-        </button>
+          {/* Publish / Unpublish toggle */}
+          <button
+            type="button"
+            onClick={() => onTogglePublish(item)}
+            disabled={isActionPending}
+            className={`gallery-action-btn ${item.isPublished ? 'gallery-action-btn--unpublish' : 'gallery-action-btn--publish'}`}
+            aria-label={item.isPublished ? `Unpublish ${item.title}` : `Publish ${item.title}`}
+            title={item.isPublished ? 'Move to drafts' : 'Publish to public gallery'}
+          >
+            {item.isPublished
+              ? <><EyeOff size={13} aria-hidden="true" />Unpublish</>
+              : <><Eye size={13} aria-hidden="true" />Publish</>
+            }
+          </button>
+        </div>
       </div>
     </article>
   )
