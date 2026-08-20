@@ -18,8 +18,8 @@ export const SERVICES: Service[] = [
     id: 'full-day-care',
     icon: 'Home',
     title: 'Full Day Care',
-    ageRange: 'Babies & Toddlers – Pre-school (5/6 months – 5 years)',
-    shortAge: '5 mths – 5 yrs',
+    ageRange: 'Babies & Toddlers (5 months – 3 years)',
+    shortAge: '5 mths – 3 yrs',
     availability: 'Mon – Thu 8:00am – 6:00pm, Fri 8:00am – 5:00pm',
     shortAvailability: 'Full-Day Care',
     shortDescription:
@@ -44,8 +44,8 @@ export const SERVICES: Service[] = [
     id: 'flexible-hours',
     icon: 'Clock',
     title: 'Part-Time & Flexible Hours',
-    ageRange: 'Babies, Toddlers & Pre-school (5/6 months – 5 years)',
-    shortAge: '5 mths – 5 yrs',
+    ageRange: 'Babies & Toddlers (5 months – 3 years)',
+    shortAge: '5 mths – 3 yrs',
     availability: 'Flexible sessions available Monday – Friday, subject to availability',
     shortAvailability: 'Flexible Slots',
     shortDescription:
@@ -71,8 +71,8 @@ export const SERVICES: Service[] = [
     id: 'after-school',
     icon: 'BookOpen',
     title: 'After School Care',
-    ageRange: '5 – 11 years',
-    shortAge: '5 – 11 yrs',
+    ageRange: '4 – 10 years',
+    shortAge: '4 – 10 yrs',
     availability: 'Monday – Friday during school term time',
     shortAvailability: 'Term Time',
     shortDescription:
@@ -97,14 +97,14 @@ export const SERVICES: Service[] = [
     id: 'holiday-care',
     icon: 'Sun',
     title: 'Holiday Care',
-    ageRange: 'Babies, Toddlers & Pre-school (5 months – 5 years)',
-    shortAge: '5 mths – 5 yrs',
+    ageRange: 'Babies, Toddlers & School Age (5 months – 10 years)',
+    shortAge: '5 mths – 10 yrs',
     availability: 'Available during school holidays, Monday – Friday',
     shortAvailability: 'School Holidays',
     shortDescription:
       'Fun, stimulating holiday childcare featuring themed discovery, arts, sensory exploration, and outdoor adventures.',
     description:
-      'Specialised holiday childcare providing a fun, stimulating, and nurturing environment for babies, toddlers, and pre-schoolers during school breaks. Children enjoy a rich variety of seasonal activities, creative arts and crafts, outdoor play in the secure garden, themed discovery days, and local outings—keeping routines consistent and enriching while schools and nurseries are on break.',
+      'Specialised holiday childcare providing a fun, stimulating, and nurturing environment for babies, toddlers, and school-age children (5 months – 10 years) during school breaks. Children enjoy a rich variety of seasonal activities, creative arts and crafts, outdoor play in the secure garden, themed discovery days, and local outings—keeping routines consistent and enriching while schools and nurseries are on break.',
     highlights: [
       'Themed discovery & creative arts',
       'Daily outdoor garden play & trips',

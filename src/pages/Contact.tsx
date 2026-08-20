@@ -29,7 +29,6 @@ const AGE_OPTIONS = [
   '8 Years Old',
   '9 Years Old',
   '10 Years Old',
-  '11 Years Old',
   'Expecting / Planning Ahead',
 ]
 
@@ -37,7 +36,7 @@ const SERVICE_OPTIONS = [
   'Full Day Care',
   'Part-Time & Flexible Hours',
   'After School Care',
-  'Holiday Care (5 mths – 5 yrs)',
+  'Holiday Care (5 mths – 10 yrs)',
   'Government Funded Childcare (15 / 30 Hours)',
   'Not sure yet / General Enquiry',
 ]
@@ -51,8 +50,8 @@ const SERVICE_PARAM_MAP: Record<string, string> = {
   'flexible': 'Part-Time & Flexible Hours',
   'flexible-hours': 'Part-Time & Flexible Hours',
   'after-school': 'After School Care',
-  'holiday': 'Holiday Care (5 mths – 5 yrs)',
-  'holiday-care': 'Holiday Care (5 mths – 5 yrs)',
+  'holiday': 'Holiday Care (5 mths – 10 yrs)',
+  'holiday-care': 'Holiday Care (5 mths – 10 yrs)',
 }
 
 function FieldError({ message }: { message?: string }) {

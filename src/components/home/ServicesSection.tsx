@@ -32,7 +32,7 @@ export default function ServicesSection() {
         <SectionHeader
           eyebrow="The Services"
           title="Care Tailored to Every Stage"
-          subtitle="Divine Heritage offers a range of professional childcare services from babies and preschoolers, adapted entirely to the unique, individual needs of every child."
+          subtitle="Divine Heritage offers a range of professional childcare services from babies and toddlers to school-age children, adapted entirely to the unique, individual needs of every child."
           centered
         />
       </AnimatedSection>

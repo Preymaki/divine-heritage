@@ -71,7 +71,7 @@ export default function Services() {
               Care for Every Stage of Childhood
             </h1>
             <p className="mt-4 text-white/90 text-base md:text-lg leading-relaxed max-w-2xl drop-shadow-[0_1px_2px_rgba(0,0,0,0.4)]">
-              Divine Heritage offers a range of professional childcare services from babies and preschoolers, adapted entirely to the unique, individual needs of every child.
+              Divine Heritage offers a range of professional childcare services from babies and toddlers to school-age children, adapted entirely to the unique, individual needs of every child.
             </p>
           </AnimatedSection>
         </div>

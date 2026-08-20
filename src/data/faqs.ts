@@ -17,7 +17,7 @@ export const FAQS: FAQ[] = [
     id: 'ages',
     question: 'What ages and sessions are cared for?',
     answer:
-      'Full-time and part-time flexible sessions are provided for Babies & Toddlers and Preschoolers (5/6 months – 5 years), alongside Holiday Care (5 months – 5 years) and After-School Care for children aged 5 – 11 years. Numbers are carefully managed to maintain an exceptional standard of individualised care for every child.',
+      'Full-time and part-time flexible sessions are provided for babies and toddlers (5 months – 3 years), alongside Holiday Care (5 months – 10 years) and After-School Care for children aged 4 – 10 years. Numbers are carefully managed to maintain an exceptional standard of individualised care for every child.',
     category: 'general',
   },
   {
