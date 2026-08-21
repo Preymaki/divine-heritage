@@ -3641,3 +3641,13 @@ textarea.admin-input {
   border: 1px solid var(--color-primary-200);
   border-radius: 0.75rem;
 }
+
+/* ── Safeguard policy callout — force white text on dark background ── */
+.callout-safeguard,
+.callout-safeguard * {
+  color: rgba(255, 255, 255, 0.92) !important;
+}
+.callout-safeguard .callout-title {
+  color: #ffffff !important;
+  opacity: 1 !important;
+}

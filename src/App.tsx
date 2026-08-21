@@ -13,6 +13,7 @@ const Services = lazy(() => import('@pages/Services'))
 const Gallery  = lazy(() => import('@pages/Gallery'))
 const FAQs     = lazy(() => import('@pages/FAQs'))
 const Contact  = lazy(() => import('@pages/Contact'))
+const Policies = lazy(() => import('@pages/Policies'))
 const NotFound = lazy(() => import('@pages/NotFound'))
 
 // ── Admin auth pages (lazy) ──────────────────────────────────────────────────
@@ -75,6 +76,7 @@ export default function App() {
           <Route path="gallery"  element={<Suspense fallback={<PageLoader />}><Gallery /></Suspense>} />
           <Route path="faqs"     element={<Suspense fallback={<PageLoader />}><FAQs /></Suspense>} />
           <Route path="contact"  element={<Suspense fallback={<PageLoader />}><Contact /></Suspense>} />
+          <Route path="policies" element={<Suspense fallback={<PageLoader />}><Policies /></Suspense>} />
           <Route path="*"        element={<Suspense fallback={<PageLoader />}><NotFound /></Suspense>} />
         </Route>
 

@@ -23,6 +23,7 @@ export const NAV_LINKS = [
   { label: 'Gallery', href: '/gallery' },
   { label: 'FAQs', href: '/faqs' },
   { label: 'Contact', href: '/contact' },
+  { label: 'Policies', href: '/policies' },
 ] as const
 
 export const CTA = {
