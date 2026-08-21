@@ -4,288 +4,362 @@ import AnimatedSection from '@components/ui/AnimatedSection'
 import SectionWrapper from '@components/ui/SectionWrapper'
 import SectionHeader from '@components/ui/SectionHeader'
 
+const STANDARD_FEES = [
+  {
+    name: 'Hourly Rate',
+    price: '£12.00',
+    frequency: 'per hour',
+    detail: 'Standard hourly childcare rate',
+  },
+  {
+    name: 'Day Rate',
+    price: '£70.00',
+    frequency: 'per day',
+    detail: 'Applies when care exceeds 5 hours',
+  },
+  {
+    name: 'Full-Time Care',
+    price: '£330.00',
+    frequency: 'per week',
+    detail: 'Full weekly placement',
+  },
+  {
+    name: 'Ad Hoc Booking',
+    price: '£18.00',
+    frequency: 'per booking',
+    detail: 'Payable on booking',
+  },
+]
+
+const SPECIALISED_FEES = [
+  {
+    category: 'Babies Under 8 Months',
+    items: [
+      { label: 'Hourly Rate', price: '£14.00', frequency: 'per hour' },
+      { label: 'Day Rate', price: '£80.00', frequency: 'per day' },
+    ],
+    note: 'Specialised infant care and dedicated attention',
+  },
+  {
+    category: 'School Pick-Up',
+    items: [
+      { label: '3:00pm – 6:00pm', price: '£30.00', frequency: 'per day' },
+    ],
+    note: 'Includes school pickup, snack & supervised activities',
+  },
+  {
+    category: 'Flexible Hours',
+    items: [
+      { label: 'Minimum Booking', price: '3 hrs +', frequency: 'minimum session' },
+    ],
+    note: 'Minimum booking of 3 hours and above',
+  },
+]
+
+const FEE_POLICY_POINTS = [
+  'The day rate applies when childcare is provided for more than 5 hours.',
+  'Charges are based on an hourly rate.',
+  'Half-hour charges are not offered.',
+  'A minimum of 2 full days or 3 part-time days is required.',
+]
+
 const FUNDING_OPTIONS = [
   {
-    tag: 'Universal Entitlement',
-    hours: '15 Hours',
     title: '15 Hours — 3 & 4 Year Olds',
-    ageGroup: 'Children aged 3 and 4',
-    description:
-      'Children aged 3 and 4 may be eligible for the universal 15-hour entitlement from the term after their third birthday.',
+    tag: 'Universal Entitlement',
+    ageGroup: '3 & 4-Year-Olds',
+    intro:
+      'Children aged 3 and 4 are eligible for the universal 15-hour entitlement from the term after their third birthday.',
     points: [
       'Universal entitlement starting the term after the 3rd birthday',
-      'Maximum of 15 hours per week over at least 38 weeks per year',
+      'Maximum of 15 hours per week over no fewer than 38 weeks per year',
       'Available during term-time only',
     ],
-    highlight: 'Universal entitlement for all 3 & 4-year-olds',
+    note: 'Available universally to all eligible 3 & 4-year-olds',
     isAccent: false,
   },
   {
-    tag: 'Working Parents',
-    hours: '15 Hours',
-    title: '15 Hours — Working Parents',
+    title: '15 Hours — Working Parent Entitlement',
+    tag: 'Working Parents (9m – 2y)',
     ageGroup: '9 Months to 2 Years',
-    description:
-      'Eligible children aged 9 months to 2 years may qualify for the 15-hour working parent entitlement.',
+    intro:
+      'Eligible children aged 9 months to 2 years can access the 15-hour working parent entitlement.',
     points: [
-      'For eligible working parents with children aged 9 months to 2 years',
-      'Up to 15 funded hours per week during term time',
+      'For eligible working parents of children aged 9 months to 2 years',
+      'Up to 15 hours of funded early learning per week',
       'Parents must provide their confirmation code when applying',
     ],
-    highlight: 'Confirmation code required upon application',
+    note: 'Confirmation code required upon application',
     isAccent: true,
   },
   {
-    tag: 'Working Parents',
-    hours: '15 Hours',
-    title: '15 Hours — 2 Year Olds',
+    title: '15 Hours — Working Parent Entitlement',
+    tag: 'Working Parents (2y)',
     ageGroup: '2-Year-Old Children',
-    description:
-      'Eligible 2-year-olds may qualify for the 15-hour working parent entitlement.',
+    intro:
+      'Eligible 2-year-olds can access the 15-hour working parent entitlement.',
     points: [
-      'For eligible working parents of 2-year-old children',
-      'Up to 15 hours of funded childcare each week',
-      'Parents must provide the relevant confirmation code',
+      'For eligible 2-year-old children of working parents',
+      'Up to 15 funded hours per week',
+      'Parents claiming this entitlement must provide the relevant confirmation code',
     ],
-    highlight: 'Confirmation code required upon application',
+    note: 'Confirmation code required upon application',
     isAccent: false,
   },
   {
-    tag: 'Extended Entitlement',
-    hours: '30 Hours',
-    title: '30 Hours — 3 & 4 Year Olds',
-    ageGroup: '3 & 4-Year-Old Children',
-    description:
-      'Eligible 3- and 4-year-olds may qualify for the 30-hour working parent entitlement.',
+    title: '30 Hours — Working Parent Entitlement',
+    tag: 'Extended Entitlement (3 & 4y)',
+    ageGroup: '3 & 4-Year-Olds',
+    intro:
+      'Eligible 3- and 4-year-olds can access the 30-hour working parent entitlement.',
     points: [
-      'Extended funding for eligible working parents',
+      'Extended entitlement for eligible working parents',
       'Parents must provide their relevant confirmation code',
       'Funding can be used for up to 10 hours per day',
       'Must be reapplied for each term (enrolment is not automatic)',
     ],
-    highlight: 'Reapply each term • Usable up to 10h per day',
+    note: 'Reapply each term • Usable up to 10h per day',
     isAccent: true,
   },
 ]
 
-const HOW_IT_WORKS_STEPS = [
-  {
-    num: '01',
-    title: 'Eligibility',
-    detail: 'Eligibility depends on the child’s age and the applicable funding entitlement.',
-  },
-  {
-    num: '02',
-    title: 'Confirmation Code',
-    detail: 'Parents claiming funded hours should provide the relevant confirmation code when applying.',
-  },
-  {
-    num: '03',
-    title: 'Weekly Entitlement',
-    detail: 'Funded hours are limited to the child’s eligible weekly entitlement.',
-  },
-  {
-    num: '04',
-    title: 'Termly Reapplication',
-    detail: 'The 30-hour funding entitlement must be reapplied for each term, as renewal is not automatic.',
-  },
-  {
-    num: '05',
-    title: 'Daily Usage Limits',
-    detail: 'Funded hours can be used for up to 10 hours per day where session times allow.',
-  },
-  {
-    num: '06',
-    title: 'Additional Hours',
-    detail: 'Additional childcare hours outside the child’s funded entitlement may be charged separately.',
-  },
-]
-
-const RATES = [
-  { service: 'Standard Hourly Rate', price: '£12.00', note: 'per hour' },
-  { service: 'Full Day Session', price: '£70.00', note: 'per day' },
-  { service: 'Full-Time Care', price: '£330.00', note: 'per week' },
-  { service: 'Ad Hoc Booking', price: '£18.00', note: 'per booking / hour' },
-  { service: 'Babies (Under 8 Months)', price: '£14.00 / hr', note: '£80.00 full day' },
-  { service: 'School Pick-ups (3pm–6pm)', price: '£30.00', note: 'per afternoon' },
-  { service: 'Flexible Hours', price: 'Min. 3 hrs', note: 'minimum 3 hours & above' },
-]
-
 export default function FundedHoursSection() {
   return (
-    <SectionWrapper id="funded-hours" background="white" className="border-t border-[var(--color-muted)]">
-      {/* 1. Header & Lead Copy */}
+    <SectionWrapper id="fees-funding" background="white" className="border-t border-[var(--color-muted)] scroll-mt-24">
+      {/* 1. FEES & FUNDING — Introduction */}
       <AnimatedSection className="text-center flex flex-col items-center">
         <SectionHeader
-          eyebrow="Early Years Entitlements"
-          title="Funded Childcare Hours"
+          eyebrow="Fees & Funding"
+          title="Fees & Funding"
           centered
         />
         <div className="max-w-3xl mt-5 space-y-3 text-center">
           <p className="text-[var(--color-text-primary)] font-medium text-base md:text-lg leading-relaxed">
-            Eligible families may be able to access funded childcare hours through the available early years entitlements.
+            We understand that choosing childcare is an important decision for families. At Divine Heritage Childcare Service, we aim to provide clear information about our childcare sessions, fees and available funded childcare options.
           </p>
           <p className="text-[var(--color-text-secondary)] text-sm md:text-base leading-relaxed">
-            Divine Heritage Childcare Service welcomes eligible families who wish to use funded childcare hours as part of their child's care. Funding availability depends on the child's age and eligibility.
+            If you have any questions about our services, funding options or the sessions available for your child, please feel free to get in touch.
           </p>
         </div>
       </AnimatedSection>
 
-      {/* 2. Funding Options Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 mt-12 md:mt-16">
-        {FUNDING_OPTIONS.map((item, idx) => {
-          const accentColor = item.isAccent ? 'var(--color-accent-500)' : 'var(--color-primary-500)'
-          const accentBg = item.isAccent ? 'var(--color-accent-50)' : 'var(--color-primary-50)'
-          const tagTextColor = item.isAccent ? 'text-[var(--color-accent-600)]' : 'text-[var(--color-primary-600)]'
-
-          return (
-            <AnimatedSection key={item.title} delay={idx * 0.08}>
-              <div className="bg-white rounded-[var(--radius-xl)] p-7 md:p-8 border border-[var(--color-muted)] shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-card)] transition-shadow duration-300 flex flex-col h-full">
-                
-                {/* Header row: Natural badges */}
-                <div className="flex items-center justify-between gap-3 mb-4">
-                  <span
-                    className={`text-xs font-semibold px-3 py-1 rounded-full ${tagTextColor}`}
-                    style={{ backgroundColor: accentBg }}
-                  >
-                    {item.tag}
-                  </span>
-                  <span className="text-xs font-medium text-[var(--color-text-muted)] bg-[var(--color-muted)] rounded-full px-3 py-1">
-                    {item.ageGroup}
-                  </span>
-                </div>
-
-                {/* Title */}
-                <h3 className="font-[var(--font-family-heading)] font-bold text-xl md:text-2xl text-[var(--color-text-primary)] mb-3">
-                  {item.title}
-                </h3>
-
-                {/* Description */}
-                <p className="text-[var(--color-text-secondary)] text-sm md:text-base leading-relaxed mb-6">
-                  {item.description}
-                </p>
-
-                {/* Bullet points */}
-                <ul className="space-y-3 mb-6 flex-1" role="list">
-                  {item.points.map((pt) => (
-                    <li key={pt} className="flex items-start gap-3 text-sm text-[var(--color-text-secondary)]">
-                      <Check
-                        size={15}
-                        className="shrink-0 mt-1"
-                        style={{ color: accentColor }}
-                        aria-hidden="true"
-                      />
-                      <span>{pt}</span>
-                    </li>
-                  ))}
-                </ul>
-
-                {/* Footer note */}
-                <div
-                  className="pt-4 border-t border-[var(--color-muted)] text-xs font-medium text-[var(--color-text-secondary)] flex items-center justify-between"
-                >
-                  <span className="text-[var(--color-text-muted)]">Key requirement:</span>
-                  <span className="font-semibold text-[var(--color-text-primary)]">{item.highlight}</span>
-                </div>
-              </div>
-            </AnimatedSection>
-          )
-        })}
-      </div>
-
-      {/* 3. How Funded Hours Work */}
-      <div className="mt-16 md:mt-24 pt-12 border-t border-[var(--color-muted)]">
-        <AnimatedSection className="text-center flex flex-col items-center mb-10 md:mb-12">
-          <p className="text-xs font-semibold uppercase tracking-[0.15em] mb-2 text-[var(--color-primary-500)] font-[var(--font-family-heading)]">
-            How It Works
-          </p>
-          <h3 className="font-[var(--font-family-heading)] font-bold text-2xl md:text-3xl text-[var(--color-text-primary)]">
-            How Funded Hours Work
-          </h3>
-          <p className="mt-3 text-[var(--color-text-secondary)] text-sm md:text-base max-w-xl text-center">
-            Helpful guidelines to ensure a smooth application and enrolment for your funded place.
-          </p>
-        </AnimatedSection>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {HOW_IT_WORKS_STEPS.map((step, idx) => (
-            <AnimatedSection key={step.title} delay={idx * 0.06}>
-              <div className="p-5 md:p-6 rounded-[var(--radius-lg)] bg-[var(--color-muted)]/50 border border-[var(--color-muted)] h-full flex flex-col">
-                <div className="flex items-center gap-3 mb-3">
-                  <span className="font-[var(--font-family-heading)] font-bold text-base text-[var(--color-primary-500)]">
-                    {step.num}
-                  </span>
-                  <h4 className="font-[var(--font-family-heading)] font-semibold text-base text-[var(--color-text-primary)]">
-                    {step.title}
-                  </h4>
-                </div>
-                <p className="text-[var(--color-text-secondary)] text-sm leading-relaxed">
-                  {step.detail}
-                </p>
-              </div>
-            </AnimatedSection>
-          ))}
-        </div>
-      </div>
-
-      {/* 4. Additional Childcare Hours */}
-      <div className="mt-16 md:mt-24 pt-12 border-t border-[var(--color-muted)]">
-        <AnimatedSection className="max-w-4xl mx-auto">
-          <div className="text-center mb-8">
-            <h3 className="font-[var(--font-family-heading)] font-bold text-2xl md:text-3xl text-[var(--color-text-primary)] mb-3">
-              Additional Childcare Hours
-            </h3>
-            <p className="text-[var(--color-text-secondary)] text-sm md:text-base max-w-2xl mx-auto leading-relaxed">
-              Funded childcare does not necessarily cover every hour of care. Standard childcare rates apply for extra hours or sessions outside your child’s funded entitlement.
+      {/* 2. SESSIONS & FEES */}
+      <div className="mt-16 md:mt-20">
+        <AnimatedSection className="mb-8">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 pb-4 border-b border-[var(--color-muted)]">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[var(--color-primary-500)] mb-1 font-[var(--font-family-heading)]">
+                Pricing Overview
+              </p>
+              <h3 className="font-[var(--font-family-heading)] font-bold text-2xl md:text-3xl text-[var(--color-text-primary)]">
+                Sessions & Fees
+              </h3>
+            </div>
+            <p className="text-xs md:text-sm text-[var(--color-text-muted)] max-w-sm">
+              Clear, transparent pricing designed around your child’s care needs.
             </p>
           </div>
+        </AnimatedSection>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 mb-6">
-            {RATES.map((r) => (
-              <div
-                key={r.service}
-                className="bg-[var(--color-background)] rounded-xl p-4 border border-[var(--color-muted)] shadow-[var(--shadow-soft)] flex flex-col justify-between"
-              >
-                <span className="text-xs font-medium text-[var(--color-text-muted)] mb-1">
-                  {r.service}
-                </span>
-                <div className="flex items-baseline justify-between gap-2">
-                  <span className="font-[var(--font-family-heading)] font-bold text-lg text-[var(--color-text-primary)]">
-                    {r.price}
-                  </span>
-                  <span className="text-xs text-[var(--color-text-muted)]">
-                    {r.note}
-                  </span>
+        {/* Standard Childcare Rates Grid */}
+        <AnimatedSection delay={0.05}>
+          <div className="mb-6">
+            <h4 className="text-sm font-semibold uppercase tracking-wider text-[var(--color-text-muted)] mb-3 font-[var(--font-family-heading)]">
+              Standard Childcare Rates
+            </h4>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {STANDARD_FEES.map((fee) => (
+                <div
+                  key={fee.name}
+                  className="bg-[var(--color-background)] rounded-[var(--radius-lg)] p-5 border border-[var(--color-muted)] shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-card)] transition-shadow duration-200 flex flex-col justify-between"
+                >
+                  <div>
+                    <span className="text-xs font-medium text-[var(--color-text-muted)] block mb-1">
+                      {fee.name}
+                    </span>
+                    <div className="flex items-baseline gap-1.5 mb-1.5">
+                      <span className="font-[var(--font-family-heading)] font-bold text-2xl text-[var(--color-text-primary)]">
+                        {fee.price}
+                      </span>
+                      <span className="text-xs text-[var(--color-text-muted)] font-medium">
+                        {fee.frequency}
+                      </span>
+                    </div>
+                  </div>
+                  <p className="text-xs text-[var(--color-text-secondary)] mt-2 pt-2 border-t border-[var(--color-muted)]">
+                    {fee.detail}
+                  </p>
                 </div>
+              ))}
+            </div>
+          </div>
+        </AnimatedSection>
+
+        {/* Specialised Childcare Options */}
+        <AnimatedSection delay={0.1}>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+            {SPECIALISED_FEES.map((block) => (
+              <div
+                key={block.category}
+                className="bg-[var(--color-muted)]/40 rounded-[var(--radius-lg)] p-5 border border-[var(--color-muted)] flex flex-col justify-between"
+              >
+                <div>
+                  <h4 className="font-[var(--font-family-heading)] font-bold text-base text-[var(--color-text-primary)] mb-3">
+                    {block.category}
+                  </h4>
+                  <div className="space-y-2.5">
+                    {block.items.map((it) => (
+                      <div key={it.label} className="flex items-baseline justify-between bg-white rounded-lg px-3 py-2 border border-[var(--color-muted)]">
+                        <span className="text-xs text-[var(--color-text-secondary)] font-medium">
+                          {it.label}
+                        </span>
+                        <div className="flex items-baseline gap-1">
+                          <span className="font-[var(--font-family-heading)] font-bold text-base text-[var(--color-primary-600)]">
+                            {it.price}
+                          </span>
+                          <span className="text-[11px] text-[var(--color-text-muted)]">
+                            {it.frequency}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <p className="text-xs text-[var(--color-text-muted)] mt-4">
+                  {block.note}
+                </p>
               </div>
             ))}
           </div>
+        </AnimatedSection>
 
-          <div className="bg-[var(--color-primary-50)]/70 border border-[var(--color-primary-100)] rounded-xl p-4 flex items-start gap-3 text-xs md:text-sm text-[var(--color-text-secondary)] leading-relaxed">
-            <Info size={18} className="text-[var(--color-primary-500)] shrink-0 mt-0.5" aria-hidden="true" />
-            <p>
-              <strong className="text-[var(--color-text-primary)]">Please Note: </strong>
-              A separate fee may apply for childcare hours outside the child's funded entitlement. Please enquire for details based on your child's required sessions and eligibility.
+        {/* Fee Information & Terms Callout */}
+        <AnimatedSection delay={0.15}>
+          <div className="bg-[var(--color-primary-50)]/70 border border-[var(--color-primary-100)] rounded-[var(--radius-xl)] p-5 md:p-6">
+            <div className="flex items-start gap-3">
+              <div className="w-8 h-8 rounded-lg bg-white text-[var(--color-primary-500)] flex items-center justify-center shrink-0 shadow-xs mt-0.5">
+                <Info size={18} aria-hidden="true" />
+              </div>
+              <div className="flex-1">
+                <h4 className="font-[var(--font-family-heading)] font-semibold text-sm text-[var(--color-primary-900)] mb-2.5">
+                  Important Fee Information & Session Policies
+                </h4>
+                <ul className="grid grid-cols-1 sm:grid-cols-2 gap-y-2 gap-x-6" role="list">
+                  {FEE_POLICY_POINTS.map((point) => (
+                    <li key={point} className="flex items-start gap-2 text-xs md:text-sm text-[var(--color-text-secondary)]">
+                      <Check size={14} className="text-[var(--color-primary-500)] shrink-0 mt-0.5" aria-hidden="true" />
+                      <span>{point}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </AnimatedSection>
+      </div>
+
+      {/* 3. FUNDED CHILDCARE HOURS */}
+      <div id="funded-hours" className="mt-20 md:mt-24 pt-16 border-t border-[var(--color-muted)] scroll-mt-24">
+        <AnimatedSection className="text-center flex flex-col items-center mb-12">
+          <p className="text-xs font-semibold uppercase tracking-[0.15em] mb-2 text-[var(--color-primary-500)] font-[var(--font-family-heading)]">
+            Government Early Years Entitlements
+          </p>
+          <h3 className="font-[var(--font-family-heading)] font-bold text-2xl md:text-3xl lg:text-4xl text-[var(--color-text-primary)]">
+            Funded Childcare Hours
+          </h3>
+          <p className="mt-4 text-[var(--color-text-secondary)] text-sm md:text-base max-w-2xl text-center leading-relaxed">
+            Eligible families may be able to access funded childcare hours through the available early years entitlements. Funding availability depends on your child's age and eligibility.
+          </p>
+        </AnimatedSection>
+
+        {/* 4 Funding Options Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
+          {FUNDING_OPTIONS.map((opt, idx) => {
+            const tagBg = opt.isAccent ? 'bg-[var(--color-accent-50)] text-[var(--color-accent-600)]' : 'bg-[var(--color-primary-50)] text-[var(--color-primary-600)]'
+            const checkColor = opt.isAccent ? 'var(--color-accent-500)' : 'var(--color-primary-500)'
+
+            return (
+              <AnimatedSection key={opt.title + opt.tag} delay={idx * 0.08}>
+                <div className="bg-white rounded-[var(--radius-xl)] p-7 md:p-8 border border-[var(--color-muted)] shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-card)] transition-shadow duration-300 flex flex-col h-full">
+                  {/* Card top badges */}
+                  <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
+                    <span className={`text-xs font-semibold px-3 py-1 rounded-full ${tagBg}`}>
+                      {opt.tag}
+                    </span>
+                    <span className="text-xs font-medium text-[var(--color-text-muted)] bg-[var(--color-muted)] rounded-full px-3 py-1">
+                      {opt.ageGroup}
+                    </span>
+                  </div>
+
+                  {/* Title */}
+                  <h4 className="font-[var(--font-family-heading)] font-bold text-xl md:text-2xl text-[var(--color-text-primary)] mb-3 leading-snug">
+                    {opt.title}
+                  </h4>
+
+                  {/* Intro */}
+                  <p className="text-[var(--color-text-secondary)] text-sm md:text-base leading-relaxed mb-5">
+                    {opt.intro}
+                  </p>
+
+                  {/* Points list */}
+                  <ul className="space-y-2.5 mb-6 flex-1" role="list">
+                    {opt.points.map((pt) => (
+                      <li key={pt} className="flex items-start gap-2.5 text-sm text-[var(--color-text-secondary)]">
+                        <Check
+                          size={15}
+                          className="shrink-0 mt-0.5"
+                          style={{ color: checkColor }}
+                          aria-hidden="true"
+                        />
+                        <span>{pt}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  {/* Note footer */}
+                  <div className="pt-4 border-t border-[var(--color-muted)] text-xs flex items-center justify-between gap-2">
+                    <span className="text-[var(--color-text-muted)] font-medium">Notice:</span>
+                    <span className="font-semibold text-[var(--color-text-primary)] text-right">{opt.note}</span>
+                  </div>
+                </div>
+              </AnimatedSection>
+            )
+          })}
+        </div>
+      </div>
+
+      {/* 4. ADDITIONAL HOURS */}
+      <div className="mt-16 md:mt-20 pt-12 border-t border-[var(--color-muted)]">
+        <AnimatedSection className="max-w-3xl mx-auto">
+          <div className="bg-[var(--color-muted)]/50 rounded-[var(--radius-2xl)] p-7 md:p-9 border border-[var(--color-muted)] text-center">
+            <h4 className="font-[var(--font-family-heading)] font-bold text-2xl text-[var(--color-text-primary)] mb-3">
+              Additional Childcare Hours
+            </h4>
+            <p className="text-[var(--color-text-secondary)] text-sm md:text-base leading-relaxed mb-4">
+              Funded childcare covers eligible hours within your child's available weekly entitlement. If you require childcare hours beyond your child's funded entitlement, a separate fee will apply based on the applicable childcare rate.
+            </p>
+            <p className="text-xs md:text-sm text-[var(--color-text-muted)]">
+              We encourage you to get in touch to discuss your individual childcare requirements and session availability.
             </p>
           </div>
         </AnimatedSection>
       </div>
 
-      {/* 5. Clean CTA Card */}
+      {/* 5. CALL TO ACTION */}
       <AnimatedSection className="mt-14 md:mt-20 text-center">
-        <div className="max-w-2xl mx-auto bg-[var(--color-background)] border border-[var(--color-muted)] rounded-[var(--radius-2xl)] p-8 md:p-10 shadow-[var(--shadow-soft)]">
+        <div className="max-w-2xl mx-auto bg-white border border-[var(--color-muted)] rounded-[var(--radius-2xl)] p-8 md:p-10 shadow-[var(--shadow-card)]">
           <h3 className="font-[var(--font-family-heading)] font-bold text-2xl md:text-3xl text-[var(--color-text-primary)] mb-3">
-            Interested in Funded Childcare?
+            Interested in Our Childcare or Funding Options?
           </h3>
           <p className="text-[var(--color-text-secondary)] text-sm md:text-base leading-relaxed mb-7 max-w-lg mx-auto">
-            If you think your child may be eligible for funded childcare hours, we'd be happy to discuss your requirements and available sessions.
+            Whether you would like to discuss childcare sessions, fees or funded childcare hours, we would be happy to help you find an arrangement that suits your family's needs.
           </p>
           <Link
-            to="/contact?service=funded"
-            id="funded-hours-enquire-btn"
+            to="/contact?enquiry=fees-funding"
+            id="fees-funding-enquiry-btn"
             className="inline-flex items-center gap-2.5 px-8 py-3.5 bg-[var(--color-primary-500)] hover:bg-[var(--color-primary-600)] text-white font-semibold rounded-xl text-sm md:text-base transition-all duration-200 hover:shadow-[var(--shadow-card)] hover:-translate-y-0.5 group focus-visible:outline-2 focus-visible:outline-offset-2"
           >
-            Enquire About Funded Hours
+            Make an Enquiry
             <ArrowRight size={17} className="group-hover:translate-x-0.5 transition-transform duration-200" aria-hidden="true" />
           </Link>
         </div>
