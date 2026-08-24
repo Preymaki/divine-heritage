@@ -112,7 +112,7 @@ function PolicySection({
   return (
     <section
       id={id}
-      className="scroll-mt-28 py-10 md:py-14 border-b border-[var(--color-muted)] last:border-b-0"
+      className="scroll-mt-36 md:scroll-mt-40 lg:scroll-mt-28 py-10 md:py-14 border-b border-[var(--color-muted)] last:border-b-0"
     >
       {eyebrow && (
         <p className="text-xs font-semibold uppercase tracking-[0.15em] text-[var(--color-primary-500)] mb-2 font-[var(--font-family-heading)]">
@@ -288,11 +288,11 @@ function MobileNav({
   const current = allItems.find((i) => i.id === activeSection)
 
   return (
-    <div className="lg:hidden sticky top-20 z-30 bg-white/95 backdrop-blur-md border-b border-[var(--color-muted)] shadow-[var(--shadow-soft)] -mx-5 px-5 py-3 md:-mx-8 md:px-8 mb-6">
+    <div className="lg:hidden sticky top-16 md:top-20 z-30 bg-white/95 backdrop-blur-md border-b border-[var(--color-muted)] shadow-[var(--shadow-soft)] -mx-5 px-5 py-3 md:-mx-8 md:px-8 mb-6 relative">
       <button
         type="button"
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between gap-3 py-2 px-4 bg-[var(--color-primary-50)] border border-[var(--color-primary-200)] rounded-[var(--radius-md)] text-left"
+        className="w-full flex items-center justify-between gap-3 py-2.5 px-4 bg-[var(--color-primary-50)] border border-[var(--color-primary-200)] rounded-[var(--radius-md)] text-left shadow-xs transition-colors hover:bg-[var(--color-primary-100)]"
         aria-expanded={open}
         aria-controls="mobile-policy-nav"
       >
@@ -308,42 +308,57 @@ function MobileNav({
 
       <AnimatePresence>
         {open && (
-          <motion.div
-            id="mobile-policy-nav"
-            key="mobile-nav"
-            initial={prefersReduced ? { height: 'auto', opacity: 1 } : { height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={prefersReduced ? { height: 'auto', opacity: 1 } : { height: 0, opacity: 0 }}
-            transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
-            className="overflow-hidden mt-2"
-          >
-            <nav aria-label="Policy sections" className="max-h-64 overflow-y-auto rounded-[var(--radius-md)] border border-[var(--color-muted)] bg-white shadow-[var(--shadow-card)]">
-              {NAV_GROUPS.map((group) => (
-                <div key={group.id}>
-                  <p className="text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)] px-4 pt-3 pb-1.5 font-[var(--font-family-heading)]">
-                    {group.label}
-                  </p>
-                  {group.items.map((item) => (
-                    <button
-                      key={item.id}
-                      type="button"
-                      onClick={() => {
-                        onNavigate(item.id)
-                        setOpen(false)
-                      }}
-                      className={`w-full text-left px-4 py-2.5 text-sm transition-colors duration-100 ${
-                        activeSection === item.id
-                          ? 'bg-[var(--color-primary-50)] text-[var(--color-primary-600)] font-semibold'
-                          : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-muted)] hover:text-[var(--color-text-primary)]'
-                      }`}
-                    >
-                      {item.label}
-                    </button>
-                  ))}
-                </div>
-              ))}
-            </nav>
-          </motion.div>
+          <>
+            {/* Backdrop to close on tap outside */}
+            <div
+              className="fixed inset-0 z-40 bg-black/20 backdrop-blur-[1px]"
+              onClick={() => setOpen(false)}
+              aria-hidden="true"
+            />
+
+            {/* Dropdown Menu - absolute overlay so it doesn't shift document flow */}
+            <motion.div
+              id="mobile-policy-nav"
+              key="mobile-nav"
+              initial={prefersReduced ? { opacity: 1, y: 0 } : { opacity: 0, y: -6, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={prefersReduced ? { opacity: 0, y: 0 } : { opacity: 0, y: -6, scale: 0.98 }}
+              transition={{ duration: 0.18, ease: [0.4, 0, 0.2, 1] }}
+              className="absolute left-5 right-5 md:left-8 md:right-8 top-full mt-1.5 z-50 overflow-hidden rounded-[var(--radius-lg)] border border-[var(--color-muted)] bg-white shadow-[var(--shadow-elevated)]"
+            >
+              <nav aria-label="Policy sections" className="max-h-[60vh] overflow-y-auto divide-y divide-[var(--color-muted)] p-1.5">
+                {NAV_GROUPS.map((group) => (
+                  <div key={group.id} className="py-1 first:pt-0 last:pb-0">
+                    <p className="text-[11px] font-semibold uppercase tracking-wider text-[var(--color-primary-500)] px-3.5 pt-2 pb-1 font-[var(--font-family-heading)]">
+                      {group.label}
+                    </p>
+                    <div className="space-y-0.5">
+                      {group.items.map((item) => (
+                        <button
+                          key={item.id}
+                          type="button"
+                          onClick={() => {
+                            setOpen(false)
+                            onNavigate(item.id)
+                          }}
+                          className={`w-full text-left px-3.5 py-2 rounded-md text-sm transition-colors duration-100 flex items-center justify-between ${
+                            activeSection === item.id
+                              ? 'bg-[var(--color-primary-50)] text-[var(--color-primary-600)] font-semibold'
+                              : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-muted)] hover:text-[var(--color-text-primary)]'
+                          }`}
+                        >
+                          <span>{item.label}</span>
+                          {activeSection === item.id && (
+                            <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-primary-500)] shrink-0" aria-hidden />
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </nav>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
     </div>
@@ -527,6 +542,14 @@ export default function Policies() {
 
     const handleScroll = () => {
       if (isNavigatingRef.current) return
+
+      // If scrolled close to the bottom of the page, activate the last section
+      const isAtBottom =
+        window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 80
+      if (isAtBottom && allIds.length > 0) {
+        setActiveSection(allIds[allIds.length - 1])
+        return
+      }
 
       const threshold = window.innerHeight * 0.35
       let current = allIds[0]
