@@ -695,50 +695,61 @@ export default function Policies() {
                     The 7 areas of learning and development and the educational programmes consist of 3 prime areas: communication and language, physical development, and personal, social, and emotional development. The 4 areas are literacy, mathematics, understanding the world and expressive arts &amp; design.
                   </p>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="p-5 rounded-[var(--radius-xl)] bg-[var(--color-primary-50)] border border-[var(--color-primary-200)]">
-                      <h3 className="font-[var(--font-family-heading)] font-bold text-base text-[var(--color-primary-900)] mb-3 flex items-center gap-2">
-                        <span className="w-2.5 h-2.5 rounded-full bg-[var(--color-primary-500)]" />
-                        3 Prime Areas
-                      </h3>
-                      <ul className="space-y-2.5 text-sm text-[var(--color-text-secondary)]">
-                        <li className="flex items-center gap-2.5">
-                          <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-primary-400)] shrink-0" />
-                          Communication and language
-                        </li>
-                        <li className="flex items-center gap-2.5">
-                          <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-primary-400)] shrink-0" />
-                          Physical development
-                        </li>
-                        <li className="flex items-center gap-2.5">
-                          <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-primary-400)] shrink-0" />
-                          Personal, social, and emotional development
-                        </li>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
+                    {/* 3 Prime Areas */}
+                    <div className="bg-white border border-slate-200/90 rounded-[var(--radius-xl)] p-5 sm:p-6 shadow-[var(--shadow-card)]">
+                      <div className="flex items-center justify-between gap-2 pb-3 mb-3.5 border-b border-slate-100">
+                        <h3 className="font-[var(--font-family-heading)] font-bold text-base text-slate-800 flex items-center gap-2.5">
+                          <span className="w-2 h-2 rounded-full bg-[var(--color-primary-500)]" aria-hidden="true" />
+                          3 Prime Areas
+                        </h3>
+                        <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--color-primary-600)] bg-[var(--color-primary-50)] px-2 py-0.5 rounded-full border border-[var(--color-primary-100)]">
+                          Core Foundation
+                        </span>
+                      </div>
+                      <ul className="space-y-1.5">
+                        {[
+                          'Communication and language',
+                          'Physical development',
+                          'Personal, social, and emotional development',
+                        ].map((area) => (
+                          <li
+                            key={area}
+                            className="flex items-center gap-2.5 py-1 px-2 rounded-md text-sm text-slate-700 font-medium hover:bg-slate-50 transition-colors"
+                          >
+                            <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-primary-400)] shrink-0" aria-hidden="true" />
+                            <span>{area}</span>
+                          </li>
+                        ))}
                       </ul>
                     </div>
 
-                    <div className="p-5 rounded-[var(--radius-xl)] bg-[var(--color-accent-50)] border border-[var(--color-accent-200)]">
-                      <h3 className="font-[var(--font-family-heading)] font-bold text-base text-[var(--color-accent-900)] mb-3 flex items-center gap-2">
-                        <span className="w-2.5 h-2.5 rounded-full bg-[var(--color-accent-500)]" />
-                        4 Specific Areas
-                      </h3>
-                      <ul className="space-y-2.5 text-sm text-[var(--color-text-secondary)]">
-                        <li className="flex items-center gap-2.5">
-                          <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-accent-400)] shrink-0" />
-                          Literacy
-                        </li>
-                        <li className="flex items-center gap-2.5">
-                          <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-accent-400)] shrink-0" />
-                          Mathematics
-                        </li>
-                        <li className="flex items-center gap-2.5">
-                          <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-accent-400)] shrink-0" />
-                          Understanding the world
-                        </li>
-                        <li className="flex items-center gap-2.5">
-                          <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-accent-400)] shrink-0" />
-                          Expressive arts &amp; design
-                        </li>
+                    {/* 4 Specific Areas */}
+                    <div className="bg-white border border-slate-200/90 rounded-[var(--radius-xl)] p-5 sm:p-6 shadow-[var(--shadow-card)]">
+                      <div className="flex items-center justify-between gap-2 pb-3 mb-3.5 border-b border-slate-100">
+                        <h3 className="font-[var(--font-family-heading)] font-bold text-base text-slate-800 flex items-center gap-2.5">
+                          <span className="w-2 h-2 rounded-full bg-[var(--color-accent-500)]" aria-hidden="true" />
+                          4 Specific Areas
+                        </h3>
+                        <span className="text-[11px] font-semibold uppercase tracking-wider text-[var(--color-accent-600)] bg-[var(--color-accent-50)] px-2 py-0.5 rounded-full border border-[var(--color-accent-100)]">
+                          Applied Skills
+                        </span>
+                      </div>
+                      <ul className="space-y-1.5">
+                        {[
+                          'Literacy',
+                          'Mathematics',
+                          'Understanding the world',
+                          'Expressive arts & design',
+                        ].map((area) => (
+                          <li
+                            key={area}
+                            className="flex items-center gap-2.5 py-1 px-2 rounded-md text-sm text-slate-700 font-medium hover:bg-slate-50 transition-colors"
+                          >
+                            <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-accent-400)] shrink-0" aria-hidden="true" />
+                            <span>{area}</span>
+                          </li>
+                        ))}
                       </ul>
                     </div>
                   </div>
