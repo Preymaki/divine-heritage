@@ -467,68 +467,41 @@ function DesktopNav({
   )
 }
 
-// ─── Quick contents directory ───────────────────────────────────────────────
+// ─── Quick contents ──────────────────────────────────────────────────────────
 
 function QuickContents({ onNavigate }: { onNavigate: (id: string) => void }) {
+  const topItems = [
+    { id: 'welcome', label: 'Welcome' },
+    { id: 'ethos', label: 'Ethos & Aims' },
+    { id: 'areas-of-learning', label: 'Areas of Learning' },
+    { id: 'assessment', label: 'Assessments' },
+    { id: 'accident-procedures', label: 'Accident Procedures' },
+    { id: 'holidays', label: 'Holidays' },
+    { id: 'attendance', label: 'Attendance Policy' },
+    { id: 'settling-in', label: 'Settling In' },
+    { id: 'sick-medication', label: 'Sick / Medication Policy' },
+    { id: 'safeguarding-policy', label: 'Safeguarding' },
+    { id: 'complaints', label: 'Complaints Policy' },
+    { id: 'risk-premises', label: 'Risk Assessments' },
+  ]
+
   return (
-    <div className="bg-white border border-slate-200/80 rounded-[var(--radius-2xl)] p-6 md:p-8 shadow-[var(--shadow-card)] mb-10 relative overflow-hidden">
-      {/* Subtle decorative background accent */}
-      <div className="absolute top-0 right-0 -mt-10 -mr-10 w-48 h-48 rounded-full bg-gradient-to-br from-[var(--color-primary-50)] to-[var(--color-accent-50)] opacity-70 pointer-events-none blur-2xl" />
-
-      {/* Header section */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 pb-5 border-b border-slate-100 relative">
-        <div>
-          <div className="flex items-center gap-2 mb-1.5">
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[var(--color-primary-50)] text-[var(--color-primary-600)] border border-[var(--color-primary-100)]">
-              <BookOpen size={11} className="text-[var(--color-primary-500)]" />
-              Policy Directory
-            </span>
-            <span className="text-[11px] text-slate-400 font-medium tracking-wide">EYFS Framework</span>
-          </div>
-          <h2 className="font-[var(--font-family-heading)] font-bold text-xl md:text-2xl text-[var(--color-text-primary)]">
-            Explore Policies &amp; Procedures
-          </h2>
-        </div>
-        <p className="text-xs text-slate-500 sm:text-right max-w-xs sm:self-end">
-          Select any policy below to jump directly to its complete operational guidance.
-        </p>
-      </div>
-
-      {/* Categorized Policy Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3.5 relative">
-        {NAV_GROUPS.map((group) => {
-          const Icon = group.icon
-          return (
-            <div
-              key={group.id}
-              className="bg-slate-50/80 hover:bg-white border border-slate-200/70 hover:border-[var(--color-primary-300)] rounded-xl p-4 transition-all duration-200 flex flex-col hover:shadow-xs group/card"
-            >
-              {/* Category Title with Icon */}
-              <div className="flex items-center gap-2.5 mb-3">
-                <div className="w-7 h-7 rounded-lg bg-white border border-slate-200/80 flex items-center justify-center text-[var(--color-primary-500)] group-hover/card:text-[var(--color-primary-600)] group-hover/card:border-[var(--color-primary-200)] shadow-2xs transition-colors shrink-0">
-                  <Icon size={14} />
-                </div>
-                <h3 className="font-[var(--font-family-heading)] font-semibold text-xs text-slate-800 tracking-wide uppercase">
-                  {group.label}
-                </h3>
-              </div>
-
-              {/* Policy Item Chips */}
-              <div className="flex flex-wrap gap-1.5 mt-auto">
-                {group.items.map((item) => (
-                  <button
-                    key={item.id}
-                    type="button"
-                    onClick={() => onNavigate(item.id)}
-                    className="inline-flex items-center text-xs font-medium text-slate-600 hover:text-[var(--color-primary-700)] bg-white hover:bg-[var(--color-primary-50)] border border-slate-200/80 hover:border-[var(--color-primary-300)] px-2.5 py-1 rounded-md shadow-2xs transition-all duration-150 text-left"
-                  >
-                    <span>{item.label}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-          )
-        })}
+    <div className="bg-[var(--color-primary-50)] border border-[var(--color-primary-100)] rounded-[var(--radius-xl)] p-6 md:p-7 mb-2">
+      <p className="text-xs font-semibold uppercase tracking-[0.15em] text-[var(--color-primary-500)] mb-4 font-[var(--font-family-heading)]">
+        Contents — Jump to section
+      </p>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-2">
+        {topItems.map((item) => (
+          <button
+            key={item.id}
+            type="button"
+            onClick={() => onNavigate(item.id)}
+            className="text-left text-sm text-[var(--color-primary-700)] hover:text-[var(--color-primary-900)] font-medium py-0.5 flex items-center gap-2 group transition-colors"
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-primary-400)] group-hover:bg-[var(--color-primary-600)] shrink-0 transition-colors" aria-hidden />
+            {item.label}
+          </button>
+        ))}
       </div>
     </div>
   )
