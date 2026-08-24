@@ -486,20 +486,32 @@ function QuickContents({ onNavigate }: { onNavigate: (id: string) => void }) {
   ]
 
   return (
-    <div className="bg-[var(--color-primary-50)] border border-[var(--color-primary-100)] rounded-[var(--radius-xl)] p-6 md:p-7 mb-2">
-      <p className="text-xs font-semibold uppercase tracking-[0.15em] text-[var(--color-primary-500)] mb-4 font-[var(--font-family-heading)]">
-        Contents — Jump to section
-      </p>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-2">
+    <div className="bg-white border border-slate-200/90 rounded-[var(--radius-xl)] p-5 sm:p-6 shadow-[var(--shadow-card)] mb-6">
+      <div className="flex items-center justify-between gap-3 pb-3.5 mb-4 border-b border-slate-100">
+        <div className="flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-[var(--color-primary-500)]" aria-hidden="true" />
+          <h3 className="text-xs font-bold uppercase tracking-[0.12em] text-slate-800 font-[var(--font-family-heading)]">
+            Contents — Quick Jump
+          </h3>
+        </div>
+        <span className="text-[11px] font-medium text-slate-400 hidden sm:inline-block">
+          Select any section to jump directly
+        </span>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-1">
         {topItems.map((item) => (
           <button
             key={item.id}
             type="button"
             onClick={() => onNavigate(item.id)}
-            className="text-left text-sm text-[var(--color-primary-700)] hover:text-[var(--color-primary-900)] font-medium py-0.5 flex items-center gap-2 group transition-colors"
+            className="group flex items-center gap-2.5 py-2 px-2.5 rounded-lg text-left text-sm text-slate-600 hover:text-[var(--color-primary-600)] hover:bg-slate-50 transition-all duration-150"
           >
-            <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-primary-400)] group-hover:bg-[var(--color-primary-600)] shrink-0 transition-colors" aria-hidden />
-            {item.label}
+            <span
+              className="w-1.5 h-1.5 rounded-full bg-slate-300 group-hover:bg-[var(--color-primary-500)] group-hover:scale-125 transition-all shrink-0"
+              aria-hidden="true"
+            />
+            <span className="font-medium truncate">{item.label}</span>
           </button>
         ))}
       </div>
