@@ -89,7 +89,7 @@ export default function About() {
             <div className="rounded-[var(--radius-2xl)] overflow-hidden aspect-[4/5]">
               <img
                 src={aboutImageSrc}
-                alt="Divine Heritage childminder sitting on the floor with four children doing hands-on sensory and vegetable play, illustrating the nurturing and interactive approach at Divine Heritage"
+                alt="Toddlers and young children happily playing with educational toys on a colourful play mat at Divine Heritage Childcare"
                 className="w-full h-full object-cover object-top"
                 loading="lazy"
                 decoding="async"

@@ -14,7 +14,9 @@ export const IMAGES = {
   // Two smiling children facing camera on swings — maximum joy, best outdoor shot
   hero: '/images/outdoor-spinning-ride.jpeg',
 
-  // ── About / Childminder ─────────────────────────────────────────────────
+  // ── About / Setting Overview & Childminder ─────────────────────────────
+  // Setting overview photo on the /about page (children playing on play mat)
+  aboutSettingOverview: '/images/about-setting-overview.jpeg',
   // Childminder sitting on floor with four children doing sensory/veg play
   aboutChildminder: '/images/about-childminder-group.jpeg',
   meetChildminder:  '/images/about-childminder-group.jpeg',

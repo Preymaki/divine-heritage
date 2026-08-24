@@ -229,8 +229,14 @@ function sanitiseAboutSettings(raw: AboutSettings): AboutSettings {
     missionQuote = 'Creating a warm, nurturing space where every child feels safe, loved, and celebrated.'
   }
 
+  let aboutImageUrl = data.aboutImageUrl
+  if (aboutImageUrl === '/images/about-childminder-group.jpeg') {
+    aboutImageUrl = ''
+  }
+
   return {
     ...data,
+    aboutImageUrl,
     highlights,
     values,
     storyParagraphs,

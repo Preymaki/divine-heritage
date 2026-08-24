@@ -32,7 +32,7 @@ export function useSiteImages(): SiteImagesMap {
     hero:                 IMAGES.hero,
     homeAbout:            IMAGES.aboutChildminder,
     homeCta:              IMAGES.ctaBg,
-    aboutPage:            IMAGES.aboutChildminder,
+    aboutPage:            IMAGES.aboutSettingOverview,
     serviceChildminding:  IMAGES.serviceChildminding,
     serviceEarlyYears:    IMAGES.serviceEarlyYears,
     serviceAfterSchool:   IMAGES.serviceAfterSchool,
@@ -48,7 +48,13 @@ export function useSiteImages(): SiteImagesMap {
 
         const getGroupUrl = (group: GalleryItem['group'], fallback: string) => {
           const found = items.find((i) => i.group === group)
-          return found?.downloadURL || fallback
+          if (found && found.downloadURL) {
+            if (group === 'about_page' && found.downloadURL === '/images/about-childminder-group.jpeg') {
+              return fallback
+            }
+            return found.downloadURL
+          }
+          return fallback
         }
 
         const getServiceUrl = (sortOrder: number, fallback: string) => {
@@ -60,7 +66,7 @@ export function useSiteImages(): SiteImagesMap {
           hero:                 getGroupUrl('home_hero', IMAGES.hero),
           homeAbout:            getGroupUrl('home_about', IMAGES.aboutChildminder),
           homeCta:              getGroupUrl('home_cta', IMAGES.ctaBg),
-          aboutPage:            getGroupUrl('about_page', IMAGES.aboutChildminder),
+          aboutPage:            getGroupUrl('about_page', IMAGES.aboutSettingOverview),
           serviceChildminding:  getServiceUrl(1, IMAGES.serviceChildminding),
           serviceEarlyYears:    getServiceUrl(2, IMAGES.serviceEarlyYears),
           serviceAfterSchool:   getServiceUrl(3, IMAGES.serviceAfterSchool),

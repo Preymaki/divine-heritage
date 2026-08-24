@@ -234,12 +234,12 @@ export async function seedGallery(uploadedBy: string): Promise<void> {
       caption: 'Background banner image for the Book a Visit callout section.',
     },
 
-    // ── About Page: Founder & Care Environment ────────────────────────
+    // ── About Page: Setting Overview ──────────────────────────────────
     {
       group: 'about_page', sortOrder: 1,
-      downloadURL: '/images/about-childminder-group.jpeg',
-      title: 'About Page: Founder Profile Frame',
-      altText: 'Divine Heritage founder and childminder nurturing children in home setup',
+      downloadURL: '/images/about-setting-overview.jpeg',
+      title: 'About Page: Setting Overview',
+      altText: 'Toddlers and young children happily playing with educational toys on a colourful play mat at Divine Heritage Childcare',
       caption: 'Featured photo on the dedicated /about page.',
     },
 

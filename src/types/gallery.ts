@@ -72,7 +72,7 @@ export const PUBLIC_GALLERY_SECTIONS: Record<GalleryGroup, PublicGallerySectionI
   },
   about_page: {
     eyebrow: 'About Page',
-    title: 'Founder & Environment',
+    title: 'Setting Overview',
     subtitle: 'Featured photo on the About Us page.',
   },
   services_page: {
@@ -86,7 +86,7 @@ export const GALLERY_GROUP_LABELS: Record<GalleryGroup, string> = {
   home_hero:     'Home Page (Hero Banner)',
   home_about:    'Home Page (About Preview)',
   home_cta:      'Home & Global CTA (Book a Visit Banner)',
-  about_page:    'About Page (Founder & Care Environment)',
+  about_page:    'About Page (Setting Overview)',
   services_page: 'Services Page (Service Card Covers)',
   outings:       'Gallery: Outdoor Play & Garden Fun',
   library:       'Gallery: Library Trips & Bubble Play',
@@ -99,7 +99,7 @@ export const GALLERY_GROUP_SUBTITLES: Record<GalleryGroup, string> = {
   home_hero:     'Controls the large top background image displayed at the very top of the website home page.',
   home_about:    'Controls the featured portrait photo of the childminder in the Home Page "About" section.',
   home_cta:      'Controls the background banner frame in the "Book a Visit" callout box on the home page and footer CTA.',
-  about_page:    'Controls the primary photo of the childminder and home nursery setup on the dedicated /about page.',
+  about_page:    'Controls the primary setting overview photo of children playing on the dedicated /about page.',
   services_page: 'Controls the service card covers on the /services page (Full Day Care, Part-Time & Flexible Hours, After School Care, Holiday Care).',
   outings:       'Outdoor play, garden activities, and local exploration photos displayed on the /gallery page.',
   library:       'Local library visits, story time, and bubble play photos displayed on the /gallery page.',
