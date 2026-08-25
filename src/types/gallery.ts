@@ -127,10 +127,10 @@ export const GALLERY_GROUP_ORDER: GalleryGroup[] = [
   'home_cta',
   'about_page',
   'services_page',
+  'indoor',
+  'learning',
   'outings',
   'library',
-  'learning',
-  'indoor',
   'other',
 ]
 

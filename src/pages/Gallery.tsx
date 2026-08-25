@@ -116,7 +116,7 @@ function GallerySkeleton() {
 // ─── Main component ────────────────────────────────────────────────────────────
 
 export default function Gallery() {
-  const PUBLIC_GALLERY_GROUPS: GalleryGroup[] = ['outings', 'library', 'learning', 'indoor', 'other']
+  const PUBLIC_GALLERY_GROUPS: GalleryGroup[] = ['indoor', 'learning', 'outings', 'library', 'other']
 
   // ── Firestore subscription ───────────────────────────────────────────────
   const [allItems,   setAllItems]   = useState<GalleryItem[]>([])
@@ -137,11 +137,11 @@ export default function Gallery() {
       acc[g] = allItems.filter((item) => item.group === g)
       return acc
     },
-    { outings: [], library: [], learning: [], indoor: [], other: [] },
+    { indoor: [], learning: [], outings: [], library: [], other: [] },
   )
 
   // ── Build flat lightbox list ─────────────────────────────────────────────
-  // Order: 2 videos → then each group in display order
+  // Order: all gallery photo groups (starting with The Home Environment) → then video clips
   const VIDEO_ITEMS = [
     { src: VIDEOS.libraryClip1, poster: IMAGES.galleryLibrary1, alt: 'Children playing with bubbles at the library (video clip 1)', idx: 0 },
     { src: VIDEOS.libraryClip2, poster: IMAGES.galleryLibrary2, alt: 'Children enjoying a bubble play session at the library (video clip 2)', idx: 1 },
@@ -156,25 +156,23 @@ export default function Gallery() {
       type: 'image' as const,
     })),
   )
-  const allLightboxItems: LightboxItem[] = [...videoItems, ...imageItems]
+  const allLightboxItems: LightboxItem[] = [...imageItems, ...videoItems]
 
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
   const closeLightbox = () => setLightboxIndex(null)
   const goPrev = () => setLightboxIndex((i) => (i == null ? 0 : (i - 1 + allLightboxItems.length) % allLightboxItems.length))
   const goNext = () => setLightboxIndex((i) => (i == null ? 0 : (i + 1) % allLightboxItems.length))
 
-  // Videos occupy indices 0–1; images start at 2
-  const VIDEO_COUNT = 2
-
   // Compute the lightbox start index for each group
-  let groupOffset = VIDEO_COUNT
+  let groupOffset = 0
   const groupOffsets: Record<string, number> = {
-    outings: 0, library: 0, learning: 0, indoor: 0, other: 0,
+    indoor: 0, learning: 0, outings: 0, library: 0, other: 0,
   }
   for (const g of PUBLIC_GALLERY_GROUPS) {
     groupOffsets[g] = groupOffset
     groupOffset += (grouped[g] || []).length
   }
+  const videoBaseOffset = groupOffset
 
   return (
     <>
@@ -203,47 +201,12 @@ export default function Gallery() {
               Moments of Joy, Growth &amp; Discovery
             </h1>
             <p className="mt-4 text-white text-base md:text-lg leading-relaxed max-w-xl drop-shadow-[0_1px_3px_rgba(0,0,0,0.6)] font-normal">
-              Explore daily life at Divine Heritage through library visits, creative activities, 
-              sensory play, arts and crafts, and indoor and outdoor play.
+              Explore daily life at Divine Heritage through our home setting, play and learning activities, 
+              outdoor exploration, and community visits.
             </p>
           </AnimatedSection>
         </div>
       </div>
-
-      {/* Video Highlights Section */}
-      <SectionWrapper background="white">
-        <AnimatedSection className="text-center flex justify-center mb-10">
-          <SectionHeader
-            eyebrow="Video Highlights"
-            title="Watch Divine Heritage in Action"
-            subtitle="Short video clips captured during local library outings and bubble play sessions."
-            centered
-          />
-        </AnimatedSection>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-          {VIDEO_ITEMS.map((v) => (
-            <AnimatedSection key={v.idx} delay={v.idx * 0.1}>
-              <button
-                type="button"
-                aria-label={`Play video: ${v.alt}`}
-                onClick={() => setLightboxIndex(v.idx)}
-                className="w-full relative aspect-video rounded-[var(--radius-xl)] overflow-hidden group focus-visible:ring-2 focus-visible:ring-[var(--color-primary-400)] block border border-[var(--color-muted)] shadow-[var(--shadow-card)]"
-              >
-                <img src={v.poster} alt="" aria-hidden="true" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="w-14 h-14 rounded-full bg-[var(--color-accent-500)] text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-200">
-                    <Play size={24} className="ml-1" fill="currentColor" />
-                  </div>
-                </div>
-                <div className="absolute bottom-3 left-3 right-3 text-left">
-                  <p className="text-white text-xs font-semibold drop-shadow">{v.alt}</p>
-                </div>
-              </button>
-            </AnimatedSection>
-          ))}
-        </div>
-      </SectionWrapper>
 
       {/* Loading state */}
       {cmsLoading && <GallerySkeleton />}
@@ -257,7 +220,7 @@ export default function Gallery() {
         </SectionWrapper>
       )}
 
-      {/* Gallery groups — rendered from Firestore */}
+      {/* Gallery groups — rendered from Firestore (Home Setting first) */}
       {!cmsLoading && !cmsError && (
         <>
           {PUBLIC_GALLERY_GROUPS.filter((g) => (grouped[g] || []).length > 0).map((g, gi) => {
@@ -265,7 +228,7 @@ export default function Gallery() {
             const baseOffset = groupOffsets[g]
             const section = PUBLIC_GALLERY_SECTIONS[g]
             return (
-              <SectionWrapper key={g} background={gi % 2 === 0 ? 'muted' : 'white'}>
+              <SectionWrapper key={g} background={gi % 2 === 0 ? 'white' : 'muted'}>
                 <AnimatedSection className="text-center flex justify-center mb-10">
                   <SectionHeader
                     eyebrow={section?.eyebrow}
@@ -305,6 +268,41 @@ export default function Gallery() {
               </SectionWrapper>
             )
           })}
+
+          {/* Video Highlights Section */}
+          <SectionWrapper background="muted">
+            <AnimatedSection className="text-center flex justify-center mb-10">
+              <SectionHeader
+                eyebrow="Video Highlights"
+                title="Watch Divine Heritage in Action"
+                subtitle="Short video clips captured during local library outings and bubble play sessions."
+                centered
+              />
+            </AnimatedSection>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+              {VIDEO_ITEMS.map((v) => (
+                <AnimatedSection key={v.idx} delay={v.idx * 0.1}>
+                  <button
+                    type="button"
+                    aria-label={`Play video: ${v.alt}`}
+                    onClick={() => setLightboxIndex(videoBaseOffset + v.idx)}
+                    className="w-full relative aspect-video rounded-[var(--radius-xl)] overflow-hidden group focus-visible:ring-2 focus-visible:ring-[var(--color-primary-400)] block border border-[var(--color-muted)] shadow-[var(--shadow-card)]"
+                  >
+                    <img src={v.poster} alt="" aria-hidden="true" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="w-14 h-14 rounded-full bg-[var(--color-accent-500)] text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-200">
+                        <Play size={24} className="ml-1" fill="currentColor" />
+                      </div>
+                    </div>
+                    <div className="absolute bottom-3 left-3 right-3 text-left">
+                      <p className="text-white text-xs font-semibold drop-shadow">{v.alt}</p>
+                    </div>
+                  </button>
+                </AnimatedSection>
+              ))}
+            </div>
+          </SectionWrapper>
 
           {/* Empty state — all groups empty (pre-seed) */}
           {allItems.length === 0 && (
