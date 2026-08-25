@@ -64,7 +64,7 @@ export default function AboutPreview() {
         <AnimatedSection direction="right" delay={0.15}>
           <SectionHeader
             eyebrow="About Divine Heritage Childcare Services"
-            title={about.previewTitle || 'A Childcare Service Built on Love & Trust'}
+            title={about.previewTitle}
             subtitle={about.previewSubtitle || 'Founded in 2017, Divine Heritage provides warm, professional home-based childminding for families across South East London.'}
           />
 

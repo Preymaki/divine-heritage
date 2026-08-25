@@ -26,12 +26,12 @@ export const IMAGES = {
   ctaBg: '/images/hero-library-bubbles.jpeg',
 
   // ── Services ────────────────────────────────────────────────────────────
-  serviceChildminding:  '/images/indoor-train-track.jpeg',       // cosy home play
-  serviceEarlyYears:    '/images/reading-book.jpeg',             // child reading independently
-  serviceAfterSchool:   '/images/outing-softplay-blocks.jpeg',   // physical activity outing
-  serviceFlexible:      '/images/arts-painting-easel.jpeg',      // creative and flexible play
-  serviceArts:          '/images/arts-painting-easel.jpeg',      // painting at easel
-  serviceOutdoor:       '/images/outdoor-nature-tree.jpeg',      // nature exploration
+  serviceChildminding:  '/images/service-full-day-care-sensory.jpeg',      // hands-on sensory tray play
+  serviceEarlyYears:    '/images/reading-book.jpeg',                        // child reading independently
+  serviceAfterSchool:   '/images/service-after-school-parachute.jpeg',      // school-age group parachute play
+  serviceFlexible:      '/images/arts-painting-easel.jpeg',                 // creative and flexible play
+  serviceArts:          '/images/arts-painting-easel.jpeg',                 // painting at easel
+  serviceOutdoor:       '/images/outdoor-nature-tree.jpeg',                 // nature exploration
 
   // ── Gallery preview carousel (6 images, curated for impact) ─────────────
   gallery1: '/images/outdoor-spinning-ride.jpeg',  // two smiling children on swings — outing

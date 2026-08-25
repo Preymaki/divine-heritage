@@ -79,7 +79,7 @@ export const DEFAULT_HERO: HeroSettings = {
 
 export const DEFAULT_ABOUT: AboutSettings = {
   aboutImageUrl: '',
-  previewTitle:    'A Childcare Service Built on Love & Trust',
+  previewTitle:    '',
   previewSubtitle: 'Founded in 2017, Divine Heritage provides warm, professional home-based childminding for families across South East London.',
   highlights: [
     { title: 'Belonging',   description: 'emotional safety, inclusion, and feeling at home.' },

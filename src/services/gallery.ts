@@ -260,9 +260,9 @@ export async function seedGallery(uploadedBy: string): Promise<void> {
     },
     {
       group: 'services_page', sortOrder: 3,
-      downloadURL: '/images/outing-softplay-blocks.jpeg',
+      downloadURL: '/images/service-after-school-parachute.jpeg',
       title: 'Services Page: After-School Care Cover',
-      altText: 'Toddler playing with climbing blocks',
+      altText: 'School-age children playing a parachute game during After-School Care at Divine Heritage',
       caption: 'Cover photo for After-School Care card.',
     },
     {

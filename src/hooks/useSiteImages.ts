@@ -59,7 +59,13 @@ export function useSiteImages(): SiteImagesMap {
 
         const getServiceUrl = (sortOrder: number, fallback: string) => {
           const found = items.find((i) => i.group === 'services_page' && i.sortOrder === sortOrder)
-          return found?.downloadURL || fallback
+          if (found && found.downloadURL) {
+            if (sortOrder === 3 && found.downloadURL === '/images/outing-softplay-blocks.jpeg') {
+              return fallback
+            }
+            return found.downloadURL
+          }
+          return fallback
         }
 
         setSiteImages({

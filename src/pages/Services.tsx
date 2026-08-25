@@ -48,7 +48,7 @@ export default function Services() {
     },
     'after-school': {
       src: siteImages.serviceAfterSchool,
-      alt: 'A toddler building strength and coordination on foam climbing blocks at a soft play session during an active outing arranged by Divine Heritage',
+      alt: 'School-age children and toddlers playing together with a colourful canopy parachute in the living room during After School Care at Divine Heritage',
       position: 'object-center',
     },
     'holiday-care': {
