@@ -27,11 +27,14 @@ export default function HeroSection() {
   const { hero } = useHeroSettings()
   const siteImages = useSiteImages()
 
-  // Coloured words: Thrives=pink, Grows=green, Belongs=blue
+  // Coloured words: Thrives=yellow, Grows=green, Belongs=blue
   const COLOURED_WORDS: Record<string, string> = {
-    Thrives: '#e0289b',   // accent pink
+    Thrives: '#facc15',   // bright sunny yellow
+    thrives: '#facc15',
     Grows:   '#3dba7a',   // sage/green
+    grows:   '#3dba7a',
     Belongs: '#4a8ef5',   // sky blue
+    belongs: '#4a8ef5',
   }
 
   function renderHeading(heading: string, accentWord: string) {
@@ -74,7 +77,7 @@ export default function HeroSection() {
     return (
       <>
         {before}
-        <span className="text-[var(--color-accent-400)] drop-shadow-[0_0_12px_rgba(224,40,155,0.5)]">
+        <span className="text-[#facc15] drop-shadow-[0_0_12px_rgba(250,204,21,0.6)]">
           {accentWord}
         </span>
         {after}
