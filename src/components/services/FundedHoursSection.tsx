@@ -57,10 +57,9 @@ const SPECIALISED_FEES = [
 ]
 
 const FEE_POLICY_POINTS = [
-  'The day rate applies when childcare is provided for more than 5 hours.',
+  'A minimum of 2 full days or 3 part-time days is required for funded hours only.',
   'Charges are based on an hourly rate.',
   'Half-hour charges are not offered.',
-  'A minimum of 2 full days or 3 part-time days is required.',
 ]
 
 const FUNDING_OPTIONS = [
