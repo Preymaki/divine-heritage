@@ -55,7 +55,7 @@ export default function AboutPreview() {
             {/* Floating badge */}
             <div className="absolute -top-4 -left-3 sm:-left-5 bg-[var(--color-accent-500)] text-white rounded-2xl px-4 py-2.5 shadow-[var(--shadow-card)]">
               <p className="font-semibold text-sm leading-none">London</p>
-              <p className="text-white/80 text-xs mt-0.5">Home-Based Care</p>
+              <p className="text-white font-medium text-xs mt-0.5">Home-Based Care</p>
             </div>
           </div>
         </AnimatedSection>

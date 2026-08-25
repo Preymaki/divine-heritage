@@ -28,8 +28,8 @@ export default function SectionHeader({
   return (
     <div className={`${centered ? 'text-center mx-auto' : ''} ${maxWidth} ${className}`}>
       {eyebrow && (
-        <p className={`text-xs font-semibold uppercase tracking-[0.15em] mb-3 font-[var(--font-family-heading)] ${
-          light ? 'text-[var(--color-accent-400)]' : 'text-[var(--color-primary-500)]'
+        <p className={`text-xs font-bold uppercase tracking-[0.15em] mb-3 font-[var(--font-family-heading)] ${
+          light ? 'text-[var(--color-accent-300)] drop-shadow-[0_1px_2px_rgba(0,0,0,0.6)]' : 'text-[var(--color-primary-600)]'
         }`}>
           {eyebrow}
         </p>
@@ -37,7 +37,7 @@ export default function SectionHeader({
       {title && (
         <h2
           className={`text-3xl md:text-4xl lg:text-5xl font-bold font-[var(--font-family-heading)] leading-tight tracking-tight ${
-            light ? 'text-white' : 'text-[var(--color-text-primary)]'
+            light ? 'text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.7)]' : 'text-[var(--color-text-primary)]'
           } ${titleClassName}`}
         >
           {title}
@@ -46,7 +46,7 @@ export default function SectionHeader({
       {subtitle && (
         <p
           className={`mt-4 text-base md:text-lg leading-relaxed ${
-            light ? 'text-white/90 drop-shadow-[0_1px_2px_rgba(0,0,0,0.4)]' : 'text-[var(--color-text-secondary)]'
+            light ? 'text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.6)]' : 'text-[var(--color-text-secondary)]'
           }`}
         >
           {subtitle}

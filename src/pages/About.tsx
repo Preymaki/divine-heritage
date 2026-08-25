@@ -68,13 +68,13 @@ export default function About() {
       <div className="bg-[var(--color-primary-900)] pt-32 pb-16">
         <div className="container-site">
           <AnimatedSection>
-            <p className="text-[var(--color-accent-400)] text-xs font-semibold uppercase tracking-[0.15em] mb-3 font-[var(--font-family-heading)]">
+            <p className="text-[var(--color-accent-300)] text-xs font-bold uppercase tracking-[0.15em] mb-3 font-[var(--font-family-heading)] drop-shadow-[0_1px_2px_rgba(0,0,0,0.6)]">
               About Divine Heritage Childcare Services
             </p>
-            <h1 className="font-[var(--font-family-heading)] font-bold text-white text-4xl md:text-5xl leading-tight tracking-tight max-w-2xl">
+            <h1 className="font-[var(--font-family-heading)] font-bold text-white text-4xl md:text-5xl leading-tight tracking-tight max-w-2xl drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)]">
               Dedicated Childminding. Genuine Care.
             </h1>
-            <p className="mt-4 text-white/90 text-base md:text-lg leading-relaxed max-w-xl drop-shadow-[0_1px_2px_rgba(0,0,0,0.4)]">
+            <p className="mt-4 text-white text-base md:text-lg leading-relaxed max-w-xl drop-shadow-[0_1px_3px_rgba(0,0,0,0.6)] font-normal">
               Learn about the philosophy, qualifications, and values that make Divine Heritage a 
               childcare setting parents trust completely.
             </p>

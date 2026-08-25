@@ -84,9 +84,9 @@ function Lightbox({
           <img src={item.src} alt={item.alt} className="max-h-[80vh] max-w-full rounded-xl object-contain shadow-2xl" />
         )}
         {item.caption && (
-          <p className="mt-3 text-white/70 text-sm text-center max-w-lg px-4">{item.caption}</p>
+          <p className="mt-3 text-white font-medium text-sm text-center max-w-lg px-4 drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">{item.caption}</p>
         )}
-        <p className="mt-2 text-white/40 text-xs">{index + 1} / {total}</p>
+        <p className="mt-2 text-white/90 text-xs font-medium drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">{index + 1} / {total}</p>
       </div>
       <button
         onClick={(e) => { e.stopPropagation(); onNext() }}
@@ -196,13 +196,13 @@ export default function Gallery() {
       <div className="bg-[var(--color-primary-900)] pt-32 pb-16">
         <div className="container-site">
           <AnimatedSection>
-            <p className="text-[var(--color-accent-400)] text-xs font-semibold uppercase tracking-[0.15em] mb-3 font-[var(--font-family-heading)]">
+            <p className="text-[var(--color-accent-300)] text-xs font-bold uppercase tracking-[0.15em] mb-3 font-[var(--font-family-heading)] drop-shadow-[0_1px_2px_rgba(0,0,0,0.6)]">
               Photo &amp; Video Gallery
             </p>
-            <h1 className="font-[var(--font-family-heading)] font-bold text-white text-4xl md:text-5xl leading-tight tracking-tight max-w-2xl">
+            <h1 className="font-[var(--font-family-heading)] font-bold text-white text-4xl md:text-5xl leading-tight tracking-tight max-w-2xl drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)]">
               Moments of Joy, Growth &amp; Discovery
             </h1>
-            <p className="mt-4 text-white/90 text-base md:text-lg leading-relaxed max-w-xl drop-shadow-[0_1px_2px_rgba(0,0,0,0.4)]">
+            <p className="mt-4 text-white text-base md:text-lg leading-relaxed max-w-xl drop-shadow-[0_1px_3px_rgba(0,0,0,0.6)] font-normal">
               Explore daily life at Divine Heritage through library visits, creative activities, 
               sensory play, arts and crafts, and indoor and outdoor play.
             </p>

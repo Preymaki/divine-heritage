@@ -48,11 +48,11 @@
   --color-background: #ffffff;
   --color-muted:      #f5f5f7;
 
-  /* Text — black / near-black */
-  --color-text-primary:   #0d0d0d;
-  --color-text-secondary: #2a2a2a;
-  --color-text-muted:     #5a5a6a;
-  --color-text-faint:     #8a8a9a;
+  /* Text — sharp, high-contrast, bright & crisp */
+  --color-text-primary:   #09090b;
+  --color-text-secondary: #18181b;
+  --color-text-muted:     #27272a;
+  --color-text-faint:     #3f3f46;
 
   /* ── Typography ── */
   --font-family-heading: 'Poppins', system-ui, sans-serif;
@@ -104,6 +104,7 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
 
   body {
@@ -112,6 +113,7 @@
     color: var(--color-text-primary);
     line-height: 1.6;
     overflow-x: hidden;
+    font-weight: 450;
   }
 
   /* ─────────────────────────────────────────────

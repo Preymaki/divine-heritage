@@ -149,9 +149,9 @@ export default function HeroSection() {
           >
             {/* Eyebrow pill */}
             <motion.div variants={itemVariants} className="flex items-center gap-2.5 mb-5">
-              <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/12 backdrop-blur-sm border border-white/20">
+              <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/15 backdrop-blur-sm border border-white/25 shadow-xs">
                 <div className="w-1.5 h-1.5 rounded-full bg-[var(--color-accent-400)]" aria-hidden="true" />
-                <span className="text-white/90 text-xs font-medium tracking-wide">
+                <span className="text-white text-xs font-semibold tracking-wide drop-shadow-[0_1px_2px_rgba(0,0,0,0.6)]">
                   {hero.eyebrow}
                 </span>
               </div>
@@ -160,7 +160,7 @@ export default function HeroSection() {
             {/* Heading */}
             <motion.h1
               variants={itemVariants}
-              className="font-[var(--font-family-heading)] font-bold text-white leading-tight tracking-tight"
+              className="font-[var(--font-family-heading)] font-bold text-white leading-tight tracking-tight drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)]"
               style={{ fontSize: 'clamp(2.1rem, 4.5vw, 3.75rem)' }}
             >
               {renderHeading(hero.heading, hero.accentWord)}
@@ -169,7 +169,7 @@ export default function HeroSection() {
             {/* Subtitle */}
             <motion.p
               variants={itemVariants}
-              className="mt-4 text-white/90 text-base md:text-lg leading-relaxed max-w-xl font-normal drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]"
+              className="mt-4 text-white text-base md:text-lg leading-relaxed max-w-xl font-normal drop-shadow-[0_1px_3px_rgba(0,0,0,0.7)]"
             >
               {hero.subtitle}
             </motion.p>
@@ -214,7 +214,7 @@ export default function HeroSection() {
                   >
                     <Icon size={14} className="text-[var(--color-accent-300)]" />
                   </div>
-                  <span className="text-white font-medium text-sm drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]">{label}</span>
+                  <span className="text-white font-semibold text-sm drop-shadow-[0_1px_3px_rgba(0,0,0,0.7)]">{label}</span>
                 </div>
               ))}
             </motion.div>
@@ -231,11 +231,11 @@ export default function HeroSection() {
           className="absolute bottom-7 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-1.5"
           aria-hidden="true"
         >
-          <span className="text-white/35 text-[10px] tracking-widest uppercase">Scroll</span>
+          <span className="text-white/80 text-[10px] tracking-widest uppercase font-semibold drop-shadow-[0_1px_2px_rgba(0,0,0,0.6)]">Scroll</span>
           <motion.div
             animate={{ y: [0, 5, 0] }}
             transition={{ repeat: Infinity, duration: 1.6, ease: 'easeInOut' }}
-            className="w-0.5 h-7 bg-gradient-to-b from-white/35 to-transparent rounded-full"
+            className="w-0.5 h-7 bg-gradient-to-b from-white/80 to-transparent rounded-full"
           />
         </motion.div>
       )}

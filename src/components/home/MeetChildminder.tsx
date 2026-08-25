@@ -99,7 +99,7 @@ export default function MeetChildminder() {
               aria-hidden="true"
             >
               <p className="font-semibold text-sm leading-none">Home-Based</p>
-              <p className="text-white/80 text-xs mt-0.5">Childminding</p>
+              <p className="text-white font-medium text-xs mt-0.5">Childminding</p>
             </div>
           </div>
         </AnimatedSection>

@@ -44,14 +44,14 @@ export default function CTASection() {
       {/* Content */}
       <div className="relative z-10 container-site text-center">
         <AnimatedSection>
-          <p className="text-[var(--color-accent-400)] text-xs font-semibold uppercase tracking-[0.15em] mb-4 font-[var(--font-family-heading)]">
+          <p className="text-[var(--color-accent-300)] text-xs font-bold uppercase tracking-[0.15em] mb-4 font-[var(--font-family-heading)] drop-shadow-[0_1px_2px_rgba(0,0,0,0.6)]">
             Ready to Get Started?
           </p>
-          <h2 className="font-[var(--font-family-heading)] font-bold text-white leading-tight tracking-tight max-w-2xl mx-auto"
+          <h2 className="font-[var(--font-family-heading)] font-bold text-white leading-tight tracking-tight max-w-2xl mx-auto drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)]"
             style={{ fontSize: 'clamp(2rem, 4vw, 3rem)' }}>
             Give Your Child the Best Possible Start
           </h2>
-          <p className="mt-4 text-white/90 text-base md:text-lg leading-relaxed max-w-xl mx-auto drop-shadow-[0_1px_2px_rgba(0,0,0,0.4)]">
+          <p className="mt-4 text-white text-base md:text-lg leading-relaxed max-w-xl mx-auto drop-shadow-[0_1px_3px_rgba(0,0,0,0.6)] font-normal">
             Book a free introductory visit to explore the setting and see why families 
             trust Divine Heritage Childcare Service.
           </p>
@@ -81,12 +81,12 @@ export default function CTASection() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.8 }}
-              className="mt-6 text-white/80 text-sm drop-shadow-[0_1px_2px_rgba(0,0,0,0.4)]"
+              className="mt-6 text-white text-sm font-medium drop-shadow-[0_1px_2px_rgba(0,0,0,0.6)]"
             >
               No obligation. All questions are welcome.
             </motion.p>
           ) : (
-            <p className="mt-6 text-white/80 text-sm drop-shadow-[0_1px_2px_rgba(0,0,0,0.4)]">
+            <p className="mt-6 text-white text-sm font-medium drop-shadow-[0_1px_2px_rgba(0,0,0,0.6)]">
               No obligation. All questions are welcome.
             </p>
           )}

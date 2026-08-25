@@ -39,8 +39,8 @@ export default function Navbar() {
           ? 'text-[var(--color-primary-600)]'
           : 'text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]'
         : isScrolled
-          ? 'text-slate-700 hover:text-[var(--color-primary-600)]'
-          : 'text-white/95 hover:text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.7)]'
+          ? 'text-slate-800 hover:text-[var(--color-primary-600)]'
+          : 'text-white hover:text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)]'
     }`
 
   return (

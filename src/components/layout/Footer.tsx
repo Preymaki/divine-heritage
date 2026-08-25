@@ -36,7 +36,7 @@ export default function Footer() {
                 />
               </div>
             </Link>
-            <p className="mt-5 text-white/90 text-sm leading-relaxed max-w-sm">
+            <p className="mt-5 text-white text-sm leading-relaxed max-w-sm">
               {SITE.description}
             </p>
 
@@ -61,7 +61,7 @@ export default function Footer() {
                 <li key={link.href}>
                   <Link
                     to={link.href}
-                    className="text-white/90 hover:text-white text-sm transition-colors duration-150 hover:translate-x-0.5 inline-block"
+                    className="text-white/95 hover:text-white text-sm font-medium transition-colors duration-150 hover:translate-x-0.5 inline-block"
                   >
                     {link.label}
                   </Link>
@@ -76,7 +76,7 @@ export default function Footer() {
                 <li key={s.label}>
                   <Link
                     to={s.href}
-                    className="text-white/90 hover:text-white text-sm transition-colors duration-150 hover:translate-x-0.5 inline-block"
+                    className="text-white/95 hover:text-white text-sm font-medium transition-colors duration-150 hover:translate-x-0.5 inline-block"
                   >
                     {s.label}
                   </Link>
@@ -94,7 +94,7 @@ export default function Footer() {
               <li>
                 <a
                   href={`tel:${contact.phone.replace(/\s/g, '')}`}
-                  className="flex items-start gap-3 text-white/90 hover:text-white text-sm transition-colors duration-150 group"
+                  className="flex items-start gap-3 text-white/95 hover:text-white text-sm font-medium transition-colors duration-150 group"
                 >
                   <Phone size={16} className="mt-0.5 shrink-0 group-hover:text-[var(--color-accent-400)]" />
                   {contact.phone}
@@ -103,13 +103,13 @@ export default function Footer() {
               <li>
                 <a
                   href={`mailto:${contact.email}`}
-                  className="flex items-start gap-3 text-white/90 hover:text-white text-sm transition-colors duration-150 group"
+                  className="flex items-start gap-3 text-white/95 hover:text-white text-sm font-medium transition-colors duration-150 group"
                 >
                   <Mail size={16} className="mt-0.5 shrink-0 group-hover:text-[var(--color-accent-400)]" />
                   {contact.email}
                 </a>
               </li>
-              <li className="flex items-start gap-3 text-white/90 text-sm">
+              <li className="flex items-start gap-3 text-white/95 text-sm font-medium">
                 <MapPin size={16} className="mt-0.5 shrink-0 text-[var(--color-accent-400)]" />
                 {contact.address}
               </li>
@@ -117,11 +117,11 @@ export default function Footer() {
 
             <div className="mt-7 p-4 bg-white/8 rounded-xl border border-white/12">
               <p className="text-white font-medium text-sm mb-1">Business Hours</p>
-              <p className="text-white/85 text-xs leading-relaxed">
+              <p className="text-white text-xs leading-relaxed font-normal">
                 {contact.hours.weekdays}
               </p>
               {contact.hours.notes && (
-                <p className="text-white/70 text-xs mt-1.5">{contact.hours.notes}</p>
+                <p className="text-white/90 text-xs mt-1.5 font-normal">{contact.hours.notes}</p>
               )}
             </div>
           </div>
@@ -131,10 +131,10 @@ export default function Footer() {
       {/* Bottom bar */}
       <div className="border-t border-white/10">
         <div className="container-site py-5 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p className="text-white/70 text-xs text-center sm:text-left">
+          <p className="text-white/90 text-xs text-center sm:text-left font-normal">
             © {year} {SITE.name}. All rights reserved.
           </p>
-          <p className="text-white/60 text-xs flex items-center gap-1">
+          <p className="text-white/80 text-xs flex items-center gap-1 font-normal">
             Made with <Heart size={11} className="text-[var(--color-accent-400)]" aria-hidden /> in London
           </p>
         </div>
