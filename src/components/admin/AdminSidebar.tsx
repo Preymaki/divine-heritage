@@ -11,6 +11,7 @@ import { NavLink, useNavigate } from 'react-router-dom'
 import {
   LayoutDashboard,
   Images,
+  FileText,
   MessageSquare,
   Settings,
   LogOut,
@@ -33,8 +34,9 @@ interface NavItem {
 const NAV_ITEMS: NavItem[] = [
   { label: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard, id: 'nav-dashboard' },
   { label: 'Gallery',   href: '/admin/gallery',   icon: Images,          id: 'nav-gallery' },
-  { label: 'Messages',  href: '/admin/messages',   icon: MessageSquare,   id: 'nav-messages' },
-  { label: 'Settings',  href: '/admin/settings',   icon: Settings,        id: 'nav-settings' },
+  { label: 'Policies',  href: '/admin/policies',  icon: FileText,        id: 'nav-policies' },
+  { label: 'Messages',  href: '/admin/messages',  icon: MessageSquare,   id: 'nav-messages' },
+  { label: 'Settings',  href: '/admin/settings',  icon: Settings,        id: 'nav-settings' },
 ]
 
 // ── Props ─────────────────────────────────────────────────────────────────────

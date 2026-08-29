@@ -26,6 +26,14 @@ service cloud.firestore {
       allow read, update, delete: if request.auth != null;
     }
 
+    // ── Policies collection ──────────────────────────────────────────────────
+    // Public read (policy content is displayed on the public /policies page).
+    // All write operations require the user to be authenticated.
+    match /policies/{docId} {
+      allow read: if true;
+      allow create, update, delete: if request.auth != null;
+    }
+
     // ── Default deny — all other collections ────────────────────────────────
     match /{document=**} {
       allow read, write: if false;

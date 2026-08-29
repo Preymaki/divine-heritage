@@ -10,6 +10,7 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import {
   Images,
+  FileText,
   MessageSquare,
   Settings,
   ArrowRight,
@@ -60,9 +61,10 @@ function formatDate(ts: Enquiry['createdAt']): string {
 // ── Quick links ──────────────────────────────────────────────────────────────
 
 const QUICK_LINKS = [
-  { href: '/admin/gallery',  icon: Images,         label: 'Manage Gallery',  desc: 'Upload and organise photos' },
-  { href: '/admin/messages', icon: MessageSquare,   label: 'View Messages',   desc: 'Respond to enquiries' },
-  { href: '/admin/settings', icon: Settings,        label: 'Site Settings',   desc: 'Update contact info & content' },
+  { href: '/admin/gallery',   icon: Images,        label: 'Manage Gallery',   desc: 'Upload and organise photos' },
+  { href: '/admin/policies',  icon: FileText,      label: 'Manage Policies',  desc: 'Add, edit and reorder policies' },
+  { href: '/admin/messages',  icon: MessageSquare, label: 'View Messages',    desc: 'Respond to enquiries' },
+  { href: '/admin/settings',  icon: Settings,      label: 'Site Settings',    desc: 'Update contact info & content' },
 ] as const
 
 // ── Component ─────────────────────────────────────────────────────────────────
