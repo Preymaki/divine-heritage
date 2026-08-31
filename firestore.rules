@@ -2,36 +2,64 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
+    // ── Admin authorisation helper ────────────────────────────────────────────
+    //
+    // Returns true only when ALL of the following are satisfied:
+    //   1. The request carries a valid Firebase Auth token (user is signed in).
+    //   2. The token's email address is verified by Firebase Auth.
+    //   3. The email exactly matches the one stored in settings/admin — the
+    //      single source of truth for the authorised admin account.
+    //
+    // This mirrors the client-side VITE_ADMIN_EMAIL_WHITELIST check performed in
+    // src/services/firebase/auth.ts → isAdminEmail(), but is enforced server-side
+    // by Firestore where it cannot be bypassed by modifying client code.
+    //
+    // Why settings/admin and not a hard-coded string?
+    //   Hard-coding the email in rules requires a rules re-deploy every time the
+    //   admin address changes. Storing it in a known Firestore document keeps
+    //   the rules generic while still being a server-authoritative value the
+    //   client can never forge. The document itself is protected by this same
+    //   function (only the existing admin can overwrite it).
+    //
+    // NOTE: request.auth.token.email_verified is checked so that a user who
+    // has the right email but has not verified it (possible in some Auth flows)
+    // still cannot write.
+    function isAdmin() {
+      return request.auth != null
+          && request.auth.token.email_verified == true
+          && request.auth.token.email == get(/databases/$(database)/documents/settings/admin).data.email;
+    }
+
     // ── Gallery collection ───────────────────────────────────────────────────
     // Public read (used by the public /gallery page).
-    // All write operations require the user to be authenticated.
+    // Write operations restricted to the authorised admin only.
     match /gallery/{docId} {
       allow read: if true;
-      allow create, update, delete: if request.auth != null;
+      allow create, update, delete: if isAdmin();
     }
 
     // ── Settings collection ──────────────────────────────────────────────────
     // Public read (hero, contact, about are displayed on the public website).
-    // All write operations require the user to be authenticated.
+    // Write operations restricted to the authorised admin only.
     match /settings/{docId} {
       allow read: if true;
-      allow create, update, delete: if request.auth != null;
+      allow create, update, delete: if isAdmin();
     }
 
     // ── Enquiries collection ─────────────────────────────────────────────────
     // Anyone can create (public contact form — no auth required).
-    // Only authenticated admin users can read, update, or delete.
+    // Read, update, and delete restricted to the authorised admin only.
     match /enquiries/{docId} {
       allow create: if true;
-      allow read, update, delete: if request.auth != null;
+      allow read, update, delete: if isAdmin();
     }
 
     // ── Policies collection ──────────────────────────────────────────────────
     // Public read (policy content is displayed on the public /policies page).
-    // All write operations require the user to be authenticated.
+    // Write operations restricted to the authorised admin only.
     match /policies/{docId} {
       allow read: if true;
-      allow create, update, delete: if request.auth != null;
+      allow create, update, delete: if isAdmin();
     }
 
     // ── Default deny — all other collections ────────────────────────────────
