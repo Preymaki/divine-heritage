@@ -12,6 +12,7 @@ import {
   Images,
   FileText,
   MessageSquare,
+  ClipboardList,
   Settings,
   ArrowRight,
   Sparkles,
@@ -22,7 +23,9 @@ import {
 import { useAuth } from '@hooks/useAuth'
 import { useGallery } from '@hooks/useGallery'
 import { subscribeToEnquiries } from '@services/enquiries'
+import { subscribeToApplications } from '@services/applications'
 import type { Enquiry } from '@appTypes/enquiry'
+import type { ApplicationRecord } from '@appTypes/application'
 import StatCard from '@components/admin/StatCard'
 import PageHeader from '@components/admin/PageHeader'
 
@@ -61,10 +64,11 @@ function formatDate(ts: Enquiry['createdAt']): string {
 // ── Quick links ──────────────────────────────────────────────────────────────
 
 const QUICK_LINKS = [
-  { href: '/admin/gallery',   icon: Images,        label: 'Manage Gallery',   desc: 'Upload and organise photos' },
-  { href: '/admin/policies',  icon: FileText,      label: 'Manage Policies',  desc: 'Add, edit and reorder policies' },
-  { href: '/admin/messages',  icon: MessageSquare, label: 'View Messages',    desc: 'Respond to enquiries' },
-  { href: '/admin/settings',  icon: Settings,      label: 'Site Settings',    desc: 'Update contact info & content' },
+  { href: '/admin/applications', icon: ClipboardList,  label: 'Applications',     desc: 'Manage registrations & PDFs' },
+  { href: '/admin/gallery',      icon: Images,         label: 'Manage Gallery',   desc: 'Upload and organise photos' },
+  { href: '/admin/policies',     icon: FileText,       label: 'Manage Policies',  desc: 'Add, edit and reorder policies' },
+  { href: '/admin/messages',     icon: MessageSquare,  label: 'View Messages',    desc: 'Respond to enquiries' },
+  { href: '/admin/settings',     icon: Settings,       label: 'Site Settings',    desc: 'Update contact info & content' },
 ] as const
 
 // ── Component ─────────────────────────────────────────────────────────────────
@@ -80,8 +84,12 @@ export default function AdminDashboard() {
   const [enquiriesLoading, setEnquiriesLoading] = useState(true)
   const [enquiriesError, setEnquiriesError]     = useState<string | null>(null)
 
+  // Live Applications data
+  const [applications, setApplications]         = useState<ApplicationRecord[]>([])
+  const [appsLoading, setAppsLoading]           = useState(true)
+
   useEffect(() => {
-    const unsub = subscribeToEnquiries(
+    const unsubEnquiries = subscribeToEnquiries(
       (data) => {
         setEnquiries(data)
         setEnquiriesLoading(false)
@@ -92,25 +100,39 @@ export default function AdminDashboard() {
         setEnquiriesLoading(false)
       },
     )
-    return unsub
+
+    const unsubApps = subscribeToApplications(
+      (data) => {
+        setApplications(data)
+        setAppsLoading(false)
+      },
+      () => setAppsLoading(false)
+    )
+
+    return () => {
+      unsubEnquiries()
+      unsubApps()
+    }
   }, [])
 
   // Derived stats
   const publishedGalleryCount = galleryItems.filter((item) => item.isPublished).length
   const unreadEnquiriesCount  = enquiries.filter((e) => e.status === 'unread').length
-  const recentEnquiries       = enquiries.slice(0, 4)
+  const newApplicationsCount  = applications.filter((a) => a.status === 'new').length
+  const recentApplications    = applications.slice(0, 3)
+  const recentEnquiries       = enquiries.slice(0, 3)
 
   const stats = [
     {
-      id: 'stat-gallery',
-      icon: Images,
-      label: 'Gallery Images',
-      value: galleryLoading ? '…' : galleryError ? '—' : galleryItems.length,
-      subtext: galleryLoading
-        ? 'Loading gallery count…'
-        : galleryError
-          ? 'Unable to load count'
-          : `${publishedGalleryCount} published on website`,
+      id: 'stat-applications',
+      icon: ClipboardList,
+      label: 'Applications',
+      value: appsLoading ? '…' : newApplicationsCount,
+      subtext: appsLoading
+        ? 'Loading application count…'
+        : newApplicationsCount === 0
+          ? 'No new applications'
+          : `${newApplicationsCount} new application${newApplicationsCount === 1 ? '' : 's'} (${applications.length} total)`,
       color: 'blue' as const,
     },
     {
@@ -126,6 +148,18 @@ export default function AdminDashboard() {
             ? 'No unread enquiries'
             : `${unreadEnquiriesCount} unread enquir${unreadEnquiriesCount === 1 ? 'y' : 'ies'} (${enquiries.length} total)`,
       color: 'amber' as const,
+    },
+    {
+      id: 'stat-gallery',
+      icon: Images,
+      label: 'Gallery Images',
+      value: galleryLoading ? '…' : galleryError ? '—' : galleryItems.length,
+      subtext: galleryLoading
+        ? 'Loading gallery count…'
+        : galleryError
+          ? 'Unable to load count'
+          : `${publishedGalleryCount} published on website`,
+      color: 'blue' as const,
     },
   ]
 
@@ -192,6 +226,73 @@ export default function AdminDashboard() {
             </Link>
           ))}
         </div>
+      </section>
+
+      {/* Recent Applications Activity */}
+      <section aria-labelledby="apps-heading" className="dashboard-section mb-8">
+        <div className="flex items-center justify-between mb-4">
+          <h2 id="apps-heading" className="dashboard-section-title">
+            Recent Childcare Applications
+          </h2>
+          {applications.length > 0 && (
+            <Link
+              to="/admin/applications"
+              className="text-xs font-semibold text-[var(--color-primary-600)] hover:text-[var(--color-primary-700)] flex items-center gap-1"
+            >
+              View all ({applications.length}) <ArrowRight size={13} />
+            </Link>
+          )}
+        </div>
+
+        {recentApplications.length === 0 ? (
+          <div className="activity-placeholder">
+            <p>No applications received yet. Submitted childcare applications will appear here.</p>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {recentApplications.map((a) => (
+              <Link
+                key={a.id}
+                to="/admin/applications"
+                className={`flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 bg-white rounded-xl border transition-all hover:border-[var(--color-primary-300)] hover:shadow-xs ${
+                  a.status === 'new'
+                    ? 'border-l-4 border-l-[var(--color-primary-600)] border-slate-200 bg-[var(--color-primary-50)]/20'
+                    : 'border-slate-200'
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-[var(--color-primary-50)] flex items-center justify-center shrink-0">
+                    <User size={15} className="text-[var(--color-primary-600)]" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <p className="font-semibold text-slate-800 text-sm">{a.child?.fullName}</p>
+                      <span className="text-xs text-slate-400 font-mono">({a.applicationId || a.id})</span>
+                      {a.status === 'new' && (
+                        <span className="px-2 py-0.5 text-[10px] font-bold bg-blue-100 text-blue-800 rounded-full">
+                          New
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-xs text-slate-500 line-clamp-1 mt-0.5">
+                      Parent: {a.parent1?.fullName} • Hours: {a.contractedSchedule?.totalContractedHours}h/wk • Start: {a.sessions?.requiredStartDate}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-4 text-xs text-slate-400 shrink-0">
+                  <span className="font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">
+                    £{Number(a.contractedSchedule?.totalWeeklyCost || 0).toFixed(2)}/wk
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <Calendar size={12} />
+                    {new Date(a.submittedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}
+                  </span>
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
       </section>
 
       {/* Recent Enquiries Activity */}

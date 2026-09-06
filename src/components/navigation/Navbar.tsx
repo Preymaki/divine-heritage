@@ -33,14 +33,14 @@ export default function Navbar() {
   }, [isOpen])
 
   const navLinkClass = ({ isActive }: { isActive: boolean }) =>
-    `relative text-sm font-semibold transition-colors duration-200 py-1 ${
+    `group relative text-sm font-semibold transition-all duration-200 px-3 py-1.5 rounded-lg flex items-center ${
       isActive
         ? isScrolled
-          ? 'text-[var(--color-primary-600)]'
-          : 'text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]'
+          ? 'text-[var(--color-primary-600)] hover:bg-[var(--color-primary-50)]/70'
+          : 'text-white hover:bg-white/15 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]'
         : isScrolled
-          ? 'text-slate-800 hover:text-[var(--color-primary-600)]'
-          : 'text-white hover:text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)]'
+          ? 'text-slate-700 hover:text-[var(--color-primary-600)] hover:bg-[var(--color-primary-50)]'
+          : 'text-white/85 hover:text-white hover:bg-white/15 drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)]'
     }`
 
   return (
@@ -80,18 +80,30 @@ export default function Navbar() {
 
             {/* Desktop Nav — absolutely centred */}
             <nav
-              className="hidden lg:flex absolute left-1/2 -translate-x-1/2 items-center gap-7"
+              className="hidden lg:flex absolute left-1/2 -translate-x-1/2 items-center gap-1.5 xl:gap-2"
               aria-label="Main navigation"
             >
               {NAV_LINKS.map((link) => (
                 <NavLink key={link.href} to={link.href} end={link.href === '/'} className={navLinkClass}>
                   {({ isActive }) => (
                     <>
-                      {link.label}
-                      {isActive && (
+                      <span>{link.label}</span>
+                      {isActive ? (
                         <motion.span
                           layoutId="nav-underline"
-                          className="absolute -bottom-0.5 left-0 right-0 h-0.5 bg-[var(--color-primary-500)] rounded-full"
+                          className={`absolute bottom-0.5 left-2.5 right-2.5 h-0.5 rounded-full ${
+                            isScrolled
+                              ? 'bg-[var(--color-primary-600)]'
+                              : 'bg-white shadow-[0_0_8px_rgba(255,255,255,0.8)]'
+                          }`}
+                        />
+                      ) : (
+                        <span
+                          className={`absolute bottom-0.5 left-2.5 right-2.5 h-0.5 rounded-full scale-x-0 group-hover:scale-x-100 transition-transform duration-200 origin-center ${
+                            isScrolled
+                              ? 'bg-[var(--color-primary-600)]'
+                              : 'bg-white/90 shadow-[0_0_6px_rgba(255,255,255,0.7)]'
+                          }`}
                         />
                       )}
                     </>

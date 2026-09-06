@@ -20,13 +20,13 @@ export const NAV_LINKS = [
   { label: 'Home', href: '/' },
   { label: 'About', href: '/about' },
   { label: 'Services', href: '/services' },
-  { label: 'Gallery', href: '/gallery' },
+  { label: 'Policies', href: '/policies' },
   { label: 'FAQs', href: '/faqs' },
   { label: 'Contact', href: '/contact' },
-  { label: 'Policies', href: '/policies' },
+  { label: 'Apply', href: '/apply' },
 ] as const
 
 export const CTA = {
-  primary: { label: 'Book a Visit', href: '/contact' },
-  secondary: { label: 'Learn More', href: '/about' },
+  primary: { label: 'Apply Now', href: '/apply' },
+  secondary: { label: 'Book a Visit', href: '/contact' },
 } as const

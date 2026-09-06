@@ -10,6 +10,7 @@ import { useState, useEffect } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import {
   LayoutDashboard,
+  ClipboardList,
   Images,
   FileText,
   MessageSquare,
@@ -21,6 +22,7 @@ import {
 } from 'lucide-react'
 import { useAuth } from '@hooks/useAuth'
 import { subscribeToEnquiries } from '@services/enquiries'
+import { subscribeToApplications } from '@services/applications'
 
 // ── Nav item definition ──────────────────────────────────────────────────────
 
@@ -32,11 +34,12 @@ interface NavItem {
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { label: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard, id: 'nav-dashboard' },
-  { label: 'Gallery',   href: '/admin/gallery',   icon: Images,          id: 'nav-gallery' },
-  { label: 'Policies',  href: '/admin/policies',  icon: FileText,        id: 'nav-policies' },
-  { label: 'Messages',  href: '/admin/messages',  icon: MessageSquare,   id: 'nav-messages' },
-  { label: 'Settings',  href: '/admin/settings',  icon: Settings,        id: 'nav-settings' },
+  { label: 'Dashboard',    href: '/admin/dashboard',    icon: LayoutDashboard, id: 'nav-dashboard' },
+  { label: 'Applications', href: '/admin/applications', icon: ClipboardList,   id: 'nav-applications' },
+  { label: 'Gallery',      href: '/admin/gallery',      icon: Images,          id: 'nav-gallery' },
+  { label: 'Policies',     href: '/admin/policies',     icon: FileText,        id: 'nav-policies' },
+  { label: 'Messages',     href: '/admin/messages',     icon: MessageSquare,   id: 'nav-messages' },
+  { label: 'Settings',     href: '/admin/settings',     icon: Settings,        id: 'nav-settings' },
 ]
 
 // ── Props ─────────────────────────────────────────────────────────────────────
@@ -63,12 +66,19 @@ export default function AdminSidebar({
   const navigate = useNavigate()
   const { user, logout } = useAuth()
   const [unreadCount, setUnreadCount] = useState(0)
+  const [newAppsCount, setNewAppsCount] = useState(0)
 
   useEffect(() => {
-    const unsub = subscribeToEnquiries((items) => {
+    const unsubEnquiries = subscribeToEnquiries((items) => {
       setUnreadCount(items.filter((i) => i.status === 'unread').length)
     })
-    return unsub
+    const unsubApps = subscribeToApplications((items) => {
+      setNewAppsCount(items.filter((i) => i.status === 'new').length)
+    })
+    return () => {
+      unsubEnquiries()
+      unsubApps()
+    }
   }, [])
 
   async function handleLogout() {
@@ -152,6 +162,9 @@ export default function AdminSidebar({
                     {isCollapsed && id === 'nav-messages' && unreadCount > 0 && (
                       <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-amber-500 rounded-full ring-2 ring-slate-900" />
                     )}
+                    {isCollapsed && id === 'nav-applications' && newAppsCount > 0 && (
+                      <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-blue-500 rounded-full ring-2 ring-slate-900" />
+                    )}
                   </div>
                   {!isCollapsed && (
                     <div className="admin-nav-link-label flex-1 flex items-center justify-between">
@@ -159,6 +172,11 @@ export default function AdminSidebar({
                       {id === 'nav-messages' && unreadCount > 0 && (
                         <span className="ml-2 px-2 py-0.5 text-[11px] font-bold bg-amber-400 text-slate-900 rounded-full leading-none">
                           {unreadCount}
+                        </span>
+                      )}
+                      {id === 'nav-applications' && newAppsCount > 0 && (
+                        <span className="ml-2 px-2 py-0.5 text-[11px] font-bold bg-blue-400 text-slate-900 rounded-full leading-none">
+                          {newAppsCount}
                         </span>
                       )}
                     </div>

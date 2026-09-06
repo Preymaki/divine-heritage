@@ -13,8 +13,9 @@ const Services = lazy(() => import('@pages/Services'))
 const Gallery  = lazy(() => import('@pages/Gallery'))
 const FAQs     = lazy(() => import('@pages/FAQs'))
 const Contact  = lazy(() => import('@pages/Contact'))
-const Policies = lazy(() => import('@pages/Policies'))
-const NotFound = lazy(() => import('@pages/NotFound'))
+const Policies    = lazy(() => import('@pages/Policies'))
+const Application = lazy(() => import('@pages/Application'))
+const NotFound    = lazy(() => import('@pages/NotFound'))
 
 // ── Admin auth pages (lazy) ──────────────────────────────────────────────────
 const AdminLogin   = lazy(() => import('@pages/admin/AdminLogin'))
@@ -23,11 +24,12 @@ const AuthCallback = lazy(() => import('@pages/admin/AuthCallback'))
 const AccessDenied = lazy(() => import('@pages/admin/AccessDenied'))
 
 // ── Admin CMS pages (lazy — kept out of the public bundle) ──────────────────
-const AdminDashboard = lazy(() => import('@pages/admin/AdminDashboard'))
-const AdminGallery   = lazy(() => import('@pages/admin/AdminGallery'))
-const AdminPolicies  = lazy(() => import('@pages/admin/AdminPolicies'))
-const AdminMessages  = lazy(() => import('@pages/admin/AdminMessages'))
-const AdminSettings  = lazy(() => import('@pages/admin/AdminSettings'))
+const AdminDashboard    = lazy(() => import('@pages/admin/AdminDashboard'))
+const AdminApplications = lazy(() => import('@pages/admin/AdminApplications'))
+const AdminGallery      = lazy(() => import('@pages/admin/AdminGallery'))
+const AdminPolicies     = lazy(() => import('@pages/admin/AdminPolicies'))
+const AdminMessages     = lazy(() => import('@pages/admin/AdminMessages'))
+const AdminSettings     = lazy(() => import('@pages/admin/AdminSettings'))
 
 // ── Loaders ──────────────────────────────────────────────────────────────────
 
@@ -78,6 +80,7 @@ export default function App() {
           <Route path="faqs"     element={<Suspense fallback={<PageLoader />}><FAQs /></Suspense>} />
           <Route path="contact"  element={<Suspense fallback={<PageLoader />}><Contact /></Suspense>} />
           <Route path="policies" element={<Suspense fallback={<PageLoader />}><Policies /></Suspense>} />
+          <Route path="apply"    element={<Suspense fallback={<PageLoader />}><Application /></Suspense>} />
           <Route path="*"        element={<Suspense fallback={<PageLoader />}><NotFound /></Suspense>} />
         </Route>
 
@@ -96,8 +99,9 @@ export default function App() {
           {/* Protected CMS routes — wrapped by DashboardLayout */}
           <Route element={<ProtectedRoute />}>
             <Route element={<DashboardLayout />}>
-              <Route path="dashboard" element={<AdminPage page={AdminDashboard} />} />
-              <Route path="gallery"   element={<AdminPage page={AdminGallery} />} />
+              <Route path="dashboard"    element={<AdminPage page={AdminDashboard} />} />
+              <Route path="applications" element={<AdminPage page={AdminApplications} />} />
+              <Route path="gallery"      element={<AdminPage page={AdminGallery} />} />
               <Route path="reviews"   element={<Navigate to="/admin/dashboard" replace />} />
               <Route path="blog"      element={<Navigate to="/admin/dashboard" replace />} />
               <Route path="policies"  element={<AdminPage page={AdminPolicies} />} />

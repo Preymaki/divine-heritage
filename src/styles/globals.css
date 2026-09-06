@@ -119,22 +119,37 @@
   /* ─────────────────────────────────────────────
      Typography scale
      ───────────────────────────────────────────── */
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    font-family: var(--font-family-heading);
-    font-weight: 600;
-    line-height: 1.25;
-    color: var(--color-text-primary);
-    letter-spacing: -0.02em;
+  @layer base {
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      font-family: var(--font-family-heading);
+      font-weight: 600;
+      line-height: 1.25;
+      color: var(--color-text-primary);
+      letter-spacing: -0.02em;
+    }
+
+    p {
+      color: var(--color-text-secondary);
+      line-height: 1.75;
+    }
   }
 
-  p {
-    color: var(--color-text-secondary);
-    line-height: 1.75;
+  /* ─────────────────────────────────────────────
+     Application page hero explicit styles
+     ───────────────────────────────────────────── */
+  .application-hero-title {
+    color: #ffffff !important;
+  }
+  .application-hero-desc {
+    color: rgba(255, 255, 255, 0.95) !important;
+  }
+  .application-hero-badge {
+    color: #f57fc3 !important;
   }
 
   /* ─────────────────────────────────────────────
@@ -156,20 +171,30 @@
 }
 
 /* ─────────────────────────────────────────────
-   Scrollbar (Webkit)
+   Scrollbar (Webkit & Standard)
    ───────────────────────────────────────────── */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 7px;
+  height: 7px;
 }
 ::-webkit-scrollbar-track {
-  background: var(--color-muted);
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--color-primary-300);
-  border-radius: 4px;
+  background: #cbd5e1;
+  border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-primary-400);
+  background: #94a3b8;
+}
+
+/* Hide scrollbar utility */
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }
 
 /* ─────────────────────────────────────────────

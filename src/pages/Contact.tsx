@@ -1,6 +1,6 @@
 import { useForm } from 'react-hook-form'
 import { useState, useEffect } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { useSearchParams, Link } from 'react-router-dom'
 import { Phone, Mail, MapPin, Clock, CheckCircle, AlertCircle, Info } from 'lucide-react'
 import AnimatedSection from '@components/ui/AnimatedSection'
 import SectionWrapper from '@components/ui/SectionWrapper'
@@ -231,6 +231,23 @@ export default function Contact() {
                   A free, no-obligation introductory visit is available to view the setting and 
                   discuss any questions. Complete the form to arrange a convenient time.
                 </p>
+              </div>
+
+              {/* Apply CTA Callout */}
+              <div className="p-5 bg-[var(--color-primary-50)] border border-[var(--color-primary-200)] rounded-[var(--radius-lg)]">
+                <p className="font-semibold text-sm text-[var(--color-primary-900)] mb-1">
+                  Ready to Enrol?
+                </p>
+                <p className="text-slate-600 text-sm leading-relaxed mb-3">
+                  Looking to apply for childcare? Submit your formal registration online.
+                </p>
+                <Link
+                  to="/apply"
+                  id="contact-apply-here-link"
+                  className="inline-flex items-center gap-1.5 text-sm font-bold text-[var(--color-primary-600)] hover:text-[var(--color-primary-700)] hover:underline"
+                >
+                  Apply here →
+                </Link>
               </div>
             </div>
           </AnimatedSection>

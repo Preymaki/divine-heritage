@@ -62,6 +62,23 @@ service cloud.firestore {
       allow create, update, delete: if isAdmin();
     }
 
+    // ── Applications collection ──────────────────────────────────────────────
+    // Anyone can create (public online application submission).
+    // Read, update, and delete are strictly restricted to the authorised admin only.
+    // Unauthenticated/public users can never read or query application records.
+    match /applications/{docId} {
+      allow create: if true;
+      allow read, update, delete: if isAdmin();
+    }
+
+    // ── Mail collection (Firebase Trigger Email extension) ───────────────────
+    // Public create (allows application notifications to be queued).
+    // Read, update, and delete restricted to the authorised admin only.
+    match /mail/{docId} {
+      allow create: if true;
+      allow read, update, delete: if isAdmin();
+    }
+
     // ── Default deny — all other collections ────────────────────────────────
     match /{document=**} {
       allow read, write: if false;

@@ -4,7 +4,6 @@ import { SERVICES } from '@data/services'
 import AnimatedSection from '@components/ui/AnimatedSection'
 import SectionWrapper from '@components/ui/SectionWrapper'
 import CTASection from '@components/home/CTASection'
-import FundedHoursSection from '@components/services/FundedHoursSection'
 import { useSiteImages } from '@hooks/useSiteImages'
 
 const iconMap: Record<string, React.ComponentType<{ size?: number }>> = {
@@ -167,8 +166,38 @@ export default function Services() {
         </div>
       </SectionWrapper>
 
-      {/* Funded Childcare Hours Section */}
-      <FundedHoursSection />
+      {/* Ready to Apply Callout */}
+      <SectionWrapper background="white" className="py-16 border-t border-[var(--color-muted)]">
+        <AnimatedSection className="max-w-3xl mx-auto text-center">
+          <div className="bg-[var(--color-primary-50)]/80 rounded-3xl p-8 md:p-12 border border-[var(--color-primary-100)] shadow-[var(--shadow-soft)]">
+            <p className="text-xs font-bold uppercase tracking-widest text-[var(--color-primary-600)] mb-3 font-[var(--font-family-heading)]">
+              Enrolment & Admissions
+            </p>
+            <h3 className="font-[var(--font-family-heading)] font-bold text-2xl md:text-3xl text-slate-900 mb-4">
+              Ready to apply for a childcare place?
+            </h3>
+            <p className="text-slate-600 text-sm md:text-base leading-relaxed mb-8 max-w-xl mx-auto">
+              Our digital application takes only a few minutes to complete. Submit your sessions, schedule, and funding details to reserve your child's place at Divine Heritage.
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <Link
+                to="/apply"
+                id="services-apply-cta"
+                className="inline-flex items-center gap-2.5 px-8 py-4 bg-[var(--color-primary-600)] hover:bg-[var(--color-primary-700)] text-white font-semibold rounded-xl text-base transition-all duration-200 shadow-md hover:shadow-lg hover:-translate-y-0.5 group focus-visible:outline-2 focus-visible:outline-offset-2"
+              >
+                Apply Online Now
+                <ArrowRight size={17} className="group-hover:translate-x-0.5 transition-transform duration-200" aria-hidden="true" />
+              </Link>
+              <Link
+                to="/contact"
+                className="inline-flex items-center gap-2 px-6 py-4 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 font-semibold rounded-xl text-base transition-colors"
+              >
+                Ask a Question First
+              </Link>
+            </div>
+          </div>
+        </AnimatedSection>
+      </SectionWrapper>
 
       <CTASection />
     </>
