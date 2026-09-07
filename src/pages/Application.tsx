@@ -628,6 +628,21 @@ export default function Application() {
           ══════════════════════════════════════════════════════════════════ */}
           {currentPage === 1 && (
             <div className="bg-white rounded-3xl shadow-sm border border-slate-200 p-6 md:p-10 space-y-8 animate-fadeIn">
+              {/* Document Childminder Header Box */}
+              <div className="border border-rose-200 bg-rose-50/20 rounded-xl overflow-hidden text-xs">
+                <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-rose-200">
+                  <div className="p-4 space-y-1 text-slate-700">
+                    <div><span className="font-bold text-slate-900">Name of Childminder:</span> Avril Cole</div>
+                    <div><span className="font-bold text-slate-900">Mobile:</span> 07939 303144</div>
+                  </div>
+                  <div className="p-4 space-y-1 text-slate-700">
+                    <div><span className="font-bold text-slate-900">Address:</span> 5 Pitman Building, Freda Street, London. SE16 4BW</div>
+                  </div>
+                </div>
+                <div className="border-t border-rose-200 p-3 bg-white/60">
+                  <span className="font-bold text-slate-900">Email:</span> divineheritagechildcare@gmail.com
+                </div>
+              </div>
 
               {/* Section Header */}
               <div className="sk-section-divider">
