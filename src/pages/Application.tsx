@@ -25,6 +25,12 @@ import type {
   ApplicationRecord,
 } from '@appTypes/application'
 import { submitApplication, downloadApplicationPDF } from '@services/applications'
+import {
+  calculateDayRate,
+  calculateWeeklySchedule,
+  calculateFundedHours,
+  isChildUnder8Months,
+} from '@utils/applicationFees'
 
 // ── Initial State ────────────────────────────────────────────────────────────
 
@@ -158,7 +164,112 @@ export default function Application() {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }, [currentPage])
 
-  // Recalculate Contracted Hours and Weekly Cost automatically
+  // Detect baby rate (<8 months old) based on child DOB and start date
+  const autoIsBaby = isChildUnder8Months(formData.page1.childDob, formData.page3.requiredStartDate)
+  const [manualBabyRate, setManualBabyRate] = useState<boolean | null>(null)
+  const isBabyRate = manualBabyRate !== null ? manualBabyRate : autoIsBaby
+
+  // Reactive financial calculations based on form rules
+  const weeklyDetails = calculateWeeklySchedule(formData.page3.contractedHours, isBabyRate)
+  const fundedSummary = calculateFundedHours(formData.page3.fundedSchedule)
+
+  // Handlers for automatic calculation
+  function handleContractedTimeChange(
+    day: 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday',
+    field: 'timeFrom' | 'timeTo',
+    value: string
+  ) {
+    const currentDay = formData.page3.contractedHours[day]
+    const nextFrom = field === 'timeFrom' ? value : currentDay.timeFrom
+    const nextTo = field === 'timeTo' ? value : currentDay.timeTo
+
+    const dayCalc = calculateDayRate(nextFrom, nextTo, isBabyRate)
+
+    const updatedContracted = {
+      ...formData.page3.contractedHours,
+      [day]: {
+        ...currentDay,
+        [field]: value,
+        totalHours: dayCalc.hours > 0 ? String(dayCalc.hours) : '',
+        rate: dayCalc.costStr,
+      },
+    }
+
+    const nextWeekly = calculateWeeklySchedule(updatedContracted, isBabyRate)
+    updatedContracted.totalHoursPerWeek = nextWeekly.totalHours > 0 ? String(nextWeekly.totalHours) : ''
+    updatedContracted.totalCostPerWeek = nextWeekly.totalHours > 0 ? nextWeekly.grossCostStr : ''
+
+    setFormData((prev) => ({
+      ...prev,
+      page3: {
+        ...prev.page3,
+        contractedHours: updatedContracted,
+      },
+    }))
+  }
+
+  function handleContractedHoursChange(
+    day: 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday',
+    value: string
+  ) {
+    const currentDay = formData.page3.contractedHours[day]
+    const h = parseFloat(value) || 0
+    let rateStr = ''
+    if (h > 0) {
+      const cost = h > 5 ? (isBabyRate ? 80 : 70) : Math.ceil(h) * (isBabyRate ? 14 : 12)
+      rateStr = `£${cost.toFixed(2)}`
+    }
+
+    const updatedContracted = {
+      ...formData.page3.contractedHours,
+      [day]: {
+        ...currentDay,
+        totalHours: value,
+        rate: rateStr,
+      },
+    }
+
+    const nextWeekly = calculateWeeklySchedule(updatedContracted, isBabyRate)
+    updatedContracted.totalHoursPerWeek = nextWeekly.totalHours > 0 ? String(nextWeekly.totalHours) : ''
+    updatedContracted.totalCostPerWeek = nextWeekly.totalHours > 0 ? nextWeekly.grossCostStr : ''
+
+    setFormData((prev) => ({
+      ...prev,
+      page3: {
+        ...prev.page3,
+        contractedHours: updatedContracted,
+      },
+    }))
+  }
+
+  function handleToggleFundedDay(
+    rowKey: 'row8to1' | 'row12to5' | 'rowFullDay',
+    day: 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday',
+    checked: boolean
+  ) {
+    const updatedSchedule = {
+      ...formData.page3.fundedSchedule,
+      [rowKey]: {
+        ...formData.page3.fundedSchedule[rowKey],
+        [day]: checked,
+      },
+    }
+
+    const res = calculateFundedHours(updatedSchedule)
+    updatedSchedule.row8to1.totalHrs = res.row8to1Hrs > 0 ? String(res.row8to1Hrs) : ''
+    updatedSchedule.row12to5.totalHrs = res.row12to5Hrs > 0 ? String(res.row12to5Hrs) : ''
+    updatedSchedule.rowFullDay.totalHrs = res.rowFullDayHrs > 0 ? String(res.rowFullDayHrs) : ''
+
+    setFormData((prev) => ({
+      ...prev,
+      page3: {
+        ...prev.page3,
+        fundedSchedule: updatedSchedule,
+      },
+    }))
+  }
+
+  // Automatically recalculate rates if baby rate changes
   useEffect(() => {
     const days: Array<'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday'> = [
       'monday',
@@ -168,57 +279,32 @@ export default function Application() {
       'friday',
     ]
 
-    let totalHrs = 0
-    let totalCost = 0
+    let changed = false
+    const updated = { ...formData.page3.contractedHours }
 
     days.forEach((d) => {
-      const row = formData.page3.contractedHours[d]
+      const row = updated[d]
       if (row.timeFrom && row.timeTo) {
-        const [fromH, fromM] = row.timeFrom.split(':').map(Number)
-        const [toH, toM] = row.timeTo.split(':').map(Number)
-        if (!isNaN(fromH) && !isNaN(toH)) {
-          const diff = Math.max(0, toH + toM / 60 - (fromH + fromM / 60))
-          const rounded = Math.round(diff * 10) / 10
-          if (!row.totalHours) {
-            row.totalHours = String(rounded)
-          }
-          const hrs = parseFloat(row.totalHours) || rounded
-          totalHrs += hrs
-          // Day rate £70 if > 5hrs, otherwise £12/hr
-          const dayCost = hrs > 5 ? 70 : hrs * 12
-          if (!row.rate) {
-            row.rate = `£${dayCost.toFixed(2)}`
-          }
-          totalCost += dayCost
+        const dayCalc = calculateDayRate(row.timeFrom, row.timeTo, isBabyRate)
+        if (row.rate !== dayCalc.costStr) {
+          updated[d] = { ...row, rate: dayCalc.costStr }
+          changed = true
         }
       }
     })
 
-    if (totalHrs > 0 && !formData.page3.contractedHours.totalHoursPerWeek) {
+    if (changed) {
+      const nextWeekly = calculateWeeklySchedule(updated, isBabyRate)
+      updated.totalCostPerWeek = nextWeekly.grossCostStr
       setFormData((prev) => ({
         ...prev,
         page3: {
           ...prev.page3,
-          contractedHours: {
-            ...prev.page3.contractedHours,
-            totalHoursPerWeek: String(Math.round(totalHrs * 10) / 10),
-            totalCostPerWeek: `£${totalCost.toFixed(2)}`,
-          },
+          contractedHours: updated,
         },
       }))
     }
-  }, [
-    formData.page3.contractedHours.monday.timeFrom,
-    formData.page3.contractedHours.monday.timeTo,
-    formData.page3.contractedHours.tuesday.timeFrom,
-    formData.page3.contractedHours.tuesday.timeTo,
-    formData.page3.contractedHours.wednesday.timeFrom,
-    formData.page3.contractedHours.wednesday.timeTo,
-    formData.page3.contractedHours.thursday.timeFrom,
-    formData.page3.contractedHours.thursday.timeTo,
-    formData.page3.contractedHours.friday.timeFrom,
-    formData.page3.contractedHours.friday.timeTo,
-  ])
+  }, [isBabyRate])
 
   // Setup canvas drawing
   useEffect(() => {
@@ -1316,9 +1402,9 @@ export default function Application() {
                     <tbody className="divide-y divide-slate-200">
                       {(
                         [
-                          { key: 'row8to1', label: '8 – 1pm' },
-                          { key: 'row12to5', label: '12 - 12:45 - 5 - 5:45 PM' },
-                          { key: 'rowFullDay', label: 'Full day' },
+                          { key: 'row8to1', label: '8 – 1pm (5 hrs/day)' },
+                          { key: 'row12to5', label: '12 - 12:45 - 5 - 5:45 PM (5 hrs/day)' },
+                          { key: 'rowFullDay', label: 'Full day (max 10 hrs/day)' },
                         ] as const
                       ).map(({ key, label }) => (
                         <tr key={key} className="hover:bg-slate-50/50">
@@ -1328,15 +1414,8 @@ export default function Application() {
                               <input
                                 type="checkbox"
                                 checked={formData.page3.fundedSchedule[key][day]}
-                                onChange={(e) => {
-                                  const updated = { ...formData.page3.fundedSchedule }
-                                  updated[key][day] = e.target.checked
-                                  setFormData({
-                                    ...formData,
-                                    page3: { ...formData.page3, fundedSchedule: updated },
-                                  })
-                                }}
-                                className="w-4 h-4 rounded text-[var(--color-primary-600)]"
+                                onChange={(e) => handleToggleFundedDay(key, day, e.target.checked)}
+                                className="w-4 h-4 rounded text-[var(--color-primary-600)] cursor-pointer"
                               />
                             </td>
                           ))}
@@ -1352,8 +1431,8 @@ export default function Application() {
                                   page3: { ...formData.page3, fundedSchedule: updated },
                                 })
                               }}
-                              placeholder="e.g. 15"
-                              className="w-16 px-2 py-1 border border-slate-300 rounded text-center text-xs"
+                              placeholder="0 hrs"
+                              className="w-16 px-2 py-1 border border-slate-300 rounded text-center text-xs font-semibold bg-slate-50"
                             />
                           </td>
                         </tr>
@@ -1361,11 +1440,45 @@ export default function Application() {
                     </tbody>
                   </table>
                 </div>
+
+                {fundedSummary.totalFundedHrs > 0 && (
+                  <div className="flex items-center justify-between p-2.5 bg-blue-50/60 rounded-xl border border-blue-200 text-xs text-blue-900">
+                    <span>Total Early Years Funded Hours Claimed:</span>
+                    <strong>{fundedSummary.totalFundedHrs} hrs / week</strong>
+                  </div>
+                )}
               </div>
 
               {/* Contracted Hours Table */}
               <div className="space-y-3">
-                <h3 className="text-sm font-bold text-slate-900">Contracted Hours</h3>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <h3 className="text-sm font-bold text-slate-900">Contracted Hours</h3>
+                  <div className="flex items-center gap-2 text-xs">
+                    <span className="text-slate-500">Rate applied:</span>
+                    <button
+                      type="button"
+                      onClick={() => setManualBabyRate(false)}
+                      className={`px-2.5 py-1 rounded-lg font-medium transition-colors ${
+                        !isBabyRate
+                          ? 'bg-[var(--color-primary-600)] text-white shadow-xs'
+                          : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                      }`}
+                    >
+                      Standard (£12/hr, £70/day)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setManualBabyRate(true)}
+                      className={`px-2.5 py-1 rounded-lg font-medium transition-colors ${
+                        isBabyRate
+                          ? 'bg-amber-600 text-white shadow-xs'
+                          : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                      }`}
+                    >
+                      Baby &lt;8m (£14/hr, £80/day)
+                    </button>
+                  </div>
+                </div>
 
                 <div className="overflow-x-auto border border-slate-300 rounded-xl">
                   <table className="w-full text-xs text-left">
@@ -1388,46 +1501,25 @@ export default function Application() {
                               <input
                                 type="time"
                                 value={dayRow.timeFrom}
-                                onChange={(e) => {
-                                  const updated = { ...formData.page3.contractedHours }
-                                  updated[day].timeFrom = e.target.value
-                                  setFormData({
-                                    ...formData,
-                                    page3: { ...formData.page3, contractedHours: updated },
-                                  })
-                                }}
-                                className="px-2 py-1 border border-slate-300 rounded text-xs"
+                                onChange={(e) => handleContractedTimeChange(day, 'timeFrom', e.target.value)}
+                                className="px-2 py-1 border border-slate-300 rounded text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
                               />
                             </td>
                             <td className="p-2.5">
                               <input
                                 type="time"
                                 value={dayRow.timeTo}
-                                onChange={(e) => {
-                                  const updated = { ...formData.page3.contractedHours }
-                                  updated[day].timeTo = e.target.value
-                                  setFormData({
-                                    ...formData,
-                                    page3: { ...formData.page3, contractedHours: updated },
-                                  })
-                                }}
-                                className="px-2 py-1 border border-slate-300 rounded text-xs"
+                                onChange={(e) => handleContractedTimeChange(day, 'timeTo', e.target.value)}
+                                className="px-2 py-1 border border-slate-300 rounded text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
                               />
                             </td>
                             <td className="p-2.5">
                               <input
                                 type="text"
                                 value={dayRow.totalHours}
-                                onChange={(e) => {
-                                  const updated = { ...formData.page3.contractedHours }
-                                  updated[day].totalHours = e.target.value
-                                  setFormData({
-                                    ...formData,
-                                    page3: { ...formData.page3, contractedHours: updated },
-                                  })
-                                }}
-                                placeholder="e.g. 9"
-                                className="w-16 px-2 py-1 border border-slate-300 rounded text-xs"
+                                onChange={(e) => handleContractedHoursChange(day, e.target.value)}
+                                placeholder="0"
+                                className="w-16 px-2 py-1 border border-slate-300 rounded text-xs bg-white font-semibold text-slate-800"
                               />
                             </td>
                             <td className="p-2.5">
@@ -1442,8 +1534,8 @@ export default function Application() {
                                     page3: { ...formData.page3, contractedHours: updated },
                                   })
                                 }}
-                                placeholder="e.g. £70.00"
-                                className="w-24 px-2 py-1 border border-slate-300 rounded text-xs"
+                                placeholder="£0.00"
+                                className="w-24 px-2 py-1 border border-slate-300 rounded text-xs font-semibold text-slate-800 bg-white"
                               />
                             </td>
                           </tr>
@@ -1471,8 +1563,8 @@ export default function Application() {
                                 },
                               })
                             }
-                            placeholder="e.g. 27"
-                            className="w-20 px-2 py-1 border border-slate-300 rounded text-xs font-bold"
+                            placeholder="0 hrs"
+                            className="w-20 px-2 py-1 border border-slate-300 rounded text-xs font-bold text-slate-900 bg-white"
                           />
                         </td>
                         <td className="p-2.5">
@@ -1491,13 +1583,107 @@ export default function Application() {
                                 },
                               })
                             }
-                            placeholder="e.g. £324.00"
-                            className="w-28 px-2 py-1 border border-slate-300 rounded text-xs font-bold"
+                            placeholder="£0.00"
+                            className="w-28 px-2 py-1 border border-slate-300 rounded text-xs font-bold text-slate-900 bg-white"
                           />
                         </td>
                       </tr>
                     </tfoot>
                   </table>
+                </div>
+
+                {/* ── Automatic Fee & Advance Payment Schedule Breakdown ── */}
+                <div className="mt-4 p-5 bg-gradient-to-br from-slate-50 to-blue-50/50 rounded-2xl border border-slate-200 space-y-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200/80 pb-3">
+                    <div>
+                      <h4 className="text-xs font-bold uppercase tracking-wider text-slate-900">
+                        Automatic Fee & Advance Payment Schedule
+                      </h4>
+                      <p className="text-[11px] text-slate-500">
+                        Calculated automatically according to the Application Form's stated fee schedule.
+                      </p>
+                    </div>
+                    {weeklyDetails.isFullTimeDiscount && (
+                      <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                        ✓ Full-time discount applied (£330.00/wk)
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+                    {/* Weekly Cost */}
+                    <div className="p-3 bg-white rounded-xl border border-slate-200 shadow-xs">
+                      <span className="text-slate-500 block text-[11px]">Weekly Fee:</span>
+                      <strong className="text-base text-slate-900 font-bold block mt-0.5">
+                        {weeklyDetails.grossCostStr || '£0.00'}
+                      </strong>
+                      <span className="text-[10px] text-slate-400 block mt-0.5">
+                        {weeklyDetails.totalHours} hrs / week
+                      </span>
+                    </div>
+
+                    {/* 4-Weekly */}
+                    <div className="p-3 bg-white rounded-xl border border-slate-200 shadow-xs">
+                      <span className="text-slate-500 block text-[11px]">4-Weekly in advance:</span>
+                      <strong className="text-base text-slate-900 font-bold block mt-0.5">
+                        {weeklyDetails.fourWeeklyCostStr || '£0.00'}
+                      </strong>
+                      <span className="text-[10px] text-slate-400 block mt-0.5">
+                        4 weeks contracted
+                      </span>
+                    </div>
+
+                    {/* Monthly */}
+                    <div className="p-3 bg-white rounded-xl border border-slate-200 shadow-xs">
+                      <span className="text-slate-500 block text-[11px]">Monthly in advance:</span>
+                      <strong className="text-base text-slate-900 font-bold block mt-0.5">
+                        {weeklyDetails.monthlyCostStr || '£0.00'}
+                      </strong>
+                      <span className="text-[10px] text-slate-400 block mt-0.5">
+                        Calendar month (52wks/12)
+                      </span>
+                    </div>
+
+                    {/* 50% Retainer Fee */}
+                    <div className="p-3 bg-white rounded-xl border border-slate-200 shadow-xs">
+                      <span className="text-slate-500 block text-[11px]">50% Retainer Fee:</span>
+                      <strong className="text-base text-[var(--color-primary-700)] font-bold block mt-0.5">
+                        {weeklyDetails.retainerFee50Str || '£0.00'}
+                      </strong>
+                      <span className="text-[10px] text-slate-400 block mt-0.5">
+                        To reserve place next term
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Funded Hours Offset Display */}
+                  {fundedSummary.totalFundedHrs > 0 && (
+                    <div className="p-3.5 bg-blue-50 rounded-xl border border-blue-200 text-xs text-blue-900 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                      <div>
+                        <strong>Early Years Entitlement:</strong> {fundedSummary.totalFundedHrs} hrs/week funded.
+                        {weeklyDetails.totalHours > fundedSummary.totalFundedHrs ? (
+                          <span> (Parent payable hours: {Math.round((weeklyDetails.totalHours - fundedSummary.totalFundedHrs) * 10) / 10} hrs beyond entitlement)</span>
+                        ) : (
+                          <span> (All contracted hours covered within entitlement)</span>
+                        )}
+                      </div>
+                      <div className="font-bold text-sm text-[var(--color-primary-900)]">
+                        Net Weekly Fee: £
+                        {Math.max(
+                          0,
+                          weeklyDetails.totalHours > fundedSummary.totalFundedHrs
+                            ? (weeklyDetails.totalHours - fundedSummary.totalFundedHrs) * (isBabyRate ? 14 : 12)
+                            : 0
+                        ).toFixed(2)}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* 4 Weeks Notice Policy Charge */}
+                  <div className="text-[11px] text-slate-500 pt-1 border-t border-slate-200/60 flex flex-wrap items-center justify-between gap-2">
+                    <span>Notice / Cancellation minimum charge (4 weeks' contracted cost):</span>
+                    <strong className="text-slate-800">{weeklyDetails.fourWeeksNoticeCostStr}</strong>
+                  </div>
                 </div>
               </div>
             </div>
@@ -2177,6 +2363,35 @@ export default function Application() {
                 <p>
                   Please do not hesitate to raise any concerns or issues you may have while your child or children are in my care. I am happy to discuss any concerns with you at any time, preferably during pick-ups.
                 </p>
+
+                {/* ── Automatic Late Pickup Fee Scale ── */}
+                <div className="mt-3 pt-3 border-t border-slate-200">
+                  <span className="font-bold text-slate-800 text-[11px] block mb-2">
+                    Late Pickup Fee Reference (Calculated per Contract Terms):
+                  </span>
+                  <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 text-center text-xs">
+                    <div className="p-2 bg-white rounded-lg border border-slate-200">
+                      <span className="text-slate-500 text-[10px] block">1–10 minutes late</span>
+                      <strong className="text-slate-900 text-sm">£5.00</strong>
+                    </div>
+                    <div className="p-2 bg-white rounded-lg border border-slate-200">
+                      <span className="text-slate-500 text-[10px] block">11–15 minutes late</span>
+                      <strong className="text-slate-900 text-sm">£10.00</strong>
+                    </div>
+                    <div className="p-2 bg-white rounded-lg border border-slate-200">
+                      <span className="text-slate-500 text-[10px] block">16–20 minutes late</span>
+                      <strong className="text-slate-900 text-sm">£15.00</strong>
+                    </div>
+                    <div className="p-2 bg-white rounded-lg border border-slate-200">
+                      <span className="text-slate-500 text-[10px] block">21–25 minutes late</span>
+                      <strong className="text-slate-900 text-sm">£20.00</strong>
+                    </div>
+                    <div className="p-2 bg-white rounded-lg border border-slate-200">
+                      <span className="text-slate-500 text-[10px] block">26–30 minutes late</span>
+                      <strong className="text-slate-900 text-sm">£25.00</strong>
+                    </div>
+                  </div>
+                </div>
               </div>
 
               {/* Termination / Amendment of Contract */}

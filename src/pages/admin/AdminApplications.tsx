@@ -27,6 +27,11 @@ import {
   downloadApplicationPDF,
 } from '@services/applications'
 import type { ApplicationRecord, ApplicationStatus } from '@appTypes/application'
+import {
+  calculateWeeklySchedule,
+  calculateFundedHours,
+  isChildUnder8Months,
+} from '@utils/applicationFees'
 
 const STATUS_LABELS: Record<ApplicationStatus, string> = {
   new: 'New',
@@ -194,8 +199,23 @@ export default function AdminApplications() {
             const phone = app.page1?.parent1Mobile || app.parent1?.mobile || ''
             const email = app.page1?.parent1Email || app.parent1?.email || ''
             const startDate = app.page3?.requiredStartDate || app.page4?.contractStartDate || app.sessions?.requiredStartDate || '—'
-            const hours = app.page3?.contractedHours?.totalHoursPerWeek || app.contractedSchedule?.totalContractedHours || 0
-            const cost = app.page3?.contractedHours?.totalCostPerWeek || app.contractedSchedule?.totalWeeklyCost || '—'
+            const isBaby = isChildUnder8Months(
+              app.page1?.childDob || app.child?.dob,
+              app.page3?.requiredStartDate || app.sessions?.requiredStartDate
+            )
+            const sched = calculateWeeklySchedule(app.page3?.contractedHours, isBaby)
+            const hours =
+              sched.totalHours > 0
+                ? sched.totalHours
+                : app.page3?.contractedHours?.totalHoursPerWeek ||
+                  app.contractedSchedule?.totalContractedHours ||
+                  0
+            const cost =
+              sched.grossCost > 0
+                ? sched.grossCostStr
+                : app.page3?.contractedHours?.totalCostPerWeek ||
+                  app.contractedSchedule?.totalWeeklyCost ||
+                  '—'
             const ref = app.applicationId || app.id
             const dateStr = new Date(app.submittedAt).toLocaleDateString('en-GB', {
               day: 'numeric',
@@ -556,45 +576,161 @@ export default function AdminApplications() {
                   )}
 
                   {/* Contracted Hours */}
-                  <div className="p-5 bg-slate-50 rounded-2xl border border-slate-200 space-y-3">
-                    <h4 className="font-bold uppercase tracking-wider text-slate-800">
-                      Contracted Hours
-                    </h4>
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-left border border-slate-300 bg-white rounded-lg">
-                        <thead className="bg-slate-100 border-b border-slate-300 font-bold">
-                          <tr>
-                            <th className="p-2">Day</th>
-                            <th className="p-2">Time From</th>
-                            <th className="p-2">Time To</th>
-                            <th className="p-2">Total Hours</th>
-                            <th className="p-2">Rate</th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-slate-200">
-                          {(['monday', 'tuesday', 'wednesday', 'thursday', 'friday'] as const).map((day) => {
-                            const d = selectedApp.page3?.contractedHours?.[day]
-                            return (
-                              <tr key={day}>
-                                <td className="p-2 font-bold capitalize">{day}</td>
-                                <td className="p-2">{d?.timeFrom || '—'}</td>
-                                <td className="p-2">{d?.timeTo || '—'}</td>
-                                <td className="p-2">{d?.totalHours || '—'}</td>
-                                <td className="p-2">{d?.rate || '—'}</td>
-                              </tr>
-                            )
-                          })}
-                        </tbody>
-                        <tfoot className="bg-slate-100 border-t-2 border-slate-400 font-bold">
-                          <tr>
-                            <td colSpan={3} className="p-2">Total hours / cost per week:</td>
-                            <td className="p-2">{selectedApp.page3?.contractedHours?.totalHoursPerWeek || selectedApp.contractedSchedule?.totalContractedHours || '—'} hrs</td>
-                            <td className="p-2">{selectedApp.page3?.contractedHours?.totalCostPerWeek || selectedApp.contractedSchedule?.totalWeeklyCost || '—'}</td>
-                          </tr>
-                        </tfoot>
-                      </table>
-                    </div>
-                  </div>
+                  {(() => {
+                    const modalIsBaby = isChildUnder8Months(
+                      selectedApp.page1?.childDob || selectedApp.child?.dob,
+                      selectedApp.page3?.requiredStartDate || selectedApp.sessions?.requiredStartDate
+                    )
+                    const modalFees = calculateWeeklySchedule(selectedApp.page3?.contractedHours, modalIsBaby)
+                    const modalFunded = calculateFundedHours(selectedApp.page3?.fundedSchedule)
+
+                    return (
+                      <div className="space-y-4">
+                        <div className="p-5 bg-slate-50 rounded-2xl border border-slate-200 space-y-3">
+                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                            <h4 className="font-bold uppercase tracking-wider text-slate-800">
+                              Contracted Hours
+                            </h4>
+                            <span className="text-xs px-2.5 py-1 rounded-full font-semibold bg-white border border-slate-200 text-slate-700">
+                              Rate applied: {modalIsBaby ? 'Baby <8m (£14/hr, £80/day)' : 'Standard (£12/hr, £70/day)'}
+                            </span>
+                          </div>
+                          <div className="overflow-x-auto">
+                            <table className="w-full text-left border border-slate-300 bg-white rounded-lg">
+                              <thead className="bg-slate-100 border-b border-slate-300 font-bold">
+                                <tr>
+                                  <th className="p-2">Day</th>
+                                  <th className="p-2">Time From</th>
+                                  <th className="p-2">Time To</th>
+                                  <th className="p-2">Total Hours</th>
+                                  <th className="p-2">Rate</th>
+                                </tr>
+                              </thead>
+                              <tbody className="divide-y divide-slate-200">
+                                {(['monday', 'tuesday', 'wednesday', 'thursday', 'friday'] as const).map((day) => {
+                                  const d = selectedApp.page3?.contractedHours?.[day]
+                                  return (
+                                    <tr key={day}>
+                                      <td className="p-2 font-bold capitalize">{day}</td>
+                                      <td className="p-2">{d?.timeFrom || '—'}</td>
+                                      <td className="p-2">{d?.timeTo || '—'}</td>
+                                      <td className="p-2">{d?.totalHours || '—'}</td>
+                                      <td className="p-2">{d?.rate || '—'}</td>
+                                    </tr>
+                                  )
+                                })}
+                              </tbody>
+                              <tfoot className="bg-slate-100 border-t-2 border-slate-400 font-bold">
+                                <tr>
+                                  <td colSpan={3} className="p-2">Total hours / cost per week:</td>
+                                  <td className="p-2">
+                                    {modalFees.totalHours > 0
+                                      ? `${modalFees.totalHours} hrs`
+                                      : selectedApp.page3?.contractedHours?.totalHoursPerWeek || selectedApp.contractedSchedule?.totalContractedHours || '—'}
+                                  </td>
+                                  <td className="p-2">
+                                    {modalFees.grossCost > 0
+                                      ? modalFees.grossCostStr
+                                      : selectedApp.page3?.contractedHours?.totalCostPerWeek || selectedApp.contractedSchedule?.totalWeeklyCost || '—'}
+                                  </td>
+                                </tr>
+                              </tfoot>
+                            </table>
+                          </div>
+                        </div>
+
+                        {/* Automatic Fee & Advance Payment Schedule */}
+                        <div className="p-5 bg-gradient-to-br from-slate-50 to-blue-50/50 rounded-2xl border border-slate-200 space-y-4">
+                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200/80 pb-3">
+                            <div>
+                              <h4 className="text-xs font-bold uppercase tracking-wider text-slate-900">
+                                Automatic Fee & Advance Payment Schedule
+                              </h4>
+                              <p className="text-[11px] text-slate-500">
+                                Calculated automatically based on the Application Form fee rules.
+                              </p>
+                            </div>
+                            {modalFees.isFullTimeDiscount && (
+                              <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                                ✓ Full-time discount applied (£330.00/wk)
+                              </span>
+                            )}
+                          </div>
+
+                          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+                            <div className="p-3 bg-white rounded-xl border border-slate-200 shadow-xs">
+                              <span className="text-slate-500 block text-[11px]">Weekly Fee:</span>
+                              <strong className="text-base text-slate-900 font-bold block mt-0.5">
+                                {modalFees.grossCostStr || '£0.00'}
+                              </strong>
+                              <span className="text-[10px] text-slate-400 block mt-0.5">
+                                {modalFees.totalHours} hrs / week
+                              </span>
+                            </div>
+
+                            <div className="p-3 bg-white rounded-xl border border-slate-200 shadow-xs">
+                              <span className="text-slate-500 block text-[11px]">4-Weekly in advance:</span>
+                              <strong className="text-base text-slate-900 font-bold block mt-0.5">
+                                {modalFees.fourWeeklyCostStr || '£0.00'}
+                              </strong>
+                              <span className="text-[10px] text-slate-400 block mt-0.5">
+                                4 weeks contracted
+                              </span>
+                            </div>
+
+                            <div className="p-3 bg-white rounded-xl border border-slate-200 shadow-xs">
+                              <span className="text-slate-500 block text-[11px]">Monthly in advance:</span>
+                              <strong className="text-base text-slate-900 font-bold block mt-0.5">
+                                {modalFees.monthlyCostStr || '£0.00'}
+                              </strong>
+                              <span className="text-[10px] text-slate-400 block mt-0.5">
+                                Calendar month (52wks/12)
+                              </span>
+                            </div>
+
+                            <div className="p-3 bg-white rounded-xl border border-slate-200 shadow-xs">
+                              <span className="text-slate-500 block text-[11px]">50% Retainer Fee:</span>
+                              <strong className="text-base text-[var(--color-primary-700)] font-bold block mt-0.5">
+                                {modalFees.retainerFee50Str || '£0.00'}
+                              </strong>
+                              <span className="text-[10px] text-slate-400 block mt-0.5">
+                                To reserve place next term
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* Funded Hours Offset Display */}
+                          {modalFunded.totalFundedHrs > 0 && (
+                            <div className="p-3.5 bg-blue-50 rounded-xl border border-blue-200 text-xs text-blue-900 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                              <div>
+                                <strong>Early Years Entitlement:</strong> {modalFunded.totalFundedHrs} hrs/week funded.
+                                {modalFees.totalHours > modalFunded.totalFundedHrs ? (
+                                  <span> (Parent payable hours: {Math.round((modalFees.totalHours - modalFunded.totalFundedHrs) * 10) / 10} hrs beyond entitlement)</span>
+                                ) : (
+                                  <span> (All contracted hours covered within entitlement)</span>
+                                )}
+                              </div>
+                              <div className="font-bold text-sm text-[var(--color-primary-900)]">
+                                Net Weekly Fee: £
+                                {Math.max(
+                                  0,
+                                  modalFees.totalHours > modalFunded.totalFundedHrs
+                                    ? (modalFees.totalHours - modalFunded.totalFundedHrs) * (modalIsBaby ? 14 : 12)
+                                    : 0
+                                ).toFixed(2)}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* 4 Weeks Notice Policy Charge */}
+                          <div className="text-[11px] text-slate-500 pt-1 border-t border-slate-200/60 flex flex-wrap items-center justify-between gap-2">
+                            <span>Notice / Cancellation minimum charge (4 weeks' contracted cost):</span>
+                            <strong className="text-slate-800">{modalFees.fourWeeksNoticeCostStr}</strong>
+                          </div>
+                        </div>
+                      </div>
+                    )
+                  })()}
                 </div>
               )}
 
@@ -744,6 +880,38 @@ export default function AdminApplications() {
               {/* PAGE 7 */}
               {activeModalPage === 7 && (
                 <div className="space-y-6">
+                  {/* Late Pickup Fee & Policy Reference */}
+                  <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
+                    <h4 className="font-bold text-slate-800 text-xs uppercase tracking-wider">
+                      Late Pickup Fee Reference (Document Terms)
+                    </h4>
+                    <p className="text-xs text-slate-600">
+                      A standard late pickup fee of £5.00 will be charged during the first 10 minutes after your scheduled pickup time. An additional £5 will be charged for every 5 minutes thereafter.
+                    </p>
+                    <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 text-center text-xs pt-1">
+                      <div className="p-2 bg-white rounded-lg border border-slate-200">
+                        <span className="text-slate-500 text-[10px] block">1–10 mins late</span>
+                        <strong className="text-slate-900 text-sm">£5.00</strong>
+                      </div>
+                      <div className="p-2 bg-white rounded-lg border border-slate-200">
+                        <span className="text-slate-500 text-[10px] block">11–15 mins late</span>
+                        <strong className="text-slate-900 text-sm">£10.00</strong>
+                      </div>
+                      <div className="p-2 bg-white rounded-lg border border-slate-200">
+                        <span className="text-slate-500 text-[10px] block">16–20 mins late</span>
+                        <strong className="text-slate-900 text-sm">£15.00</strong>
+                      </div>
+                      <div className="p-2 bg-white rounded-lg border border-slate-200">
+                        <span className="text-slate-500 text-[10px] block">21–25 mins late</span>
+                        <strong className="text-slate-900 text-sm">£20.00</strong>
+                      </div>
+                      <div className="p-2 bg-white rounded-lg border border-slate-200">
+                        <span className="text-slate-500 text-[10px] block">26–30 mins late</span>
+                        <strong className="text-slate-900 text-sm">£25.00</strong>
+                      </div>
+                    </div>
+                  </div>
+
                   {/* Signatures */}
                   <div className="p-5 bg-slate-50 rounded-2xl border border-slate-200 space-y-4">
                     <h4 className="font-bold uppercase tracking-wider text-[var(--color-primary-800)] border-b pb-2">

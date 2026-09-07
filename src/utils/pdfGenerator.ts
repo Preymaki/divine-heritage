@@ -7,6 +7,11 @@
 
 import { jsPDF } from 'jspdf'
 import type { ApplicationRecord } from '@appTypes/application'
+import {
+  calculateWeeklySchedule,
+  calculateFundedHours,
+  isChildUnder8Months,
+} from './applicationFees'
 
 const PRIMARY_COLOR: [number, number, number] = [30, 58, 138] // #1e3a8a Navy
 const TEXT_DARK: [number, number, number] = [30, 41, 59] // #1e293b Slate 800
@@ -413,6 +418,96 @@ export async function generateApplicationPDF(
   doc.text('Total hours/cost per week:', margin + 2, currentY + 3.5)
   doc.text(`${cHours.totalHoursPerWeek || '0'} hrs`, margin + 115, currentY + 3.5)
   doc.text(cHours.totalCostPerWeek || '£0.00', margin + 150, currentY + 3.5)
+  currentY += 8
+
+  // Automatic Fee & Advance Payment Schedule
+  const isBaby = isChildUnder8Months(
+    app.page1?.childDob || app.child?.dob,
+    app.page3?.requiredStartDate || app.page4?.contractStartDate || app.sessions?.requiredStartDate
+  )
+  const feeSched = calculateWeeklySchedule(app.page3?.contractedHours, isBaby)
+  const fundedRes = calculateFundedHours(app.page3?.fundedSchedule)
+
+  renderSectionHeader('Automatic Fee & Advance Payment Schedule')
+  doc.setFontSize(8)
+  doc.setFont('helvetica', 'normal')
+  doc.setTextColor(...TEXT_MUTED)
+  doc.text(
+    `Rate applied: ${isBaby ? 'Baby <8 months (£14.00/hr, £80.00/day)' : 'Standard (£12.00/hr, £70.00/day)'}` +
+      (feeSched.isFullTimeDiscount ? ' • Full-time discount applied (£330.00/wk)' : ''),
+    margin + 2,
+    currentY
+  )
+  currentY += 4.5
+
+  const feeBoxW = (contentWidth - 6) / 4
+  const feeMetrics = [
+    { label: 'Weekly Fee', val: feeSched.grossCostStr || '£0.00', sub: `${feeSched.totalHours} hrs/week` },
+    { label: '4-Weekly advance', val: feeSched.fourWeeklyCostStr || '£0.00', sub: '4 weeks contracted' },
+    { label: 'Monthly advance', val: feeSched.monthlyCostStr || '£0.00', sub: 'Calendar month (52wks/12)' },
+    { label: '50% Retainer Fee', val: feeSched.retainerFee50Str || '£0.00', sub: 'Reserves next term' },
+  ]
+
+  feeMetrics.forEach((m, idx) => {
+    const boxX = margin + idx * (feeBoxW + 2)
+    doc.setDrawColor(...BORDER_COLOR)
+    doc.setFillColor(255, 255, 255)
+    doc.roundedRect(boxX, currentY, feeBoxW, 15, 1, 1, 'FD')
+
+    doc.setFontSize(7)
+    doc.setFont('helvetica', 'normal')
+    doc.setTextColor(...TEXT_MUTED)
+    doc.text(m.label, boxX + 2, currentY + 3.8)
+
+    doc.setFontSize(9)
+    doc.setFont('helvetica', 'bold')
+    doc.setTextColor(...PRIMARY_COLOR)
+    doc.text(m.val, boxX + 2, currentY + 8.5)
+
+    doc.setFontSize(6)
+    doc.setFont('helvetica', 'normal')
+    doc.setTextColor(...TEXT_MUTED)
+    doc.text(m.sub, boxX + 2, currentY + 12.5)
+  })
+
+  currentY += 18
+
+  if (fundedRes.totalFundedHrs > 0) {
+    doc.setFillColor(239, 246, 255)
+    doc.setDrawColor(191, 219, 254)
+    doc.roundedRect(margin, currentY, contentWidth, 9, 1, 1, 'FD')
+
+    doc.setFontSize(7.5)
+    doc.setFont('helvetica', 'bold')
+    doc.setTextColor(30, 58, 138)
+    doc.text(`Early Years Entitlement: ${fundedRes.totalFundedHrs} hrs/week funded.`, margin + 3, currentY + 4)
+
+    const netWeekly = Math.max(
+      0,
+      feeSched.totalHours > fundedRes.totalFundedHrs
+        ? (feeSched.totalHours - fundedRes.totalFundedHrs) * (isBaby ? 14 : 12)
+        : 0
+    )
+    doc.text(`Net Weekly Fee: £${netWeekly.toFixed(2)}`, pageWidth - margin - 3, currentY + 4, { align: 'right' })
+
+    doc.setFont('helvetica', 'normal')
+    doc.setFontSize(6.5)
+    doc.setTextColor(...TEXT_MUTED)
+    doc.text(
+      feeSched.totalHours > fundedRes.totalFundedHrs
+        ? `Parent payable hours: ${Math.round((feeSched.totalHours - fundedRes.totalFundedHrs) * 10) / 10} hrs beyond entitlement.`
+        : 'All contracted hours covered within entitlement.',
+      margin + 3,
+      currentY + 7.5
+    )
+    currentY += 12
+  }
+
+  doc.setFontSize(7)
+  doc.setFont('helvetica', 'normal')
+  doc.setTextColor(...TEXT_MUTED)
+  doc.text(`Notice / Cancellation minimum charge (4 weeks' contracted cost): ${feeSched.fourWeeksNoticeCostStr}`, margin + 2, currentY)
+  currentY += 5
 
   // ═══════════════════════════════════════════════════════════════════════════
   // PAGE 4
@@ -636,7 +731,7 @@ export async function generateApplicationPDF(
 
   renderSectionHeader('Terms, Termination, House Rules & Signatures')
   const p7Rules =
-    'Repeated late collection will be considered a breach of contract. The following procedures will be implemented in all late collections.\n\nA standard late pickup fee of £5.00 will be charged during the first 10 minutes after your scheduled pickup time. An additional £5 will be charged for every 5 minutes thereafter.\n\nThe total late pickup charge should be paid by the next time you drop off your child.\n\nFailure to pay any fine incurred may result in the withdrawal of the services provided until payment is made.\n\nParents are to pay a 50% retainer fee for term-time childcare. The fee confirms and reserves your child’s place for the following term.\n\nI will give a minimum of FOUR (4) weeks’ notice of my holidays. Full payment will be required when I am on holiday.\n\nPlease do not hesitate to raise any concerns or issues you may have while your child or children are in my care. I am happy to discuss any concerns with you at any time, preferably during pick-ups.'
+    'Repeated late collection will be considered a breach of contract. The following procedures will be implemented in all late collections.\n\nA standard late pickup fee of £5.00 will be charged during the first 10 minutes after your scheduled pickup time. An additional £5 will be charged for every 5 minutes thereafter. (Scale: 1–10m late: £5.00 | 11–15m: £10.00 | 16–20m: £15.00 | 21–25m: £20.00 | 26–30m: £25.00).\n\nThe total late pickup charge should be paid by the next time you drop off your child.\n\nFailure to pay any fine incurred may result in the withdrawal of the services provided until payment is made.\n\nParents are to pay a 50% retainer fee for term-time childcare. The fee confirms and reserves your child’s place for the following term.\n\nI will give a minimum of FOUR (4) weeks’ notice of my holidays. Full payment will be required when I am on holiday.\n\nPlease do not hesitate to raise any concerns or issues you may have while your child or children are in my care. I am happy to discuss any concerns with you at any time, preferably during pick-ups.'
   const splitP7Rules = doc.splitTextToSize(p7Rules, contentWidth)
   doc.text(splitP7Rules, margin, currentY)
   currentY += splitP7Rules.length * 3.8 + 6
