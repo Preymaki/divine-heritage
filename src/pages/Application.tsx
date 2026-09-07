@@ -604,12 +604,13 @@ export default function Application() {
                       setCurrentPage(pageNum)
                     }
                   }}
-                  className={`h-2.5 rounded-full transition-all cursor-pointer ${pageNum === currentPage
+                  className={`h-2.5 rounded-full transition-all cursor-pointer ${
+                    pageNum === currentPage
                       ? 'bg-[#DB3056] ring-2 ring-rose-200 shadow-xs'
                       : pageNum < currentPage
-                        ? 'bg-emerald-500'
-                        : 'bg-slate-200 hover:bg-slate-300'
-                    }`}
+                      ? 'bg-emerald-500'
+                      : 'bg-slate-200 hover:bg-slate-300'
+                  }`}
                   title={`Go to Page ${pageNum}`}
                   aria-label={`Go to Page ${pageNum}`}
                 />
@@ -1450,20 +1451,22 @@ export default function Application() {
                     <button
                       type="button"
                       onClick={() => setManualBabyRate(false)}
-                      className={`px-2.5 py-1 rounded-lg font-medium transition-colors ${!isBabyRate
+                      className={`px-2.5 py-1 rounded-lg font-medium transition-colors ${
+                        !isBabyRate
                           ? 'bg-[var(--color-primary-600)] text-white shadow-xs'
                           : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                        }`}
+                      }`}
                     >
                       Standard (£12/hr, £70/day)
                     </button>
                     <button
                       type="button"
                       onClick={() => setManualBabyRate(true)}
-                      className={`px-2.5 py-1 rounded-lg font-medium transition-colors ${isBabyRate
+                      className={`px-2.5 py-1 rounded-lg font-medium transition-colors ${
+                        isBabyRate
                           ? 'bg-amber-600 text-white shadow-xs'
                           : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                        }`}
+                      }`}
                     >
                       Baby &lt;8m (£14/hr, £80/day)
                     </button>
