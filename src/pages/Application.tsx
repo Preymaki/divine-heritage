@@ -537,46 +537,53 @@ export default function Application() {
   }
 
   return (
-    <main className="min-h-screen bg-[#FBFBFC] pb-20">
-      {/* ── Page Header Banner (Skallywags Style) ─────────────────────────── */}
-      <section className="bg-gradient-to-b from-rose-50/60 via-white to-white text-slate-800 pt-24 md:pt-28 pb-8 px-4 border-b border-rose-100/70 relative">
-        <div className="max-w-4xl mx-auto">
-          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-6">
+    <main className="min-h-screen bg-[var(--color-neutral-50)] pb-20">
+      {/* ── Page Header Banner ────────────────────────────────────────────── */}
+      <section className="bg-[var(--color-primary-900)] text-white pt-28 md:pt-32 pb-10 px-4 border-b border-[var(--color-primary-800)] relative overflow-hidden">
+        {/* Subtle background glow */}
+        <div
+          className="absolute -top-24 right-0 w-96 h-96 rounded-full blur-3xl pointer-events-none"
+          style={{ background: 'radial-gradient(circle, rgba(30, 86, 208, 0.25) 0%, transparent 70%)' }}
+          aria-hidden="true"
+        />
+
+        <div className="max-w-4xl mx-auto relative z-10">
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-6 border-b border-white/10">
             <div className="max-w-xl">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-100/70 text-[#DB3056] text-xs font-bold uppercase tracking-wider mb-2.5">
-                <span className="w-2 h-2 rounded-full bg-[#DB3056]" aria-hidden="true" />
-                Childcare Application Form
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--color-accent-500)]/20 border border-[var(--color-accent-400)]/30 text-[var(--color-accent-300)] text-xs font-bold uppercase tracking-wider mb-3">
+                <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-accent-400)]" aria-hidden="true" />
+                Official Childcare Enrolment
               </div>
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-black font-[var(--font-family-heading)] text-[#DB3056] tracking-tight">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold font-[var(--font-family-heading)] text-white tracking-tight drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">
                 Divine Heritage Application Form
               </h1>
-              <p className="mt-2 text-slate-600 text-xs sm:text-sm md:text-base leading-relaxed">
-                First class childcare in an environment which is safe, secure, healthy and stimulating. Please complete the 7-section enrolment agreement below.
+              <p className="mt-2 text-white/80 text-xs sm:text-sm md:text-base leading-relaxed">
+                Please complete this 7-step official enrolment form. Your progress is saved as you complete each section.
               </p>
             </div>
 
             {/* Childminder Details Card */}
-            <div className="bg-white rounded-xl p-4 border-2 border-rose-100 shadow-xs text-xs shrink-0 max-w-sm">
-              <div className="flex items-center gap-2.5 mb-2.5 pb-2 border-b border-slate-100">
-                <div className="w-8 h-8 rounded-lg bg-rose-50 border border-rose-200 flex items-center justify-center text-[#DB3056]">
-                  <User size={16} />
+            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/15 shadow-sm text-xs shrink-0 max-w-sm">
+              <div className="flex items-center gap-2.5 mb-2.5 pb-2 border-b border-white/10">
+                <div className="w-7 h-7 rounded-lg bg-[var(--color-primary-500)]/40 border border-white/20 flex items-center justify-center text-[var(--color-accent-300)]">
+                  <User size={14} />
                 </div>
                 <div>
-                  <div className="font-bold text-slate-900 text-sm">Avril Cole</div>
-                  <div className="text-slate-500 text-[11px]">Registered Childminder</div>
+                  <div className="font-bold text-white text-sm">Avril Cole</div>
+                  <div className="text-white/60 text-[11px]">Registered Childminder</div>
                 </div>
               </div>
-              <div className="space-y-1.5 text-slate-700">
+              <div className="space-y-1.5 text-white/85">
                 <div className="flex items-center gap-2">
-                  <Phone size={13} className="text-[#DB3056] shrink-0" />
-                  <a href="tel:07939303144" className="font-semibold text-slate-800 hover:text-[#DB3056] transition-colors">07939 303144</a>
+                  <Phone size={13} className="text-[var(--color-accent-300)] shrink-0" />
+                  <a href="tel:07939303144" className="hover:text-white transition-colors">07939 303144</a>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Mail size={13} className="text-[#DB3056] shrink-0" />
-                  <a href="mailto:divineheritagechildcare@gmail.com" className="font-medium hover:text-[#DB3056] transition-colors truncate">divineheritagechildcare@gmail.com</a>
+                  <Mail size={13} className="text-[var(--color-accent-300)] shrink-0" />
+                  <a href="mailto:divineheritagechildcare@gmail.com" className="hover:text-white transition-colors truncate">divineheritagechildcare@gmail.com</a>
                 </div>
-                <div className="flex items-start gap-2 text-slate-500 text-[11px] pt-0.5">
-                  <MapPin size={13} className="text-[#DB3056] shrink-0 mt-0.5" />
+                <div className="flex items-start gap-2 text-white/70 text-[11px] pt-0.5">
+                  <MapPin size={13} className="text-[var(--color-accent-300)] shrink-0 mt-0.5" />
                   <span>5 Pitman Building, Freda St, London SE16 4BW</span>
                 </div>
               </div>
@@ -584,15 +591,15 @@ export default function Application() {
           </div>
 
           {/* Page Tabs Indicator */}
-          <div className="pt-4 border-t border-slate-200/80">
-            <div className="flex items-center justify-between text-xs text-slate-600 mb-2 font-medium">
-              <span className="font-bold text-slate-900 flex items-center gap-2">
-                <span className="w-6 h-6 rounded-full bg-[#DB3056] text-white text-xs font-bold inline-flex items-center justify-center shadow-xs">
+          <div className="pt-6">
+            <div className="flex items-center justify-between text-xs text-white/90 mb-2.5 font-medium">
+              <span className="font-semibold text-white flex items-center gap-2">
+                <span className="w-5 h-5 rounded-full bg-[var(--color-accent-500)] text-white text-[11px] font-bold inline-flex items-center justify-center shadow-xs">
                   {currentPage}
                 </span>
-                <span className="text-sm">{PAGE_TITLES[currentPage - 1]}</span>
+                <span>{PAGE_TITLES[currentPage - 1]}</span>
               </span>
-              <span className="text-slate-500 font-bold">Step {currentPage} of 7</span>
+              <span className="text-white/75 font-medium">Step {currentPage} of 7</span>
             </div>
             <div className="grid grid-cols-7 gap-1.5 sm:gap-2">
               {[1, 2, 3, 4, 5, 6, 7].map((pageNum) => (
@@ -606,10 +613,10 @@ export default function Application() {
                   }}
                   className={`h-2.5 rounded-full transition-all cursor-pointer ${
                     pageNum === currentPage
-                      ? 'bg-[#DB3056] ring-2 ring-rose-200 shadow-xs'
+                      ? 'bg-[var(--color-accent-400)] ring-2 ring-[var(--color-accent-300)]/50 shadow-xs'
                       : pageNum < currentPage
-                      ? 'bg-emerald-500'
-                      : 'bg-slate-200 hover:bg-slate-300'
+                      ? 'bg-emerald-400'
+                      : 'bg-white/20 hover:bg-white/35'
                   }`}
                   title={`Go to Page ${pageNum}`}
                   aria-label={`Go to Page ${pageNum}`}
@@ -630,24 +637,24 @@ export default function Application() {
           {currentPage === 1 && (
             <div className="bg-white rounded-3xl shadow-sm border border-slate-200 p-6 md:p-10 space-y-8 animate-fadeIn">
               {/* Document Childminder Header Box */}
-              <div className="border border-rose-200 bg-rose-50/20 rounded-xl overflow-hidden text-xs">
-                <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-rose-200">
-                  <div className="p-4 space-y-1 text-slate-700">
-                    <div><span className="font-bold text-slate-900">Name of Childminder:</span> Avril Cole</div>
-                    <div><span className="font-bold text-slate-900">Mobile:</span> 07939 303144</div>
+              <div className="border-2 border-slate-800 rounded-xl overflow-hidden text-xs">
+                <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x-2 divide-slate-800">
+                  <div className="p-4 space-y-1">
+                    <div><span className="font-bold">Name of Childminder:</span> Avril Cole</div>
+                    <div><span className="font-bold">Mobile:</span> 07939303144</div>
                   </div>
-                  <div className="p-4 space-y-1 text-slate-700">
-                    <div><span className="font-bold text-slate-900">Address:</span> 5 Pitman Building, Freda Street, London. SE16 4BW</div>
+                  <div className="p-4 space-y-1">
+                    <div><span className="font-bold">Address:</span> 5 Pitman Building, Freda Street, London. SE16 4BW</div>
                   </div>
                 </div>
-                <div className="border-t border-rose-200 p-3 bg-white/60">
-                  <span className="font-bold text-slate-900">Email:</span> divineheritagechildcare@gmail.com
+                <div className="border-t-2 border-slate-800 p-3 bg-slate-50">
+                  <span className="font-bold">Email:</span> divineheritagechildcare@gmail.com
                 </div>
               </div>
 
               {/* Section Header */}
-              <div className="sk-section-divider">
-                <h2 className="sk-section-title">
+              <div className="border-b-2 border-slate-800 pb-2">
+                <h2 className="text-base md:text-lg font-bold text-slate-900">
                   Details of Parental responsibility, legal contact, & residence arrangements:
                 </h2>
               </div>
@@ -655,8 +662,8 @@ export default function Application() {
               {/* Child Details */}
               <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
                 <div className="md:col-span-6">
-                  <label className="sk-label">
-                    Full name of Child: <span className="sk-required">*</span>
+                  <label className="block text-xs font-bold text-slate-800 mb-1">
+                    Full name of Child: <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
@@ -668,7 +675,7 @@ export default function Application() {
                         page1: { ...formData.page1, childFullName: e.target.value },
                       })
                     }
-                    className="sk-input"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
                   />
                   {errors.childFullName && (
                     <p className="text-xs text-red-500 mt-1">{errors.childFullName}</p>
@@ -676,8 +683,8 @@ export default function Application() {
                 </div>
 
                 <div className="md:col-span-3">
-                  <label className="sk-label">
-                    Date of Birth: <span className="sk-required">*</span>
+                  <label className="block text-xs font-bold text-slate-800 mb-1">
+                    Date of Birth: <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="date"
@@ -689,7 +696,7 @@ export default function Application() {
                         page1: { ...formData.page1, childDob: e.target.value },
                       })
                     }
-                    className="sk-input"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
                   />
                   {errors.childDob && (
                     <p className="text-xs text-red-500 mt-1">{errors.childDob}</p>
@@ -697,7 +704,7 @@ export default function Application() {
                 </div>
 
                 <div className="md:col-span-3">
-                  <label className="sk-label">
+                  <label className="block text-xs font-bold text-slate-800 mb-1">
                     Gender:
                   </label>
                   <div className="flex items-center gap-4 h-[42px]">
@@ -744,8 +751,8 @@ export default function Application() {
                   </h3>
 
                   <div>
-                    <label className="sk-label">
-                      Name of Parent/ Carer/ Guardian 1: <span className="sk-required">*</span>
+                    <label className="block text-xs font-bold text-slate-800 mb-1">
+                      Name of Parent/ Carer/ Guardian 1: <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
@@ -757,7 +764,7 @@ export default function Application() {
                           page1: { ...formData.page1, parent1Name: e.target.value },
                         })
                       }
-                      className="sk-input"
+                      className="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
                     />
                     {errors.parent1Name && (
                       <p className="text-xs text-red-500 mt-1">{errors.parent1Name}</p>
@@ -765,7 +772,7 @@ export default function Application() {
                   </div>
 
                   <div>
-                    <label className="sk-label">Home Address:</label>
+                    <label className="block text-xs font-bold text-slate-800 mb-1">Home Address:</label>
                     <textarea
                       rows={2}
                       value={formData.page1.parent1Address}
@@ -775,13 +782,13 @@ export default function Application() {
                           page1: { ...formData.page1, parent1Address: e.target.value },
                         })
                       }
-                      className="sk-input"
+                      className="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
                     />
                   </div>
 
                   <div>
-                    <label className="sk-label">
-                      Phone Mobile: <span className="sk-required">*</span>
+                    <label className="block text-xs font-bold text-slate-800 mb-1">
+                      Phone Mobile: <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="tel"
@@ -793,7 +800,7 @@ export default function Application() {
                           page1: { ...formData.page1, parent1Mobile: e.target.value },
                         })
                       }
-                      className="sk-input"
+                      className="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
                     />
                     {errors.parent1Mobile && (
                       <p className="text-xs text-red-500 mt-1">{errors.parent1Mobile}</p>
@@ -801,8 +808,8 @@ export default function Application() {
                   </div>
 
                   <div>
-                    <label className="sk-label">
-                      Email: <span className="sk-required">*</span>
+                    <label className="block text-xs font-bold text-slate-800 mb-1">
+                      Email: <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="email"
@@ -814,7 +821,7 @@ export default function Application() {
                           page1: { ...formData.page1, parent1Email: e.target.value },
                         })
                       }
-                      className="sk-input"
+                      className="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
                     />
                     {errors.parent1Email && (
                       <p className="text-xs text-red-500 mt-1">{errors.parent1Email}</p>
@@ -822,7 +829,7 @@ export default function Application() {
                   </div>
 
                   <div>
-                    <label className="sk-label">Profession:</label>
+                    <label className="block text-xs font-bold text-slate-800 mb-1">Profession:</label>
                     <input
                       type="text"
                       value={formData.page1.parent1Profession}
@@ -832,12 +839,12 @@ export default function Application() {
                           page1: { ...formData.page1, parent1Profession: e.target.value },
                         })
                       }
-                      className="sk-input"
+                      className="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
                     />
                   </div>
 
                   <div>
-                    <label className="sk-label">Work / College Address:</label>
+                    <label className="block text-xs font-bold text-slate-800 mb-1">Work / College Address:</label>
                     <textarea
                       rows={2}
                       value={formData.page1.parent1WorkAddress}
@@ -847,12 +854,12 @@ export default function Application() {
                           page1: { ...formData.page1, parent1WorkAddress: e.target.value },
                         })
                       }
-                      className="sk-input"
+                      className="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
                     />
                   </div>
 
                   <div>
-                    <label className="sk-label">Work Phone:</label>
+                    <label className="block text-xs font-bold text-slate-800 mb-1">Work Phone:</label>
                     <input
                       type="tel"
                       value={formData.page1.parent1WorkPhone}
@@ -862,7 +869,7 @@ export default function Application() {
                           page1: { ...formData.page1, parent1WorkPhone: e.target.value },
                         })
                       }
-                      className="sk-input"
+                      className="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
                     />
                   </div>
                 </div>
@@ -874,7 +881,7 @@ export default function Application() {
                   </h3>
 
                   <div>
-                    <label className="sk-label">
+                    <label className="block text-xs font-bold text-slate-800 mb-1">
                       Name of Parent/ Carer/ Guardian 2:
                     </label>
                     <input
@@ -886,12 +893,12 @@ export default function Application() {
                           page1: { ...formData.page1, parent2Name: e.target.value },
                         })
                       }
-                      className="sk-input"
+                      className="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
                     />
                   </div>
 
                   <div>
-                    <label className="sk-label">Home Address:</label>
+                    <label className="block text-xs font-bold text-slate-800 mb-1">Home Address:</label>
                     <textarea
                       rows={2}
                       value={formData.page1.parent2Address}
@@ -901,12 +908,12 @@ export default function Application() {
                           page1: { ...formData.page1, parent2Address: e.target.value },
                         })
                       }
-                      className="sk-input"
+                      className="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
                     />
                   </div>
 
                   <div>
-                    <label className="sk-label">Phone Mobile:</label>
+                    <label className="block text-xs font-bold text-slate-800 mb-1">Phone Mobile:</label>
                     <input
                       type="tel"
                       value={formData.page1.parent2Mobile}
@@ -916,12 +923,12 @@ export default function Application() {
                           page1: { ...formData.page1, parent2Mobile: e.target.value },
                         })
                       }
-                      className="sk-input"
+                      className="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
                     />
                   </div>
 
                   <div>
-                    <label className="sk-label">Email:</label>
+                    <label className="block text-xs font-bold text-slate-800 mb-1">Email:</label>
                     <input
                       type="email"
                       value={formData.page1.parent2Email}
@@ -931,12 +938,12 @@ export default function Application() {
                           page1: { ...formData.page1, parent2Email: e.target.value },
                         })
                       }
-                      className="sk-input"
+                      className="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
                     />
                   </div>
 
                   <div>
-                    <label className="sk-label">Profession:</label>
+                    <label className="block text-xs font-bold text-slate-800 mb-1">Profession:</label>
                     <input
                       type="text"
                       value={formData.page1.parent2Profession}
@@ -946,12 +953,12 @@ export default function Application() {
                           page1: { ...formData.page1, parent2Profession: e.target.value },
                         })
                       }
-                      className="sk-input"
+                      className="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
                     />
                   </div>
 
                   <div>
-                    <label className="sk-label">Work / College Address:</label>
+                    <label className="block text-xs font-bold text-slate-800 mb-1">Work / College Address:</label>
                     <textarea
                       rows={2}
                       value={formData.page1.parent2WorkAddress}
@@ -961,12 +968,12 @@ export default function Application() {
                           page1: { ...formData.page1, parent2WorkAddress: e.target.value },
                         })
                       }
-                      className="sk-input"
+                      className="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
                     />
                   </div>
 
                   <div>
-                    <label className="sk-label">Work Phone:</label>
+                    <label className="block text-xs font-bold text-slate-800 mb-1">Work Phone:</label>
                     <input
                       type="tel"
                       value={formData.page1.parent2WorkPhone}
@@ -976,7 +983,7 @@ export default function Application() {
                           page1: { ...formData.page1, parent2WorkPhone: e.target.value },
                         })
                       }
-                      className="sk-input"
+                      className="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
                     />
                   </div>
                 </div>
@@ -985,7 +992,7 @@ export default function Application() {
               {/* Who will bring/collect */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-slate-200">
                 <div>
-                  <label className="sk-label">
+                  <label className="block text-xs font-bold text-slate-800 mb-1">
                     Who will bring/collect the child from the childminder:
                   </label>
                   <input
@@ -997,12 +1004,12 @@ export default function Application() {
                         page1: { ...formData.page1, whoWillBringCollect: e.target.value },
                       })
                     }
-                    className="sk-input"
+                    className="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
                   />
                 </div>
 
                 <div>
-                  <label className="sk-label">
+                  <label className="block text-xs font-bold text-slate-800 mb-1">
                     Contact Details:
                   </label>
                   <input
@@ -1014,7 +1021,7 @@ export default function Application() {
                         page1: { ...formData.page1, contactDetails: e.target.value },
                       })
                     }
-                    className="sk-input"
+                    className="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
                   />
                 </div>
               </div>
@@ -1028,8 +1035,8 @@ export default function Application() {
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                   <div>
-                    <label className="sk-label">
-                      1. Name: <span className="sk-required">*</span>
+                    <label className="block text-xs font-bold text-slate-800 mb-1">
+                      1. Name: <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
@@ -1040,7 +1047,7 @@ export default function Application() {
                         updated[0].name = e.target.value
                         setFormData({ ...formData, emergencyContacts: updated })
                       }}
-                      className="sk-input"
+                      className="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
                     />
                     {errors.emergency1Name && (
                       <p className="text-xs text-red-500 mt-1">{errors.emergency1Name}</p>
@@ -1048,8 +1055,8 @@ export default function Application() {
                   </div>
 
                   <div>
-                    <label className="sk-label">
-                      Contact no: <span className="sk-required">*</span>
+                    <label className="block text-xs font-bold text-slate-800 mb-1">
+                      Contact no: <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="tel"
@@ -1060,7 +1067,7 @@ export default function Application() {
                         updated[0].contactNo = e.target.value
                         setFormData({ ...formData, emergencyContacts: updated })
                       }}
-                      className="sk-input"
+                      className="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
                     />
                     {errors.emergency1ContactNo && (
                       <p className="text-xs text-red-500 mt-1">{errors.emergency1ContactNo}</p>
@@ -1068,7 +1075,7 @@ export default function Application() {
                   </div>
 
                   <div>
-                    <label className="sk-label">Relationship:</label>
+                    <label className="block text-xs font-bold text-slate-800 mb-1">Relationship:</label>
                     <input
                       type="text"
                       value={formData.emergencyContacts[0].relationship}
@@ -1077,7 +1084,7 @@ export default function Application() {
                         updated[0].relationship = e.target.value
                         setFormData({ ...formData, emergencyContacts: updated })
                       }}
-                      className="sk-input"
+                      className="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
                     />
                   </div>
                 </div>
@@ -1092,8 +1099,8 @@ export default function Application() {
             <div className="bg-white rounded-3xl shadow-sm border border-slate-200 p-6 md:p-10 space-y-8 animate-fadeIn">
               {/* Emergency Contacts 2, 3, 4 */}
               <div className="space-y-4">
-                <div className="sk-section-divider">
-                  <h2 className="sk-section-title">
+                <div className="border-b-2 border-slate-800 pb-2">
+                  <h2 className="text-base md:text-lg font-bold text-slate-900">
                     Emergency Contact(s) (Continued)
                   </h2>
                 </div>
@@ -1102,7 +1109,7 @@ export default function Application() {
                   {[1, 2, 3].map((idx) => (
                     <div key={idx} className="grid grid-cols-1 md:grid-cols-3 gap-3 p-3 bg-slate-50 rounded-xl border border-slate-200">
                       <div>
-                        <label className="sk-label">
+                        <label className="block text-xs font-bold text-slate-800 mb-1">
                           {idx + 1}. Name:
                         </label>
                         <input
@@ -1113,11 +1120,11 @@ export default function Application() {
                             updated[idx].name = e.target.value
                             setFormData({ ...formData, emergencyContacts: updated })
                           }}
-                          className="sk-input text-xs py-1.5"
+                          className="w-full px-3 py-1.5 rounded-lg border border-slate-300 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
                         />
                       </div>
                       <div>
-                        <label className="sk-label">Contact no:</label>
+                        <label className="block text-xs font-bold text-slate-800 mb-1">Contact no:</label>
                         <input
                           type="tel"
                           value={formData.emergencyContacts[idx].contactNo}
@@ -1126,11 +1133,11 @@ export default function Application() {
                             updated[idx].contactNo = e.target.value
                             setFormData({ ...formData, emergencyContacts: updated })
                           }}
-                          className="sk-input text-xs py-1.5"
+                          className="w-full px-3 py-1.5 rounded-lg border border-slate-300 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
                         />
                       </div>
                       <div>
-                        <label className="sk-label">Relationship:</label>
+                        <label className="block text-xs font-bold text-slate-800 mb-1">Relationship:</label>
                         <input
                           type="text"
                           value={formData.emergencyContacts[idx].relationship}
@@ -1139,7 +1146,7 @@ export default function Application() {
                             updated[idx].relationship = e.target.value
                             setFormData({ ...formData, emergencyContacts: updated })
                           }}
-                          className="sk-input text-xs py-1.5"
+                          className="w-full px-3 py-1.5 rounded-lg border border-slate-300 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
                         />
                       </div>
                     </div>
@@ -1149,8 +1156,8 @@ export default function Application() {
 
               {/* Funded Hours / Free Entitlements */}
               <div className="pt-4 border-t-2 border-slate-800 space-y-4">
-                <div className="sk-section-divider">
-                  <h2 className="sk-section-title">
+                <div className="border-b border-slate-300 pb-2">
+                  <h2 className="text-base md:text-lg font-bold text-slate-900 underline">
                     Funded Hours / Free Entitlements
                   </h2>
                 </div>
@@ -1214,7 +1221,7 @@ export default function Application() {
                           page2: { ...formData.page2, workingParent15HrsUnder2Code: e.target.value },
                         })
                       }
-                      className="sm:col-span-6 sk-input text-xs py-1.5 px-3"
+                      className="sm:col-span-6 px-3 py-1.5 rounded-lg border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
                     />
                   </div>
 
@@ -1229,7 +1236,7 @@ export default function Application() {
                           page2: { ...formData.page2, workingParent15Hrs2yoCode: e.target.value },
                         })
                       }
-                      className="sm:col-span-6 sk-input text-xs py-1.5 px-3"
+                      className="sm:col-span-6 px-3 py-1.5 rounded-lg border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
                     />
                   </div>
 
@@ -1244,7 +1251,7 @@ export default function Application() {
                           page2: { ...formData.page2, workingParent30HrsCode: e.target.value },
                         })
                       }
-                      className="sm:col-span-6 sk-input text-xs py-1.5 px-3"
+                      className="sm:col-span-6 px-3 py-1.5 rounded-lg border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
                     />
                   </div>
 
@@ -1259,7 +1266,7 @@ export default function Application() {
                           page2: { ...formData.page2, nationalInsuranceNo: e.target.value },
                         })
                       }
-                      className="sm:col-span-6 sk-input text-xs py-1.5 px-3"
+                      className="sm:col-span-6 px-3 py-1.5 rounded-lg border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
                     />
                   </div>
 
@@ -1274,7 +1281,7 @@ export default function Application() {
                           page2: { ...formData.page2, parentClaimingDob: e.target.value },
                         })
                       }
-                      className="sm:col-span-6 sk-input text-xs py-1.5 px-3"
+                      className="sm:col-span-6 px-3 py-1.5 rounded-lg border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
                     />
                   </div>
 
@@ -1336,8 +1343,8 @@ export default function Application() {
 
               {/* Session & Start date required */}
               <div className="pt-4 border-t-2 border-slate-800 space-y-4">
-                <div className="sk-section-divider">
-                  <h2 className="sk-section-title">
+                <div className="border-b border-slate-300 pb-2">
+                  <h2 className="text-base md:text-lg font-bold text-slate-900 underline">
                     Session & Start date required
                   </h2>
                 </div>
@@ -1355,7 +1362,7 @@ export default function Application() {
                 </div>
 
                 <div className="max-w-xs">
-                  <label className="sk-label">
+                  <label className="block text-xs font-bold text-slate-800 mb-1">
                     Required Start Date:
                   </label>
                   <input
@@ -1367,7 +1374,7 @@ export default function Application() {
                         page3: { ...formData.page3, requiredStartDate: e.target.value },
                       })
                     }
-                    className="sk-input text-xs py-1.5"
+                    className="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
                   />
                 </div>
               </div>
@@ -1689,15 +1696,15 @@ export default function Application() {
             <div className="bg-white rounded-3xl shadow-sm border border-slate-200 p-6 md:p-10 space-y-8 animate-fadeIn">
               {/* Contract Duration */}
               <div className="space-y-3">
-                <div className="sk-section-divider">
-                  <h2 className="sk-section-title">
+                <div className="border-b-2 border-slate-800 pb-2">
+                  <h2 className="text-base md:text-lg font-bold text-slate-900">
                     Contract Duration:
                   </h2>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="sk-label">Start of contract:</label>
+                    <label className="block text-xs font-bold text-slate-800 mb-1">Start of contract:</label>
                     <input
                       type="date"
                       value={formData.page4.contractStartDate}
@@ -1707,11 +1714,11 @@ export default function Application() {
                           page4: { ...formData.page4, contractStartDate: e.target.value },
                         })
                       }
-                      className="sk-input text-xs py-1.5"
+                      className="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
                     />
                   </div>
                   <div>
-                    <label className="sk-label">End of Contract:</label>
+                    <label className="block text-xs font-bold text-slate-800 mb-1">End of Contract:</label>
                     <input
                       type="date"
                       value={formData.page4.contractEndDate}
@@ -1721,7 +1728,7 @@ export default function Application() {
                           page4: { ...formData.page4, contractEndDate: e.target.value },
                         })
                       }
-                      className="sk-input text-xs py-1.5"
+                      className="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
                     />
                   </div>
                 </div>
@@ -1774,8 +1781,8 @@ export default function Application() {
 
               {/* Race & Ethnicity */}
               <div className="pt-4 border-t-2 border-slate-800 space-y-4">
-                <div className="sk-section-divider">
-                  <h2 className="sk-section-title">
+                <div className="border-b border-slate-300 pb-2">
+                  <h2 className="text-base md:text-lg font-bold text-slate-900 underline">
                     Race & Ethnicity
                   </h2>
                 </div>
@@ -1792,7 +1799,7 @@ export default function Application() {
                           page4: { ...formData.page4, childRaceEthnicity: e.target.value },
                         })
                       }
-                      className="sk-input text-xs py-1.5"
+                      className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
                     />
                   </div>
 
@@ -1807,7 +1814,7 @@ export default function Application() {
                           page4: { ...formData.page4, familyRaceEthnicity: e.target.value },
                         })
                       }
-                      className="sk-input text-xs py-1.5"
+                      className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
                     />
                   </div>
 
@@ -1822,7 +1829,7 @@ export default function Application() {
                           page4: { ...formData.page4, languagesUnderstoodChild: e.target.value },
                         })
                       }
-                      className="sk-input text-xs py-1.5"
+                      className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
                     />
                   </div>
 
@@ -1837,7 +1844,7 @@ export default function Application() {
                           page4: { ...formData.page4, languagesSpokenFamily: e.target.value },
                         })
                       }
-                      className="sk-input text-xs py-1.5"
+                      className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
                     />
                   </div>
 
@@ -1852,7 +1859,7 @@ export default function Application() {
                           page4: { ...formData.page4, languagesSpokenChild: e.target.value },
                         })
                       }
-                      className="sk-input text-xs py-1.5"
+                      className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
                     />
                   </div>
 
@@ -1867,7 +1874,7 @@ export default function Application() {
                           page4: { ...formData.page4, translationRequired: e.target.value },
                         })
                       }
-                      className="sk-input text-xs py-1.5"
+                      className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
                     />
                   </div>
 
@@ -1882,7 +1889,7 @@ export default function Application() {
                           page4: { ...formData.page4, religion: e.target.value },
                         })
                       }
-                      className="sk-input text-xs py-1.5"
+                      className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
                     />
                   </div>
 
@@ -1897,13 +1904,13 @@ export default function Application() {
                           page4: { ...formData.page4, festivalsCelebrated: e.target.value },
                         })
                       }
-                      className="sk-input text-xs py-1.5"
+                      className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
                     />
                   </div>
                 </div>
 
                 <div className="pt-2">
-                  <label className="sk-label">Child's previous childcare:</label>
+                  <label className="block text-xs font-bold text-slate-800 mb-1">Child's previous childcare:</label>
                   <input
                     type="text"
                     value={formData.page4.previousChildcare}
@@ -1913,7 +1920,7 @@ export default function Application() {
                         page4: { ...formData.page4, previousChildcare: e.target.value },
                       })
                     }
-                    className="sk-input text-xs py-1.5"
+                    className="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
                   />
                 </div>
               </div>
@@ -1938,7 +1945,7 @@ export default function Application() {
                         page5: { ...formData.page5, nurseryAttendedName: e.target.value },
                       })
                     }
-                    className="sk-input text-xs py-1.5"
+                    className="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
                   />
                 </div>
                 <div>
@@ -1952,15 +1959,15 @@ export default function Application() {
                         page5: { ...formData.page5, nurseryAttendedAddress: e.target.value },
                       })
                     }
-                    className="sk-input text-xs py-1.5"
+                    className="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
                   />
                 </div>
               </div>
 
               {/* Other Family Members */}
               <div className="pt-4 border-t-2 border-slate-800 space-y-4">
-                <div className="sk-section-divider">
-                  <h2 className="sk-section-title">
+                <div className="border-b border-slate-300 pb-2">
+                  <h2 className="text-base md:text-lg font-bold text-slate-900 underline">
                     Other Family Members:
                   </h2>
                 </div>
@@ -2063,7 +2070,7 @@ export default function Application() {
 
               {/* Social Service */}
               <div className="pt-4 border-t-2 border-slate-800 space-y-3 text-xs">
-                <div className="sk-section-divider">
+                <div className="border-b border-slate-300 pb-2">
                   <h2 className="text-base font-bold text-slate-900">
                     Social Service:
                   </h2>
@@ -2121,7 +2128,7 @@ export default function Application() {
 
               {/* Medical Needs */}
               <div className="pt-4 border-t-2 border-slate-800 space-y-3 text-xs">
-                <div className="sk-section-divider">
+                <div className="border-b border-slate-300 pb-2">
                   <h2 className="text-base font-bold text-slate-900">
                     Medical Needs:
                   </h2>
@@ -2196,8 +2203,8 @@ export default function Application() {
             <div className="bg-white rounded-3xl shadow-sm border border-slate-200 p-6 md:p-10 space-y-8 animate-fadeIn">
               {/* Permissions */}
               <div className="space-y-4">
-                <div className="sk-section-divider">
-                  <h2 className="sk-section-title">
+                <div className="border-b-2 border-slate-800 pb-2">
+                  <h2 className="text-base md:text-lg font-bold text-slate-900">
                     Please tick to give permission:
                   </h2>
                 </div>
@@ -2424,7 +2431,7 @@ export default function Application() {
                   <div className="p-5 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-300 space-y-4">
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-bold uppercase tracking-wider text-slate-900">
-                        Parent / Guardian Signature <span className="sk-required">*</span>
+                        Parent / Guardian Signature <span className="text-red-500">*</span>
                       </span>
                       {hasSignature && (
                         <button
@@ -2459,8 +2466,8 @@ export default function Application() {
 
                     <div className="space-y-2 pt-2">
                       <div>
-                        <label className="sk-label">
-                          Name: <span className="sk-required">*</span>
+                        <label className="block text-xs font-bold text-slate-800 mb-1">
+                          Name: <span className="text-red-500">*</span>
                         </label>
                         <input
                           type="text"
@@ -2481,7 +2488,7 @@ export default function Application() {
                       </div>
 
                       <div>
-                        <label className="sk-label">Date:</label>
+                        <label className="block text-xs font-bold text-slate-800 mb-1">Date:</label>
                         <input
                           type="date"
                           value={formData.page7.parentDate}
@@ -2542,13 +2549,13 @@ export default function Application() {
             </div>
           )}
 
-          {/* ── Page Navigation & Actions (Skallywags Style) ─────────────── */}
-          <div className="flex items-center justify-between pt-6 border-t border-slate-200">
+          {/* ── Page Navigation & Actions ─────────────────────────────────── */}
+          <div className="flex items-center justify-between pt-4">
             {currentPage > 1 ? (
               <button
                 type="button"
                 onClick={handlePrev}
-                className="sk-btn-secondary"
+                className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs shadow-xs transition-colors cursor-pointer"
               >
                 <ChevronLeft size={16} /> Previous Page
               </button>
@@ -2556,7 +2563,7 @@ export default function Application() {
               <div />
             )}
 
-            <div className="text-xs font-bold text-slate-500">
+            <div className="text-xs font-semibold text-slate-500">
               Page {currentPage} of 7
             </div>
 
@@ -2564,7 +2571,7 @@ export default function Application() {
               <button
                 type="button"
                 onClick={handleNext}
-                className="sk-btn-primary"
+                className="inline-flex items-center gap-1.5 px-6 py-2.5 rounded-xl bg-[var(--color-primary-600)] hover:bg-[var(--color-primary-700)] text-white font-bold text-xs shadow-sm transition-colors cursor-pointer"
               >
                 Next Page <ChevronRight size={16} />
               </button>
@@ -2572,7 +2579,7 @@ export default function Application() {
               <button
                 type="submit"
                 disabled={submitting}
-                className="sk-btn-primary disabled:opacity-50"
+                className="inline-flex items-center gap-2 px-8 py-3 rounded-xl bg-[var(--color-accent-600)] hover:bg-[var(--color-accent-700)] disabled:opacity-50 text-white font-bold text-sm shadow-md transition-all cursor-pointer"
               >
                 {submitting ? (
                   <>
@@ -2587,6 +2594,7 @@ export default function Application() {
               </button>
             )}
           </div>
+
         </form>
       </SectionWrapper>
     </main>
