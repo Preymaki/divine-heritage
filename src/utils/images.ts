@@ -28,7 +28,7 @@ export const IMAGES = {
   // ── Services ────────────────────────────────────────────────────────────
   serviceChildminding:  '/images/service-full-day-care-sensory.jpeg',      // hands-on sensory tray play
   serviceEarlyYears:    '/images/reading-book.jpeg',                        // child reading independently
-  serviceAfterSchool:   '/images/service-after-school-parachute.jpeg',      // school-age group parachute play
+  serviceAfterSchool:   '/images/service-after-school.jpg',                 // school-age group parachute play
   serviceFlexible:      '/images/arts-painting-easel.jpeg',                 // creative and flexible play
   serviceArts:          '/images/arts-painting-easel.jpeg',                 // painting at easel
   serviceOutdoor:       '/images/outdoor-nature-tree.jpeg',                 // nature exploration

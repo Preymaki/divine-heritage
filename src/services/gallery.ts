@@ -260,7 +260,7 @@ export async function seedGallery(uploadedBy: string): Promise<void> {
     },
     {
       group: 'services_page', sortOrder: 3,
-      downloadURL: '/images/service-after-school-parachute.jpeg',
+      downloadURL: '/images/service-after-school.jpg',
       title: 'Services Page: After-School Care Cover',
       altText: 'School-age children playing a parachute game during After-School Care at Divine Heritage',
       caption: 'Cover photo for After-School Care card.',

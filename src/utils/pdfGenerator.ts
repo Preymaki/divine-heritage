@@ -1,26 +1,114 @@
 /**
  * Divine Heritage Application PDF Generator
  *
- * Faithfully generates an official multi-page PDF document representing
- * the exact 7 pages of the Divine Heritage Childcare Application Form.
+ * Clean, authentic document style (clean fonts, bold underlined headers, crisp bordered tables,
+ * vector-drawn checkboxes, exact column and text alignment) strictly synchronized with the
+ * 5-step application form on the website.
+ *
+ * Excludes outdated drafts, removed policies, or external bank details.
  */
 
 import { jsPDF } from 'jspdf'
 import type { ApplicationRecord } from '@appTypes/application'
-import {
-  calculateWeeklySchedule,
-  calculateFundedHours,
-  isChildUnder8Months,
-} from './applicationFees'
 
-const PRIMARY_COLOR: [number, number, number] = [30, 58, 138] // #1e3a8a Navy
-const TEXT_DARK: [number, number, number] = [30, 41, 59] // #1e293b Slate 800
-const TEXT_MUTED: [number, number, number] = [100, 116, 139] // #64748b Slate 500
-const BORDER_COLOR: [number, number, number] = [200, 205, 215] // light border
-const BG_HEADER: [number, number, number] = [241, 245, 249] // #f1f5f9 Slate 100
+const COLOR_BLACK: [number, number, number] = [0, 0, 0]
+
+/**
+ * Preloads the website logo for centered rendering on each page.
+ */
+async function loadLogoDataUrl(): Promise<string | null> {
+  if (typeof window === 'undefined') return null
+  return new Promise((resolve) => {
+    const img = new Image()
+    img.crossOrigin = 'anonymous'
+    img.onload = () => {
+      try {
+        const canvas = document.createElement('canvas')
+        const size = 200
+        canvas.width = size
+        canvas.height = size
+        const ctx = canvas.getContext('2d')
+        if (!ctx) {
+          resolve(img.src)
+          return
+        }
+        ctx.drawImage(img, 0, 0, size, size)
+        resolve(canvas.toDataURL('image/png'))
+      } catch {
+        resolve('/logo.png')
+      }
+    }
+    img.onerror = () => resolve(null)
+    img.src = '/logo.png'
+  })
+}
+
+function cleanVal(val?: string | null): string {
+  if (!val) return ''
+  const trimmed = val.trim()
+  const lower = trimmed.toLowerCase()
+  if (
+    lower === 'gf' ||
+    lower === 'jhv' ||
+    lower === 'hgchg' ||
+    lower === 'test' ||
+    lower === 'asdf' ||
+    lower === 'undefined' ||
+    lower === 'null' ||
+    lower === 'n/a'
+  ) {
+    return ''
+  }
+  return trimmed
+}
+
+function formatDate(val?: string | null): string {
+  if (!val) return ''
+  const trimmed = val.trim()
+  if (!trimmed) return ''
+  const parts = trimmed.split('-')
+  if (parts.length === 3 && parts[0].length <= 4) {
+    const [y, m, d] = parts
+    return `${d.padStart(2, '0')}/${m.padStart(2, '0')}/${y}`
+  }
+  return trimmed
+}
+
+/**
+ * Draws a crisp vector square checkbox with an optional clean checkmark.
+ * Eliminates character-encoding glitches (e.g. '%' or '%i') in jsPDF.
+ */
+function drawCheckbox(
+  doc: jsPDF,
+  x: number,
+  y: number,
+  checked: boolean,
+  size = 3.2,
+) {
+  doc.setDrawColor(0, 0, 0)
+  doc.setLineWidth(0.25)
+  // Baseline-aligned square box
+  doc.rect(x, y - size + 0.5, size, size)
+  if (checked) {
+    doc.setDrawColor(0, 0, 0)
+    doc.setLineWidth(0.4)
+    doc.line(x + 0.6, y - size * 0.45, x + size * 0.42, y - 0.6)
+    doc.line(x + size * 0.42, y - 0.6, x + size - 0.5, y - size + 0.9)
+  }
+}
+
+/**
+ * Draws a clean centered checkmark inside a table cell.
+ */
+function drawTableCheckmark(doc: jsPDF, centerX: number, centerY: number) {
+  doc.setDrawColor(0, 0, 0)
+  doc.setLineWidth(0.45)
+  doc.line(centerX - 1.8, centerY + 0.2, centerX - 0.5, centerY + 1.8)
+  doc.line(centerX - 0.5, centerY + 1.8, centerX + 2.2, centerY - 2.0)
+}
 
 export async function generateApplicationPDF(
-  app: ApplicationRecord,
+  app: Partial<ApplicationRecord> = {},
 ): Promise<{ doc: jsPDF; blob: Blob; base64: string }> {
   const doc = new jsPDF({
     orientation: 'portrait',
@@ -28,659 +116,974 @@ export async function generateApplicationPDF(
     format: 'a4',
   })
 
-  const pageWidth = doc.internal.pageSize.getWidth()
-  const pageHeight = doc.internal.pageSize.getHeight()
+  const logoDataUrl = await loadLogoDataUrl()
   const margin = 14
-  const contentWidth = pageWidth - margin * 2
+  const pageWidth = 210
+  const contentWidth = pageWidth - margin * 2 // 182mm
+  const totalPages = 5
 
-  let currentY = margin
+  // Data bindings directly from website application state
+  const p1 = app.page1 || ({} as NonNullable<typeof app.page1>)
+  const p2 = app.page2 || ({} as NonNullable<typeof app.page2>)
+  const p3 = app.page3 || ({} as NonNullable<typeof app.page3>)
+  const p4 = app.page4 || ({} as NonNullable<typeof app.page4>)
+  const p5 = app.page5 || ({} as NonNullable<typeof app.page5>)
+  const p6 = app.page6 || ({} as NonNullable<typeof app.page6>)
+  const p7 = app.page7 || ({} as NonNullable<typeof app.page7>)
+  const contacts = app.emergencyContacts || []
 
-  function renderPageHeader(pageNumber: number) {
-    doc.setFillColor(...PRIMARY_COLOR)
-    doc.rect(margin, 10, contentWidth, 1.2, 'F')
+  const childName = cleanVal(p1.childFullName || app.child?.fullName)
+  const childDob = cleanVal(p1.childDob || app.child?.dob)
+  const childGender = cleanVal(p1.childGender || app.child?.sex)
+  const childEthnicity = cleanVal(p1.childRaceEthnicity || p4.childRaceEthnicity)
+  const religion = cleanVal(p1.religion || p4.religion)
+  const receivingSocial = p1.receivingSocialServices || (p5.childInCareOrLookedAfter as string) || ''
+  const socialWorker = cleanVal(p1.socialWorkerDetails || p5.lookedAfterDetails)
+  const specialNeeds = cleanVal(p1.specialNeedsOrDisabilities)
+  const dietaryNeeds = cleanVal(p1.dietaryNeeds || p5.specialDietaryRequirements)
+  const previousChildcare = cleanVal(p1.previousChildcare || p4.previousChildcare)
 
-    doc.setFontSize(8)
-    doc.setTextColor(...TEXT_MUTED)
+  const parent1Name = cleanVal(p1.parent1Name || app.parent1?.fullName)
+  const parent1Address = cleanVal(p1.parent1Address || app.parent1?.homeAddress)
+  const parent1Mobile = cleanVal(p1.parent1Mobile || app.parent1?.mobile)
+  const parent1Email = cleanVal(p1.parent1Email || app.parent1?.email)
+  const parent1Profession = cleanVal(p1.parent1Profession)
+  const parent1WorkAddress = cleanVal(p1.parent1WorkAddress)
+  const parent1WorkPhone = cleanVal(p1.parent1WorkPhone)
+
+  const parent2Name = cleanVal(p1.parent2Name)
+  const parent2Address = cleanVal(p1.parent2Address)
+  const parent2Mobile = cleanVal(p1.parent2Mobile)
+  const parent2Email = cleanVal(p1.parent2Email)
+  const parent2Profession = cleanVal(p1.parent2Profession)
+  const parent2WorkAddress = cleanVal(p1.parent2WorkAddress)
+  const parent2WorkPhone = cleanVal(p1.parent2WorkPhone)
+
+  const whoWillBringCollect = cleanVal(p1.whoWillBringCollect)
+  const contactDetails = cleanVal(p1.contactDetails)
+
+  function renderPageHeader(pageNum: number) {
+    if (logoDataUrl) {
+      try {
+        doc.addImage(logoDataUrl, 'PNG', 95, 8, 20, 20)
+      } catch {
+        // fallback
+      }
+    }
     doc.setFont('helvetica', 'normal')
-    doc.text('DIVINE HERITAGE CHILDCARE SERVICE — APPLICATION FORM', margin, 15)
-    doc.text(`Ref: ${app.applicationId || app.id}`, pageWidth - margin, 15, { align: 'right' })
-
-    doc.setFontSize(8)
-    doc.text(`Page ${pageNumber} of 5`, margin, pageHeight - 8)
-  }
-
-  function renderSectionHeader(title: string) {
-    doc.setFillColor(...BG_HEADER)
-    doc.roundedRect(margin, currentY, contentWidth, 7, 1, 1, 'F')
-    doc.setFillColor(...PRIMARY_COLOR)
-    doc.rect(margin, currentY, 2.5, 7, 'F')
-
-    doc.setFontSize(9)
-    doc.setFont('helvetica', 'bold')
-    doc.setTextColor(...PRIMARY_COLOR)
-    doc.text(title, margin + 4, currentY + 4.8)
-    currentY += 9
+    doc.setFontSize(8.5)
+    doc.setTextColor(...COLOR_BLACK)
+    doc.text(`Page ${pageNum} of ${totalPages}`, margin, 287)
   }
 
   // ═══════════════════════════════════════════════════════════════════════════
-  // PAGE 1
+  // PAGE 1: Child Details, Parents & Emergency Contact 1
   // ═══════════════════════════════════════════════════════════════════════════
   renderPageHeader(1)
-  currentY = 20
 
   // Title
-  doc.setFontSize(14)
   doc.setFont('helvetica', 'bold')
-  doc.setTextColor(...PRIMARY_COLOR)
-  doc.text('DIVINE HERITAGE APPLICATION FORM', pageWidth / 2, currentY, { align: 'center' })
-  currentY += 6
+  doc.setFontSize(11)
+  doc.setTextColor(...COLOR_BLACK)
+  doc.text('DIVINE HERITAGE APPLICATION FORM', 105, 33, { align: 'center' })
 
-  // Childminder Details Box
-  doc.setDrawColor(...BORDER_COLOR)
+  // Section Header
+  let y = 40
+  doc.setFont('helvetica', 'bold')
+  doc.setFontSize(9)
+  const h1 = 'Details of Parental responsibility, legal contact, & residence arrangements:'
+  doc.text(h1, margin, y)
   doc.setLineWidth(0.3)
-  doc.rect(margin, currentY, contentWidth, 22)
+  doc.line(margin, y + 0.8, margin + doc.getTextWidth(h1), y + 0.8)
 
+  y += 3.5
+
+  // 2-Column Table Layout exactly matching the official form
+  const colW = 91 // 182 / 2
+  const rowHeights = [12, 10.5, 11.5, 12, 11.5, 10.5, 16, 18, 18, 11, 10]
+  const tableH = rowHeights.reduce((a, b) => a + b, 0)
+
+  doc.setDrawColor(0, 0, 0)
+  doc.setLineWidth(0.3)
+  doc.rect(margin, y, contentWidth, tableH)
+
+  // Vertical center line for rows 0, 1, 2, 4, 5, 6, 7, 8
+  const colSplitRows = [0, 1, 2, 4, 5, 6, 7, 8]
+  let curY = y
+  for (let r = 0; r < rowHeights.length; r++) {
+    if (r > 0) {
+      doc.line(margin, curY, margin + contentWidth, curY)
+    }
+    if (colSplitRows.includes(r)) {
+      doc.line(margin + colW, curY, margin + colW, curY + rowHeights[r])
+    }
+    curY += rowHeights[r]
+  }
+
+  let rY = y
+
+  // Row 0: Full name of Child | Date of Birth & Gender
+  doc.setFont('helvetica', 'bold')
+  doc.setFontSize(8)
+  doc.text('Full name of Child:', margin + 2, rY + 4.2)
+  doc.setFont('helvetica', 'normal')
   doc.setFontSize(8.5)
-  doc.setTextColor(...TEXT_DARK)
-  doc.setFont('helvetica', 'bold')
-  doc.text('Name of Childminder:', margin + 3, currentY + 5)
-  doc.setFont('helvetica', 'normal')
-  doc.text('Avril Cole', margin + 35, currentY + 5)
+  if (childName) doc.text(childName, margin + 2, rY + 9.0)
 
   doc.setFont('helvetica', 'bold')
-  doc.text('Address:', margin + 95, currentY + 5)
+  doc.setFontSize(8)
+  doc.text('Date of Birth:', margin + colW + 2, rY + 4.2)
   doc.setFont('helvetica', 'normal')
-  doc.text('5 Pitman Building, Freda Street, London. SE16 4BW', margin + 110, currentY + 5)
+  if (childDob) doc.text(formatDate(childDob), margin + colW + 22, rY + 4.2)
+
+  const isMale = childGender.toLowerCase() === 'male'
+  const isFemale = childGender.toLowerCase() === 'female'
+  doc.setFont('helvetica', 'bold')
+  doc.text('Gender:', margin + colW + 2, rY + 9.0)
+  doc.setFont('helvetica', 'normal')
+  doc.text('Male', margin + colW + 15, rY + 9.0)
+  drawCheckbox(doc, margin + colW + 23, rY + 9.0, isMale)
+  doc.text('Female', margin + colW + 32, rY + 9.0)
+  drawCheckbox(doc, margin + colW + 43, rY + 9.0, isFemale)
+
+  rY += rowHeights[0]
+
+  // Row 1: Race & Ethnic Background | Religion
+  doc.setFont('helvetica', 'bold')
+  doc.setFontSize(8)
+  doc.text("Child's Race & Ethnic background:", margin + 2, rY + 4.0)
+  doc.setFont('helvetica', 'normal')
+  if (childEthnicity) doc.text(childEthnicity, margin + 2, rY + 8.2)
 
   doc.setFont('helvetica', 'bold')
-  doc.text('Mobile:', margin + 3, currentY + 11)
+  doc.text('Religion:', margin + colW + 2, rY + 4.0)
   doc.setFont('helvetica', 'normal')
-  doc.text('07939303144', margin + 35, currentY + 11)
+  if (religion) doc.text(religion, margin + colW + 2, rY + 8.2)
+
+  rY += rowHeights[1]
+
+  // Row 2: Social Services - cleanly separated into 2 columns
+  const socYes = receivingSocial.toLowerCase() === 'yes'
+  const socNo = receivingSocial.toLowerCase() === 'no'
+  doc.setFont('helvetica', 'bold')
+  doc.setFontSize(7.5)
+  doc.text('Receiving support from social services?', margin + 2, rY + 4.0)
+  doc.setFont('helvetica', 'normal')
+  doc.setFontSize(8)
+  doc.text('Yes', margin + 2, rY + 8.5)
+  drawCheckbox(doc, margin + 9, rY + 8.5, socYes)
+  doc.text('No', margin + 17, rY + 8.5)
+  drawCheckbox(doc, margin + 23, rY + 8.5, socNo)
 
   doc.setFont('helvetica', 'bold')
-  doc.text('Email:', margin + 3, currentY + 17)
+  doc.text('Social worker / team:', margin + colW + 2, rY + 4.0)
   doc.setFont('helvetica', 'normal')
-  doc.text('divineheritagechildcare@gmail.com', margin + 35, currentY + 17)
-
-  currentY += 26
-
-  // Section: Details of Parental responsibility
-  renderSectionHeader('Details of Parental responsibility, legal contact, & residence arrangements:')
-
-  const p1 = app.page1 || {
-    childFullName: app.child?.fullName || '',
-    childDob: app.child?.dob || '',
-    childGender: app.child?.sex || '',
-    parent1Name: app.parent1?.fullName || '',
-    parent1Address: app.parent1?.homeAddress || '',
-    parent1Mobile: app.parent1?.mobile || '',
-    parent1Email: app.parent1?.email || '',
-    parent1Profession: '',
-    parent1WorkAddress: '',
-    parent1WorkPhone: '',
-    parent2Name: '',
-    parent2Address: '',
-    parent2Mobile: '',
-    parent2Email: '',
-    parent2Profession: '',
-    parent2WorkAddress: '',
-    parent2WorkPhone: '',
-    whoWillBringCollect: '',
-    contactDetails: '',
+  if (socialWorker) {
+    doc.text(doc.splitTextToSize(socialWorker, colW - 4), margin + colW + 2, rY + 8.5)
   }
 
-  // Child line
+  rY += rowHeights[2]
+
+  // Row 3: Special Educational Needs or Disabilities (Full Width)
+  doc.setFont('helvetica', 'bold')
+  doc.text('Special Educational needs or Disabilities:', margin + 2, rY + 4.0)
+  doc.setFont('helvetica', 'normal')
+  if (specialNeeds) {
+    doc.text(doc.splitTextToSize(specialNeeds, contentWidth - 4), margin + 2, rY + 8.5)
+  }
+
+  rY += rowHeights[3]
+
+  // Row 4: Dietary Needs | Previous Childcare
+  doc.setFont('helvetica', 'bold')
+  doc.text('Dietary needs for food or drinks:', margin + 2, rY + 4.0)
+  doc.setFont('helvetica', 'normal')
+  if (dietaryNeeds) {
+    doc.text(doc.splitTextToSize(dietaryNeeds, colW - 4), margin + 2, rY + 8.5)
+  }
+
+  doc.setFont('helvetica', 'bold')
+  doc.text("Child's Previous Childcare:", margin + colW + 2, rY + 4.0)
+  doc.setFont('helvetica', 'normal')
+  if (previousChildcare) {
+    doc.text(doc.splitTextToSize(previousChildcare, colW - 4), margin + colW + 2, rY + 8.5)
+  }
+
+  rY += rowHeights[4]
+
+  // Row 5: Parent 1 Name | Parent 2 Name
+  doc.setFont('helvetica', 'bold')
+  doc.text('Name of Parent/ Carer/ Guardian 1:', margin + 2, rY + 4.0)
+  doc.setFont('helvetica', 'normal')
+  if (parent1Name) doc.text(parent1Name, margin + 2, rY + 8.2)
+
+  doc.setFont('helvetica', 'bold')
+  doc.text('Name of Parent/ Carer/ Guardian 2:', margin + colW + 2, rY + 4.0)
+  doc.setFont('helvetica', 'normal')
+  if (parent2Name) doc.text(parent2Name, margin + colW + 2, rY + 8.2)
+
+  rY += rowHeights[5]
+
+  // Row 6: Home Addresses
+  doc.setFont('helvetica', 'bold')
+  doc.text('Home Address:', margin + 2, rY + 4.0)
+  doc.setFont('helvetica', 'normal')
+  if (parent1Address) {
+    doc.text(doc.splitTextToSize(parent1Address, colW - 4), margin + 2, rY + 8.2)
+  }
+
+  doc.setFont('helvetica', 'bold')
+  doc.text('Home Address:', margin + colW + 2, rY + 4.0)
+  doc.setFont('helvetica', 'normal')
+  if (parent2Address) {
+    doc.text(doc.splitTextToSize(parent2Address, colW - 4), margin + colW + 2, rY + 8.2)
+  }
+
+  rY += rowHeights[6]
+
+  // Row 7: Phone Mobile, Email, Profession
+  doc.setFont('helvetica', 'bold')
+  doc.text('Phone Mobile:', margin + 2, rY + 4.2)
+  doc.setFont('helvetica', 'normal')
+  if (parent1Mobile) doc.text(parent1Mobile, margin + 24, rY + 4.2)
+
+  doc.setFont('helvetica', 'bold')
+  doc.text('Email:', margin + 2, rY + 9.5)
+  doc.setFont('helvetica', 'normal')
+  if (parent1Email) doc.text(parent1Email, margin + 13, rY + 9.5)
+
+  doc.setFont('helvetica', 'bold')
+  doc.text('Profession:', margin + 2, rY + 14.8)
+  doc.setFont('helvetica', 'normal')
+  if (parent1Profession) doc.text(parent1Profession, margin + 20, rY + 14.8)
+
+  // Col 2
+  doc.setFont('helvetica', 'bold')
+  doc.text('Phone Mobile:', margin + colW + 2, rY + 4.2)
+  doc.setFont('helvetica', 'normal')
+  if (parent2Mobile) doc.text(parent2Mobile, margin + colW + 24, rY + 4.2)
+
+  doc.setFont('helvetica', 'bold')
+  doc.text('Email:', margin + colW + 2, rY + 9.5)
+  doc.setFont('helvetica', 'normal')
+  if (parent2Email) doc.text(parent2Email, margin + colW + 13, rY + 9.5)
+
+  doc.setFont('helvetica', 'bold')
+  doc.text('Profession:', margin + colW + 2, rY + 14.8)
+  doc.setFont('helvetica', 'normal')
+  if (parent2Profession) doc.text(parent2Profession, margin + colW + 20, rY + 14.8)
+
+  rY += rowHeights[7]
+
+  // Row 8: Work / College Address & Work Phone
+  doc.setFont('helvetica', 'bold')
+  doc.text('Work / College Address:', margin + 2, rY + 4.0)
+  doc.setFont('helvetica', 'normal')
+  if (parent1WorkAddress) {
+    doc.text(doc.splitTextToSize(parent1WorkAddress, colW - 4), margin + 2, rY + 8.0)
+  }
+  doc.setFont('helvetica', 'bold')
+  doc.text('Work Phone:', margin + 2, rY + 14.5)
+  doc.setFont('helvetica', 'normal')
+  if (parent1WorkPhone) doc.text(parent1WorkPhone, margin + 22, rY + 14.5)
+
+  doc.setFont('helvetica', 'bold')
+  doc.text('Work / College Address:', margin + colW + 2, rY + 4.0)
+  doc.setFont('helvetica', 'normal')
+  if (parent2WorkAddress) {
+    doc.text(doc.splitTextToSize(parent2WorkAddress, colW - 4), margin + colW + 2, rY + 8.0)
+  }
+  doc.setFont('helvetica', 'bold')
+  doc.text('Work Phone:', margin + colW + 2, rY + 14.5)
+  doc.setFont('helvetica', 'normal')
+  if (parent2WorkPhone) doc.text(parent2WorkPhone, margin + colW + 22, rY + 14.5)
+
+  rY += rowHeights[8]
+
+  // Row 9: Who will bring/collect
+  doc.setFont('helvetica', 'bold')
+  doc.text('Who will bring/collect the child from the childminder:', margin + 2, rY + 4.0)
+  doc.setFont('helvetica', 'normal')
+  if (whoWillBringCollect) doc.text(whoWillBringCollect, margin + 2, rY + 8.2)
+
+  rY += rowHeights[9]
+
+  // Row 10: Contact Details
+  doc.setFont('helvetica', 'bold')
+  doc.text('Contact Details:', margin + 2, rY + 4.0)
+  doc.setFont('helvetica', 'normal')
+  if (contactDetails) doc.text(contactDetails, margin + 2, rY + 7.8)
+
+  y += tableH + 6.5
+
+  // Emergency Contact 1 Section
+  doc.setFont('helvetica', 'bold')
   doc.setFontSize(8.5)
+  doc.text(
+    'Emergency Contact(s) - Please note that completing this task is mandatory, and all tasks',
+    margin,
+    y,
+  )
+  doc.text('must be finished.', margin, y + 4.0)
+
+  doc.setFont('helvetica', 'italic')
+  doc.setFontSize(8)
+  doc.text('Contact 1 of 4 (continued on Page 2)', margin, y + 8.5)
+
+  y += 11.0
+
+  const ecW = [60, 60, 62] // 182mm
+  doc.setLineWidth(0.3)
+  doc.rect(margin, y, contentWidth, 15)
+  doc.line(margin, y + 6, margin + contentWidth, y + 6)
+  doc.line(margin + ecW[0], y, margin + ecW[0], y + 15)
+  doc.line(margin + ecW[0] + ecW[1], y, margin + ecW[0] + ecW[1], y + 15)
+
   doc.setFont('helvetica', 'bold')
-  doc.text('Full name of Child:', margin, currentY)
+  doc.setFontSize(8)
+  doc.text('Name:', margin + 2, y + 4.2)
+  doc.text('Contact no', margin + ecW[0] + 2, y + 4.2)
+  doc.text('Relationship', margin + ecW[0] + ecW[1] + 2, y + 4.2)
+
+  const c1 = contacts[0]
   doc.setFont('helvetica', 'normal')
-  doc.text(p1.childFullName || '—', margin + 32, currentY)
-
-  doc.setFont('helvetica', 'bold')
-  doc.text('Date of Birth:', margin + 105, currentY)
-  doc.setFont('helvetica', 'normal')
-  doc.text(p1.childDob || '—', margin + 128, currentY)
-
-  doc.setFont('helvetica', 'bold')
-  doc.text('Gender:', margin + 155, currentY)
-  doc.setFont('helvetica', 'normal')
-  doc.text(p1.childGender || '—', margin + 170, currentY)
-  currentY += 6
-
-  const childRace = p1.childRaceEthnicity || app.page4?.childRaceEthnicity || ''
-  const childRel = p1.religion || app.page4?.religion || ''
-  if (childRace || childRel) {
-    doc.setFont('helvetica', 'bold')
-    doc.text("Child's Race & Ethnic background:", margin, currentY)
-    doc.setFont('helvetica', 'normal')
-    doc.text(childRace || '—', margin + 52, currentY)
-
-    doc.setFont('helvetica', 'bold')
-    doc.text('Religion:', margin + 120, currentY)
-    doc.setFont('helvetica', 'normal')
-    doc.text(childRel || '—', margin + 135, currentY)
-    currentY += 6
-  }
-
-  // Parent 1 vs Parent 2 Columns
-  const colW = (contentWidth - 6) / 2
-  const col2X = margin + colW + 6
-
-  doc.setFillColor(...BG_HEADER)
-  doc.rect(margin, currentY, colW, 6, 'F')
-  doc.rect(col2X, currentY, colW, 6, 'F')
-  doc.setFont('helvetica', 'bold')
-  doc.text('Name of Parent/ Carer/ Guardian 1:', margin + 2, currentY + 4.2)
-  doc.text('Name of Parent/ Carer/ Guardian 2:', col2X + 2, currentY + 4.2)
-  currentY += 8
-
-  doc.setFont('helvetica', 'normal')
-  doc.text(p1.parent1Name || '—', margin + 2, currentY)
-  doc.text(p1.parent2Name || '—', col2X + 2, currentY)
-  currentY += 6
-
-  const renderParentRow = (label: string, v1: string, v2: string) => {
-    doc.setFont('helvetica', 'bold')
-    doc.setTextColor(...TEXT_MUTED)
-    doc.text(label.toUpperCase(), margin, currentY)
-    doc.text(label.toUpperCase(), col2X, currentY)
-    currentY += 4
-    doc.setFont('helvetica', 'normal')
-    doc.setTextColor(...TEXT_DARK)
-    doc.text(v1 || '—', margin, currentY)
-    doc.text(v2 || '—', col2X, currentY)
-    currentY += 6
-  }
-
-  renderParentRow('Home Address:', p1.parent1Address, p1.parent2Address)
-  renderParentRow('Phone Mobile:', p1.parent1Mobile, p1.parent2Mobile)
-  renderParentRow('Email:', p1.parent1Email, p1.parent2Email)
-  renderParentRow('Profession:', p1.parent1Profession, p1.parent2Profession)
-  renderParentRow('Work / College Address:', p1.parent1WorkAddress, p1.parent2WorkAddress)
-  renderParentRow('Work Phone:', p1.parent1WorkPhone, p1.parent2WorkPhone)
-
-  // Collection
-  doc.setFont('helvetica', 'bold')
-  doc.text('Who will bring/collect the child from the childminder:', margin, currentY)
-  currentY += 4
-  doc.setFont('helvetica', 'normal')
-  doc.text(p1.whoWillBringCollect || '—', margin, currentY)
-  currentY += 6
-
-  doc.setFont('helvetica', 'bold')
-  doc.text('Contact Details:', margin, currentY)
-  currentY += 4
-  doc.setFont('helvetica', 'normal')
-  doc.text(p1.contactDetails || '—', margin, currentY)
-  currentY += 9
-
-  // Emergency Contact 1
-  renderSectionHeader('Emergency Contact(s) - Mandatory, all tasks must be finished')
-  const em1 = app.emergencyContacts?.[0] || { name: '', contactNo: '', relationship: '' }
-  doc.setFont('helvetica', 'bold')
-  doc.text(`1. Name: ${em1.name || '—'}    |    Contact no: ${em1.contactNo || '—'}    |    Relationship: ${em1.relationship || '—'}`, margin + 2, currentY)
+  doc.setFontSize(8.5)
+  doc.text(`1.  ${cleanVal(c1?.name) || ''}`, margin + 2, y + 11.0)
+  doc.text(cleanVal(c1?.contactNo) || '', margin + ecW[0] + 2, y + 11.0)
+  doc.text(cleanVal(c1?.relationship) || '', margin + ecW[0] + ecW[1] + 2, y + 11.0)
 
   // ═══════════════════════════════════════════════════════════════════════════
-  // PAGE 2
+  // PAGE 2: Emergency Contacts (2-4), Funded Entitlements & Fees
   // ═══════════════════════════════════════════════════════════════════════════
   doc.addPage()
   renderPageHeader(2)
-  currentY = 20
+  y = 34
 
-  renderSectionHeader('Emergency Contact(s) (Continued)')
+  // Header
+  doc.setFont('helvetica', 'bold')
+  doc.setFontSize(9.5)
+  const h2 = 'Emergency Contact(s) (Continued)'
+  doc.text(h2, margin, y)
+  doc.setLineWidth(0.3)
+  doc.line(margin, y + 0.8, margin + doc.getTextWidth(h2), y + 0.8)
+
+  y += 5.5
+
+  // Table for Contacts 2, 3, 4
+  doc.rect(margin, y, contentWidth, 30)
+  doc.line(margin, y + 6, margin + contentWidth, y + 6)
+  doc.line(margin, y + 14, margin + contentWidth, y + 14)
+  doc.line(margin, y + 22, margin + contentWidth, y + 22)
+  doc.line(margin + ecW[0], y, margin + ecW[0], y + 30)
+  doc.line(margin + ecW[0] + ecW[1], y, margin + ecW[0] + ecW[1], y + 30)
+
+  doc.setFont('helvetica', 'bold')
+  doc.setFontSize(8)
+  doc.text('Name:', margin + 2, y + 4.2)
+  doc.text('Contact no', margin + ecW[0] + 2, y + 4.2)
+  doc.text('Relationship', margin + ecW[0] + ecW[1] + 2, y + 4.2)
+
+  doc.setFont('helvetica', 'normal')
+  doc.setFontSize(8.5)
   for (let i = 1; i <= 3; i++) {
-    const em = app.emergencyContacts?.[i] || { name: '', contactNo: '', relationship: '' }
-    doc.setFontSize(8.5)
-    doc.setFont('helvetica', 'bold')
-    doc.text(`${i + 1}. Name:`, margin, currentY)
-    doc.setFont('helvetica', 'normal')
-    doc.text(em.name || '—', margin + 18, currentY)
-    doc.setFont('helvetica', 'bold')
-    doc.text('Contact no:', margin + 75, currentY)
-    doc.setFont('helvetica', 'normal')
-    doc.text(em.contactNo || '—', margin + 95, currentY)
-    doc.setFont('helvetica', 'bold')
-    doc.text('Relationship:', margin + 135, currentY)
-    doc.setFont('helvetica', 'normal')
-    doc.text(em.relationship || '—', margin + 158, currentY)
-    currentY += 6
+    const c = contacts[i]
+    const rowYPos = y + 6 + (i - 1) * 8
+    doc.text(`${i + 1}.  ${cleanVal(c?.name) || ''}`, margin + 2, rowYPos + 5.5)
+    doc.text(cleanVal(c?.contactNo) || '', margin + ecW[0] + 2, rowYPos + 5.5)
+    doc.text(cleanVal(c?.relationship) || '', margin + ecW[0] + ecW[1] + 2, rowYPos + 5.5)
   }
-  currentY += 6
+
+  y += 37
 
   // Funded Hours / Free Entitlements
-  renderSectionHeader('Funded Hours / Free Entitlements')
-  doc.setFontSize(8)
-  doc.setFont('helvetica', 'normal')
-  const fundedIntro =
-    'All children aged 3 years old are eligible for the universal 15-hour entitlement from the term after their third birthday. Each eligible child is entitled to a maximum of 15 hours per week over no fewer than 38 weeks per year, during term-time only.\n\nOnly children aged 9 months to 2 years are eligible to take up a free entitlement place. Eligible parents must provide a copy of their confirmation code to obtain a free space.'
-  const splitIntro = doc.splitTextToSize(fundedIntro, contentWidth)
-  doc.text(splitIntro, margin, currentY)
-  currentY += splitIntro.length * 4 + 4
+  doc.setFont('helvetica', 'bold')
+  doc.setFontSize(10)
+  const hFh = 'Funded Hours / Free Entitlements'
+  doc.text(hFh, margin, y)
+  doc.line(margin, y + 0.8, margin + doc.getTextWidth(hFh), y + 0.8)
 
-  const p2 = app.page2 || {
-    universal15Hrs: '',
-    workingParent15HrsUnder2Code: '',
-    workingParent15Hrs2yoCode: '',
-    workingParent30HrsCode: '',
-    nationalInsuranceNo: '',
-    parentClaimingDob: '',
-  }
+  y += 5.5
+  doc.setFont('helvetica', 'normal')
+  doc.setFontSize(8.5)
+  const fhP1 =
+    'All children aged 3 years old are eligible for the universal 15-hour entitlement from the term after their third birthday. Each eligible child is entitled to a maximum of 15 hours per week over no fewer than 38 weeks per year, during term-time only.'
+  doc.text(doc.splitTextToSize(fhP1, contentWidth), margin, y)
+  y += 10.5
+
+  const fhP2 =
+    'Only children aged 9 months to 2 years are eligible to take up a free entitlement place. Eligible parents must provide a copy of their confirmation code to obtain a free space.'
+  doc.text(doc.splitTextToSize(fhP2, contentWidth), margin, y)
+  y += 10.0
 
   doc.setFont('helvetica', 'bold')
-  doc.text('Which of the free entitlements are you claiming for this child?', margin, currentY)
-  currentY += 6
+  doc.text('Which of the free entitlements are you claiming for this child?', margin, y)
+  y += 6.0
 
   doc.setFont('helvetica', 'normal')
-  doc.text(`• 15hrs universal entitlement for 3 & 4-year-olds?  ${p2.universal15Hrs || 'No'}`, margin, currentY)
-  currentY += 5
-  doc.text(`• 15hrs working parent entitlement (9-23 months old) Code:  ${p2.workingParent15HrsUnder2Code || '—'}`, margin, currentY)
-  currentY += 5
-  doc.text(`• 15hrs working parent Entitlement (2 years old) Code:  ${p2.workingParent15Hrs2yoCode || '—'}`, margin, currentY)
-  currentY += 5
-  doc.text(`• 30 hrs working parent entitlement (3 & 4-year-old) code:  ${p2.workingParent30HrsCode || '—'}`, margin, currentY)
-  currentY += 7
+  const hasUniv = p2.universal15Hrs === 'Yes'
+  const notUniv = p2.universal15Hrs === 'No'
+  doc.text('•  15hrs universal entitlement for 3 & 4-year-olds?', margin + 2, y)
+  doc.text('Yes', margin + 84, y)
+  drawCheckbox(doc, margin + 91, y, hasUniv)
+  doc.text('No', margin + 101, y)
+  drawCheckbox(doc, margin + 107, y, notUniv)
+  y += 6.5
 
+  const code923 = cleanVal(p2.workingParent15HrsUnder2Code)
+  doc.text('•  15hrs working parent entitlement (9-23 months old) Code:', margin + 2, y)
+  doc.text(code923 || '________________________________________', margin + 92, y)
+  y += 6.5
+
+  const code2yo = cleanVal(p2.workingParent15Hrs2yoCode)
+  doc.text('•  15hrs working parent Entitlement (2 years old) Code:', margin + 2, y)
+  doc.text(code2yo || '________________________________________', margin + 86, y)
+  y += 6.5
+
+  const code30h = cleanVal(p2.workingParent30HrsCode)
+  doc.text('•  30 hrs working parent entitlement (3 & 4-year-old) code:', margin + 2, y)
+  doc.text(code30h || '________________________________________', margin + 89, y)
+  y += 7.5
+
+  const niNo = cleanVal(p2.nationalInsuranceNo)
   doc.setFont('helvetica', 'bold')
-  doc.text(`National Insurance no for parent claiming funded hours:  ${p2.nationalInsuranceNo || '—'}`, margin, currentY)
-  currentY += 5
-  doc.text(`Parent claiming funded hours DOB:  ${p2.parentClaimingDob || '—'}`, margin, currentY)
-  currentY += 7
+  doc.text('National Insurance no for parent claiming funded hours:', margin, y)
+  doc.setFont('helvetica', 'normal')
+  doc.text(niNo || '__________________________________', margin + 83, y)
+  y += 6.5
+
+  const claimDob = cleanVal(p2.parentClaimingDob)
+  doc.setFont('helvetica', 'bold')
+  doc.text('Parent claiming funded hours DOB:', margin, y)
+  doc.setFont('helvetica', 'normal')
+  doc.text(formatDate(claimDob) || '__________________________________________', margin + 55, y)
+  y += 8.0
 
   doc.setFont('helvetica', 'italic')
-  const fundingRules =
-    'Parents must reapply for the 30-hour funding term, as this is not an automatic enrolment. The 30-hour funding can be used up to 10 hours per day.\nA separate fee is required from parents for children accessing 15/30 hours of free childcare for any hours beyond their weekly entitlement.'
-  const splitRules = doc.splitTextToSize(fundingRules, contentWidth)
-  doc.text(splitRules, margin, currentY)
-  currentY += splitRules.length * 4 + 6
+  doc.setFontSize(8)
+  const fhP3 =
+    'Parents must reapply for the 30-hour funding term, as this is not an automatic enrolment. The 30-hour funding can be used up to 10 hours per day.'
+  doc.text(doc.splitTextToSize(fhP3, contentWidth), margin, y)
+  y += 8.5
 
-  // Fees Schedule
-  renderSectionHeader('Fees:')
-  doc.setFont('helvetica', 'normal')
-  doc.text('Rate: Hourly - £12.00          Day rate: £70.00          Full-time £330.00 per week', margin, currentY)
-  currentY += 5
-  doc.text('Ad hoc fees: £18:00 payable on booking.', margin, currentY)
-  currentY += 5
-  doc.text('Babies under 8 months: - £80.00 per day          Hourly – £14.00', margin, currentY)
-  currentY += 5
-  doc.text('School pickups: - 3 pm – 6 pm - £30.00 per day', margin, currentY)
-  currentY += 5
+  const fhP4 =
+    'A separate fee is required from parents for children accessing 15/30 hours of free childcare for any hours beyond their weekly entitlement.'
+  doc.text(doc.splitTextToSize(fhP4, contentWidth), margin, y)
+  y += 11.5
+
+  // Fees Section
   doc.setFont('helvetica', 'bold')
-  doc.text('Flexible Hours: Minimum 3 hrs & above.', margin, currentY)
+  doc.setFontSize(10)
+  const hFees = 'Fees:'
+  doc.text(hFees, margin, y)
+  doc.line(margin, y + 0.8, margin + doc.getTextWidth(hFees), y + 0.8)
+
+  y += 5.5
+  doc.rect(margin, y, contentWidth, 38)
+  doc.setFont('helvetica', 'normal')
+  doc.setFontSize(8.5)
+  doc.text('Rate: Hourly - £12.00          Day rate: £70.00          Full-time £330.00 per week', margin + 3, y + 6.0)
+  doc.text('Ad hoc fees: £18.00 payable on booking.', margin + 3, y + 12.5)
+  doc.text('Babies under 8 months: - £80.00 per day          Hourly – £14.00', margin + 3, y + 19.0)
+  doc.text('School pickups: - 3 pm – 6 pm - £30.00 per day', margin + 3, y + 25.5)
+  doc.setFont('helvetica', 'bold')
+  doc.text('Flexible Hours: Minimum 3 hrs & above.', margin + 3, y + 32.0)
 
   // ═══════════════════════════════════════════════════════════════════════════
-  // PAGE 3
+  // PAGE 3: Sessions & Hours Schedules (Strictly from Website Form)
   // ═══════════════════════════════════════════════════════════════════════════
   doc.addPage()
   renderPageHeader(3)
-  currentY = 20
+  y = 34
 
-  doc.setFontSize(8)
+  // Website Payment Note (No external bank details)
   doc.setFont('helvetica', 'normal')
-  doc.text('Fees are payable in advance on a weekly, 4-weekly, or monthly basis. Fees can be paid by cash, tax-free childcare voucher, Universal Credit, or online bank transfer.', margin, currentY)
-  currentY += 8
+  doc.setFontSize(8.5)
+  const p3Notice =
+    'Fees are payable in advance on a weekly, 4-weekly, or monthly basis. Fees can be paid by cash, tax-free childcare voucher, Universal Credit, or online bank transfer.'
+  doc.text(doc.splitTextToSize(p3Notice, contentWidth), margin, y)
+  y += 10.5
 
   // Start of contract
-  renderSectionHeader('Start of contract')
+  doc.setFont('helvetica', 'bold')
+  doc.setFontSize(10)
+  const hSoc = 'Start of contract'
+  doc.text(hSoc, margin, y)
+  doc.line(margin, y + 0.8, margin + doc.getTextWidth(hSoc), y + 0.8)
+
+  y += 5.5
+  doc.setFont('helvetica', 'bold')
+  doc.setFontSize(8.5)
+  doc.text('Full Day: 8-6 pm          Friday closes at 5 PM', margin, y)
+  y += 5.5
+
+  const startDate = cleanVal(p3.requiredStartDate || p4.contractStartDate)
+  doc.text('Start of contract:', margin, y)
   doc.setFont('helvetica', 'normal')
-  doc.text('Full Day: 8-6 pm    Friday closes at 5 PM', margin, currentY)
-  currentY += 5
-  const reqStart = app.page3?.requiredStartDate || app.page4?.contractStartDate || app.sessions?.requiredStartDate || '—'
-  doc.text(`Start of contract: ${reqStart}`, margin, currentY)
-  currentY += 4.5
-  doc.setFont('helvetica', 'italic')
-  doc.text('A minimum of four weeks’ notice is required to end the contract.', margin, currentY)
-  currentY += 7.5
+  doc.text(formatDate(startDate) || '____________________________________', margin + 28, y)
+  y += 5.5
+
+  doc.setFont('helvetica', 'bold')
+  doc.text('A minimum of four weeks’ notice is required to end the contract.', margin, y)
+  y += 8.5
 
   // Early Years Funded Hours Table
   doc.setFont('helvetica', 'bold')
-  doc.text('Early Years Funded Hours (Only complete if you’re entitled to funded hours):', margin, currentY)
-  currentY += 4
+  doc.setFontSize(9)
+  doc.text('Early Years Funded Hours', margin, y)
+  doc.setFont('helvetica', 'italic')
+  doc.setFontSize(8)
+  doc.text('Only complete if you’re entitled to funded hours.', margin + 48, y)
+  y += 4.5
 
-  const fSch = app.page3?.fundedSchedule || {
-    row8to1: { monday: false, tuesday: false, wednesday: false, thursday: false, friday: false, totalHrs: '' },
-    row12to5: { monday: false, tuesday: false, wednesday: false, thursday: false, friday: false, totalHrs: '' },
-    rowFullDay: { monday: false, tuesday: false, wednesday: false, thursday: false, friday: false, totalHrs: '' },
+  const fColW = [47, 22.5, 22.5, 22.5, 22.5, 22.5, 22.5] // 182mm
+  doc.setLineWidth(0.3)
+  doc.rect(margin, y, contentWidth, 28)
+  doc.line(margin, y + 7, margin + contentWidth, y + 7)
+  doc.line(margin, y + 14, margin + contentWidth, y + 14)
+  doc.line(margin, y + 21, margin + contentWidth, y + 21)
+
+  let curX = margin
+  for (let i = 0; i < fColW.length - 1; i++) {
+    curX += fColW[i]
+    doc.line(curX, y, curX, y + 28)
   }
 
-  const times = [
-    { label: '8 – 1pm', data: fSch.row8to1 },
-    { label: '12 - 12:45 - 5 - 5:45 PM', data: fSch.row12to5 },
-    { label: 'Full Day 8-6 pm', data: fSch.rowFullDay },
+  doc.setFont('helvetica', 'bold')
+  doc.setFontSize(8)
+  doc.text('Time', margin + 2, y + 4.8)
+  curX = margin + fColW[0]
+  doc.text('Monday', curX + 5, y + 4.8)
+  curX += fColW[1]
+  doc.text('Tuesday', curX + 5, y + 4.8)
+  curX += fColW[2]
+  doc.text('Wednesday', curX + 3, y + 4.8)
+  curX += fColW[3]
+  doc.text('Thursday', curX + 5, y + 4.8)
+  curX += fColW[4]
+  doc.text('Friday', curX + 6, y + 4.8)
+  curX += fColW[5]
+  doc.text('Total Hrs', curX + 5, y + 4.8)
+
+  const fs = p3.fundedSchedule
+  const fRows = [
+    { label: '8 – 1pm (5 hrs/day)', data: fs?.row8to1 },
+    { label: '12 - 12:45 - 5 - 5:45 PM (5 hrs/day)', data: fs?.row12to5 },
+    { label: 'Full Day 8-6 pm', data: fs?.rowFullDay },
   ]
 
-  // Table header
-  doc.setFillColor(...BG_HEADER)
-  doc.rect(margin, currentY, contentWidth, 5, 'F')
-  doc.text('Time', margin + 2, currentY + 3.5)
-  doc.text('Mon', margin + 55, currentY + 3.5)
-  doc.text('Tue', margin + 75, currentY + 3.5)
-  doc.text('Wed', margin + 95, currentY + 3.5)
-  doc.text('Thu', margin + 115, currentY + 3.5)
-  doc.text('Fri', margin + 135, currentY + 3.5)
-  doc.text('Total Hrs', margin + 155, currentY + 3.5)
-  currentY += 5
-
   doc.setFont('helvetica', 'normal')
-  times.forEach((t) => {
-    doc.text(t.label, margin + 2, currentY + 3.5)
-    doc.text(t.data?.monday ? 'Yes' : '—', margin + 55, currentY + 3.5)
-    doc.text(t.data?.tuesday ? 'Yes' : '—', margin + 75, currentY + 3.5)
-    doc.text(t.data?.wednesday ? 'Yes' : '—', margin + 95, currentY + 3.5)
-    doc.text(t.data?.thursday ? 'Yes' : '—', margin + 115, currentY + 3.5)
-    doc.text(t.data?.friday ? 'Yes' : '—', margin + 135, currentY + 3.5)
-    doc.text(t.data?.totalHrs || '—', margin + 155, currentY + 3.5)
-    currentY += 5
-  })
-  currentY += 2
+  for (let r = 0; r < fRows.length; r++) {
+    const rowYPos = y + 7 + r * 7
+    doc.text(fRows[r].label, margin + 2, rowYPos + 4.8)
+
+    const rowData = fRows[r].data
+    curX = margin + fColW[0]
+    if (rowData?.monday) drawTableCheckmark(doc, curX + 11.25, rowYPos + 3.2)
+    curX += fColW[1]
+    if (rowData?.tuesday) drawTableCheckmark(doc, curX + 11.25, rowYPos + 3.2)
+    curX += fColW[2]
+    if (rowData?.wednesday) drawTableCheckmark(doc, curX + 11.25, rowYPos + 3.2)
+    curX += fColW[3]
+    if (rowData?.thursday) drawTableCheckmark(doc, curX + 11.25, rowYPos + 3.2)
+    curX += fColW[4]
+    if (rowData?.friday) drawTableCheckmark(doc, curX + 11.25, rowYPos + 3.2)
+    curX += fColW[5]
+    const totHrs = cleanVal(rowData?.totalHrs)
+    if (totHrs) {
+      doc.text(totHrs, curX + 11.25, rowYPos + 4.8, { align: 'center' })
+    }
+  }
+
+  y += 33.0
   doc.setFont('helvetica', 'bold')
-  doc.text('Please note that I only Accept children for a minimum of 2 full days and 3 part time days', margin, currentY)
-  currentY += 6
+  doc.setFontSize(8.5)
+  doc.text(
+    'Please note that I only Accept children for a minimum of 2 full days and 3 part time days',
+    margin,
+    y,
+  )
+
+  y += 8.5
 
   // Contracted Hours Table
   doc.setFont('helvetica', 'bold')
-  doc.text('Contracted Hours:', margin, currentY)
-  currentY += 4
+  doc.setFontSize(9)
+  doc.text('Contracted Hours', margin, y)
+  y += 4.5
 
-  const cHours = app.page3?.contractedHours || {
-    monday: { timeFrom: '', timeTo: '', totalHours: '', rate: '' },
-    tuesday: { timeFrom: '', timeTo: '', totalHours: '', rate: '' },
-    wednesday: { timeFrom: '', timeTo: '', totalHours: '', rate: '' },
-    thursday: { timeFrom: '', timeTo: '', totalHours: '', rate: '' },
-    friday: { timeFrom: '', timeTo: '', totalHours: '', rate: '' },
-    totalHoursPerWeek: String(app.contractedSchedule?.totalContractedHours || ''),
-    totalCostPerWeek: String(app.contractedSchedule?.totalWeeklyCost || ''),
+  const cColW = [32, 30, 30, 42, 48] // 182mm
+  doc.rect(margin, y, contentWidth, 49)
+  for (let r = 1; r <= 6; r++) {
+    doc.line(margin, y + r * 7, margin + contentWidth, y + r * 7)
+  }
+  curX = margin
+  for (let i = 0; i < cColW.length - 1; i++) {
+    curX += cColW[i]
+    doc.line(curX, y, curX, y + 49)
   }
 
-  doc.setFillColor(...BG_HEADER)
-  doc.rect(margin, currentY, contentWidth, 5, 'F')
-  doc.text('Day', margin + 2, currentY + 3.5)
-  doc.text('Time From', margin + 40, currentY + 3.5)
-  doc.text('Time To', margin + 75, currentY + 3.5)
-  doc.text('Total Hours', margin + 115, currentY + 3.5)
-  doc.text('Hourly/weekly Rate £', margin + 150, currentY + 3.5)
-  currentY += 5
-
-  doc.setFont('helvetica', 'normal')
-  ;(['monday', 'tuesday', 'wednesday', 'thursday', 'friday'] as const).forEach((d) => {
-    const row = cHours[d]
-    doc.text(d.charAt(0).toUpperCase() + d.slice(1), margin + 2, currentY + 3.5)
-    doc.text(row?.timeFrom || '—', margin + 40, currentY + 3.5)
-    doc.text(row?.timeTo || '—', margin + 75, currentY + 3.5)
-    doc.text(row?.totalHours ? `${row.totalHours} hrs` : '—', margin + 115, currentY + 3.5)
-    doc.text(row?.rate || '—', margin + 150, currentY + 3.5)
-    currentY += 5
-  })
-
-  doc.setFont('helvetica', 'bold')
-  doc.setFillColor(...BG_HEADER)
-  doc.rect(margin, currentY, contentWidth, 5, 'F')
-  doc.text('Total hours/cost per week:', margin + 2, currentY + 3.5)
-  doc.text(`${cHours.totalHoursPerWeek || '0'} hrs`, margin + 115, currentY + 3.5)
-  doc.text(cHours.totalCostPerWeek || '£0.00', margin + 150, currentY + 3.5)
-  currentY += 8
-
-  // Automatic Fee & Advance Payment Schedule
-  const isBaby = isChildUnder8Months(
-    app.page1?.childDob || app.child?.dob,
-    app.page3?.requiredStartDate || app.page4?.contractStartDate || app.sessions?.requiredStartDate
-  )
-  const feeSched = calculateWeeklySchedule(app.page3?.contractedHours, isBaby)
-  const fundedRes = calculateFundedHours(app.page3?.fundedSchedule)
-
-  renderSectionHeader('Automatic Fee & Advance Payment Schedule')
   doc.setFontSize(8)
-  doc.setFont('helvetica', 'normal')
-  doc.setTextColor(...TEXT_MUTED)
-  doc.text(
-    `Rate applied: ${isBaby ? 'Baby <8 months (£14.00/hr, £80.00/day)' : 'Standard (£12.00/hr, £70.00/day)'}` +
-      (feeSched.isFullTimeDiscount ? ' • Full-time discount applied (£330.00/wk)' : ''),
-    margin + 2,
-    currentY
-  )
-  currentY += 4.5
+  doc.text('Day', margin + 3, y + 4.8)
+  curX = margin + cColW[0]
+  doc.text('Time From', curX + 3, y + 4.8)
+  curX += cColW[1]
+  doc.text('Time To', curX + 3, y + 4.8)
+  curX += cColW[2]
+  doc.text('Total Hours', curX + 3, y + 4.8)
+  curX += cColW[3]
+  doc.text('Hourly/weekly Rate £', curX + 3, y + 4.8)
 
-  const feeBoxW = (contentWidth - 4) / 3
-  const feeMetrics = [
-    { label: 'Weekly Fee', val: feeSched.grossCostStr || '£0.00', sub: `${feeSched.totalHours} hrs/week` },
-    { label: '4-Weekly advance', val: feeSched.fourWeeklyCostStr || '£0.00', sub: '4 weeks contracted' },
-    { label: 'Monthly advance', val: feeSched.monthlyCostStr || '£0.00', sub: 'Calendar month (52wks/12)' },
+  const cHours = p3.contractedHours
+  const cDays = [
+    { name: 'Monday', row: cHours?.monday },
+    { name: 'Tuesday', row: cHours?.tuesday },
+    { name: 'Wednesday', row: cHours?.wednesday },
+    { name: 'Thursday', row: cHours?.thursday },
+    { name: 'Friday', row: cHours?.friday },
   ]
 
-  feeMetrics.forEach((m, idx) => {
-    const boxX = margin + idx * (feeBoxW + 2)
-    doc.setDrawColor(...BORDER_COLOR)
-    doc.setFillColor(255, 255, 255)
-    doc.roundedRect(boxX, currentY, feeBoxW, 15, 1, 1, 'FD')
+  doc.setFont('helvetica', 'normal')
+  for (let r = 0; r < cDays.length; r++) {
+    const rowYPos = y + 7 + r * 7
+    doc.text(cDays[r].name, margin + 3, rowYPos + 4.8)
 
-    doc.setFontSize(7)
-    doc.setFont('helvetica', 'normal')
-    doc.setTextColor(...TEXT_MUTED)
-    doc.text(m.label, boxX + 2, currentY + 3.8)
-
-    doc.setFontSize(9)
-    doc.setFont('helvetica', 'bold')
-    doc.setTextColor(...PRIMARY_COLOR)
-    doc.text(m.val, boxX + 2, currentY + 8.5)
-
-    doc.setFontSize(6)
-    doc.setFont('helvetica', 'normal')
-    doc.setTextColor(...TEXT_MUTED)
-    doc.text(m.sub, boxX + 2, currentY + 12.5)
-  })
-
-  currentY += 18
-
-  if (fundedRes.totalFundedHrs > 0) {
-    doc.setFillColor(239, 246, 255)
-    doc.setDrawColor(191, 219, 254)
-    doc.roundedRect(margin, currentY, contentWidth, 9, 1, 1, 'FD')
-
-    doc.setFontSize(7.5)
-    doc.setFont('helvetica', 'bold')
-    doc.setTextColor(30, 58, 138)
-    doc.text(`Early Years Entitlement: ${fundedRes.totalFundedHrs} hrs/week funded.`, margin + 3, currentY + 4)
-
-    const netWeekly = Math.max(
-      0,
-      feeSched.totalHours > fundedRes.totalFundedHrs
-        ? (feeSched.totalHours - fundedRes.totalFundedHrs) * (isBaby ? 14 : 12)
-        : 0
-    )
-    doc.text(`Net Weekly Fee: £${netWeekly.toFixed(2)}`, pageWidth - margin - 3, currentY + 4, { align: 'right' })
-
-    doc.setFont('helvetica', 'normal')
-    doc.setFontSize(6.5)
-    doc.setTextColor(...TEXT_MUTED)
-    doc.text(
-      feeSched.totalHours > fundedRes.totalFundedHrs
-        ? `Parent payable hours: ${Math.round((feeSched.totalHours - fundedRes.totalFundedHrs) * 10) / 10} hrs beyond entitlement.`
-        : 'All contracted hours covered within entitlement.',
-      margin + 3,
-      currentY + 7.5
-    )
-    currentY += 12
+    const d = cDays[r].row
+    curX = margin + cColW[0]
+    doc.text(cleanVal(d?.timeFrom) || '', curX + 3, rowYPos + 4.8)
+    curX += cColW[1]
+    doc.text(cleanVal(d?.timeTo) || '', curX + 3, rowYPos + 4.8)
+    curX += cColW[2]
+    doc.text(cleanVal(d?.totalHours) ? `${d?.totalHours} hrs` : '', curX + 3, rowYPos + 4.8)
+    curX += cColW[3]
+    doc.text(cleanVal(d?.rate) ? (d?.rate.startsWith('£') ? d?.rate : `£${d?.rate}`) : '', curX + 3, rowYPos + 4.8)
   }
 
+  // Summary Row: Total hours/cost per week
+  const sumY = y + 42
+  doc.setFont('helvetica', 'bold')
+  doc.text('Total hours/cost per week', margin + 3, sumY + 5.0)
+
+  // Column 3: Total Hours Per Week
+  curX = margin + cColW[0] + cColW[1] + cColW[2] // margin + 92
+  const totWkHrs = cleanVal(cHours?.totalHoursPerWeek)
+  doc.text(totWkHrs ? `${totWkHrs} hrs` : '', curX + 3, sumY + 5.0)
+
+  // Column 4: Total Cost Per Week
+  curX += cColW[3] // margin + 134
+  const totWkCost = cleanVal(cHours?.totalCostPerWeek)
+  doc.text(totWkCost ? (totWkCost.startsWith('£') ? totWkCost : `£${totWkCost}`) : '', curX + 3, sumY + 5.0)
+
   // ═══════════════════════════════════════════════════════════════════════════
-  // PAGE 4: Medical Information
+  // PAGE 4: Medical Information, Consent & Sickness
   // ═══════════════════════════════════════════════════════════════════════════
   doc.addPage()
   renderPageHeader(4)
-  currentY = 20
+  y = 34
 
-  renderSectionHeader('Medical Information')
-  const page5Data = app.page5
-  const p5 = {
-    gpName: page5Data?.gpName || '',
-    gpAddress: page5Data?.gpAddress || '',
-    gpNameAddress: page5Data?.gpNameAddress || '',
-    gpPhone: page5Data?.gpPhone || '',
-    healthVisitorName: page5Data?.healthVisitorName || '',
-    immunisationsUpToDate: page5Data?.immunisationsUpToDate || '',
-    dentalTreatment: page5Data?.dentalTreatment || '',
-    medicalNeedsDetails: page5Data?.medicalNeedsDetails || app.page1?.specialNeedsOrDisabilities || '',
-    allergiesDetails: page5Data?.allergiesDetails || '',
-  }
+  // Medical Information
+  doc.setFont('helvetica', 'bold')
+  doc.setFontSize(10)
+  const hMed = 'Medical Information'
+  doc.text(hMed, margin, y)
+  doc.line(margin, y + 0.8, margin + doc.getTextWidth(hMed), y + 0.8)
+
+  y += 5.5
 
   doc.setFont('helvetica', 'bold')
-  doc.text("Doctor's Name:", margin, currentY)
-  currentY += 4
+  doc.setFontSize(8.5)
+  doc.text("Doctor's Name:", margin, y)
   doc.setFont('helvetica', 'normal')
-  const gpNameDisplay = p5.gpName || (p5.gpNameAddress ? p5.gpNameAddress.split('\n')[0] : '—')
-  doc.text(gpNameDisplay, margin, currentY)
-  currentY += 5
+  doc.text(cleanVal(p5.gpName) || '________________________________________________________', margin + 26, y)
+  y += 6.5
 
   doc.setFont('helvetica', 'bold')
-  doc.text("Surgery Name & Address:", margin, currentY)
-  currentY += 4
+  doc.text('Surgery Name and Address:', margin, y)
   doc.setFont('helvetica', 'normal')
-  const gpAddressDisplay = p5.gpAddress || (p5.gpNameAddress ? p5.gpNameAddress : '—')
-  const gpLines = doc.splitTextToSize(gpAddressDisplay, contentWidth)
-  doc.text(gpLines, margin, currentY)
-  currentY += gpLines.length * 4 + 2
+  const surgAddr = cleanVal(p5.gpAddress || p5.gpNameAddress)
+  doc.text(surgAddr || '____________________________________________', margin + 46, y)
+  y += 6.5
 
   doc.setFont('helvetica', 'bold')
-  doc.text(`Phone no: ${p5.gpPhone || '—'}        Health visitor name and contact number: ${p5.healthVisitorName || '—'}`, margin, currentY)
-  currentY += 6
-
-  doc.text(`Immunisations: Are they up to date?  ${p5.immunisationsUpToDate || '—'}        Dental treatment?  ${p5.dentalTreatment || '—'}`, margin, currentY)
-  currentY += 6
-
-  doc.text('Any childhood illnesses/ serious condition?:', margin, currentY)
-  currentY += 4
+  doc.text('Phone no:', margin, y)
   doc.setFont('helvetica', 'normal')
-  const illnessLines = p5.medicalNeedsDetails ? doc.splitTextToSize(p5.medicalNeedsDetails, contentWidth) : ['None stated']
-  doc.text(illnessLines, margin, currentY)
-  currentY += illnessLines.length * 4 + 2
+  doc.text(cleanVal(p5.gpPhone) || '________________________________________________________', margin + 18, y)
+  y += 6.5
 
   doc.setFont('helvetica', 'bold')
-  doc.text('Any Allergies/ health conditions (asthma, eczema, inhaler/ epipen, penicillin, food, plaster, etc):', margin, currentY)
-  currentY += 4
+  doc.text('Health visitor name and contact number:', margin, y)
   doc.setFont('helvetica', 'normal')
-  const allergyLines = p5.allergiesDetails ? doc.splitTextToSize(p5.allergiesDetails, contentWidth) : ['None stated']
-  doc.text(allergyLines, margin, currentY)
-  currentY += allergyLines.length * 4 + 5
+  doc.text(cleanVal(p5.healthVisitorName) || '____________________________________', margin + 64, y)
+  y += 7.0
 
-  // Consent on Page 5
-  renderSectionHeader('Consent - Please tick to give permission')
-  const p6 = app.page6 || {
-    emergencyHospitalTreatment: false,
-    localOutings: false,
-    photosVideosLearningRecord: false,
-    transportInVehicle: false,
-    transitionRecords: false,
-    photosArtworkSetting: '',
-    photosWebsite: '',
+  const immYes = p5.immunisationsUpToDate === 'Yes'
+  const immNo = p5.immunisationsUpToDate === 'No'
+  doc.setFont('helvetica', 'bold')
+  doc.text('Immunisations: Are they up to date?', margin, y)
+  doc.setFont('helvetica', 'normal')
+  doc.text('Yes', margin + 62, y)
+  drawCheckbox(doc, margin + 69, y, immYes)
+  doc.text('No', margin + 79, y)
+  drawCheckbox(doc, margin + 85, y, immNo)
+  y += 7.0
+
+  doc.setFont('helvetica', 'bold')
+  doc.text('Dental treatment?', margin, y)
+  doc.setFont('helvetica', 'normal')
+  doc.text(cleanVal(p5.dentalTreatment) || '___________________________________________________', margin + 29, y)
+  y += 7.5
+
+  doc.setFont('helvetica', 'bold')
+  doc.text('Any childhood illnesses/ serious condition? If yes, please give details below.', margin, y)
+  y += 2.5
+  doc.rect(margin, y, contentWidth, 14)
+  const medNeeds = cleanVal(p5.medicalNeedsDetails)
+  if (medNeeds) {
+    doc.setFont('helvetica', 'normal')
+    doc.text(doc.splitTextToSize(medNeeds, contentWidth - 4), margin + 2, y + 4.5)
   }
+  y += 17.5
 
-  doc.setFontSize(8)
-  const consentItems = [
-    { label: 'My child can be taken to the hospital for treatment in the event of an emergency', val: p6.emergencyHospitalTreatment },
-    { label: 'My child can be taken on local outing trips', val: p6.localOutings },
-    { label: 'My child to have photographs/ videos taken for the learning record', val: p6.photosVideosLearningRecord },
-    { label: 'My child is to be transported by the childminder/setting in the vehicle used for this purpose', val: p6.transportInVehicle },
-    { label: 'My child’s records were passed on to the next setting as part of transition arrangements', val: p6.transitionRecords },
-  ]
+  doc.setFont('helvetica', 'bold')
+  doc.text(
+    'Any Allergies/ health conditions, e.g asthma, eczema, inhaler/ epipen, penicillin, food, plaster, etc',
+    margin,
+    y,
+  )
+  y += 2.5
+  doc.rect(margin, y, contentWidth, 14)
+  const allergies = cleanVal(p5.allergiesDetails || p5.specialDietaryRequirements)
+  if (allergies) {
+    doc.setFont('helvetica', 'normal')
+    doc.text(doc.splitTextToSize(allergies, contentWidth - 4), margin + 2, y + 4.5)
+  }
+  y += 18.5
+
+  // Consent - Please tick to give permission
+  doc.setFont('helvetica', 'bold')
+  doc.setFontSize(10)
+  const hCon = 'Consent - Please tick to give permission'
+  doc.text(hCon, margin, y)
+  doc.line(margin, y + 0.8, margin + doc.getTextWidth(hCon), y + 0.8)
+
+  y += 5.5
+  doc.setFont('helvetica', 'bold')
+  doc.setFontSize(8.5)
+  doc.text('Please tick to give permission:', margin, y)
+  y += 5.5
+
+  const pEmergency = p6.emergencyHospitalTreatment ?? true
+  const pOutings = p6.localOutings ?? true
+  const pPhotos = p6.photosVideosLearningRecord ?? true
+  const pTransport = p6.transportInVehicle ?? true
+  const pTransition = p6.transitionRecords ?? true
 
   doc.setFont('helvetica', 'normal')
-  consentItems.forEach((item) => {
-    const mark = item.val ? '[✓]' : '[  ]'
-    const textStr = `${mark}  ${item.label}`
-    const split = doc.splitTextToSize(textStr, contentWidth - 4)
-    doc.text(split, margin + 2, currentY)
-    currentY += split.length * 3.8 + 1
-  })
-  currentY += 2
+  // Checkbox on left ensures zero overflow or right margin clipping
+  drawCheckbox(doc, margin, y, pEmergency)
+  doc.text('My child can be taken to the hospital for treatment in the event of an emergency', margin + 6, y)
+  y += 6.0
 
-  if (p6.photosArtworkSetting) {
-    doc.setFont('helvetica', 'bold')
-    doc.text(`Photos/artwork displayed in setting: ${p6.photosArtworkSetting === 'give' ? 'I give permission' : 'I do not permit'}`, margin, currentY)
-    currentY += 5
-  }
-  if (p6.photosWebsite) {
-    doc.setFont('helvetica', 'bold')
-    doc.text(`Photos/work included on website: ${p6.photosWebsite === 'give' ? 'I give permission' : 'I do not permit'}`, margin, currentY)
-    currentY += 5
-  }
-  currentY += 2
+  drawCheckbox(doc, margin, y, pOutings)
+  doc.text('My child can be taken on local outing trips', margin + 6, y)
+  y += 6.0
 
-  // Sickness on Page 5
-  renderSectionHeader('Sickness')
+  drawCheckbox(doc, margin, y, pPhotos)
+  doc.text('My child to have photographs/ videos taken for the learning record', margin + 6, y)
+  y += 6.0
+
+  drawCheckbox(doc, margin, y, pTransport)
+  doc.text('My child is to be transported by the childminder/setting in the vehicle used for this purpose', margin + 6, y)
+  y += 6.0
+
+  drawCheckbox(doc, margin, y, pTransition)
+  doc.text('My child’s records were passed on to the next setting as part of transition arrangements', margin + 6, y)
+  y += 7.0
+
+  const artGive = p6.photosArtworkSetting === 'give'
+  const artNo = p6.photosArtworkSetting === 'do_not_permit'
+  doc.setFont('helvetica', 'bold')
+  doc.text('Photos/artwork used and displayed within setting:', margin, y)
+  y += 5.5
   doc.setFont('helvetica', 'normal')
-  const sickText =
-    "Divine Heritage may contact you if your child is unwell (e.g., persistent coughing or sneezing) to prevent spreading illness to other children and staff.\n\nDo not send your child if they were given antibiotics or Calpol before the session.\n\nVomiting/Diarrhoea: Children must stay home for 48 hours after their last episode and until completely recovered."
-  const splitSick = doc.splitTextToSize(sickText, contentWidth)
-  doc.text(splitSick, margin, currentY)
-  currentY += splitSick.length * 3.8 + 6
+  doc.text('I give permission', margin + 4, y)
+  drawCheckbox(doc, margin + 31, y, artGive)
+  doc.text('I do not permit', margin + 48, y)
+  drawCheckbox(doc, margin + 72, y, artNo)
+  y += 6.5
+
+  const webGive = p6.photosWebsite === 'give'
+  const webNo = p6.photosWebsite === 'do_not_permit'
+  doc.setFont('helvetica', 'bold')
+  doc.text('Photos/work included on website:', margin, y)
+  y += 5.5
+  doc.setFont('helvetica', 'normal')
+  doc.text('I give permission', margin + 4, y)
+  drawCheckbox(doc, margin + 31, y, webGive)
+  doc.text('I do not permit', margin + 48, y)
+  drawCheckbox(doc, margin + 72, y, webNo)
+  y += 8.5
+
+  // Sickness Section
+  doc.setFont('helvetica', 'bold')
+  doc.setFontSize(10)
+  const hSick = 'Sickness'
+  doc.text(hSick, margin, y)
+  doc.line(margin, y + 0.8, margin + doc.getTextWidth(hSick), y + 0.8)
+
+  y += 5.5
+  doc.setFont('helvetica', 'normal')
+  doc.setFontSize(8.5)
+  const sickP1 =
+    'Divine Heritage may contact you if your child is unwell (e.g., persistent coughing or sneezing) to prevent spreading illness to other children and staff.'
+  doc.text(doc.splitTextToSize(sickP1, contentWidth), margin, y)
+  y += 10.0
+
+  const sickP2 =
+    'Do not send your child if they were given antibiotics or Calpol before the session.'
+  doc.text(doc.splitTextToSize(sickP2, contentWidth), margin, y)
+  y += 6.5
+
+  const sickP3 =
+    'Vomiting/Diarrhoea: Children must stay home for 48 hours after their last episode and until completely recovered.'
+  doc.text(doc.splitTextToSize(sickP3, contentWidth), margin, y)
 
   // ═══════════════════════════════════════════════════════════════════════════
-  // PAGE 5: Collection, Declarations & Signatures
+  // PAGE 5: Collection, Declarations & Signatures (Strictly from Website Form)
   // ═══════════════════════════════════════════════════════════════════════════
   doc.addPage()
   renderPageHeader(5)
-  currentY = 20
+  y = 34
 
-  renderSectionHeader('Collection')
-  const colPoints = [
-    '• Full payment is required in advance for all contracted hours. No refunds or discounts are given for early collections, or absences.',
-    '• Early drop offs require prior arrangement due to strict staff to child ratio limits.',
-    '• Arrive 5 minutes before your scheduled pick up time. Repeated late pick ups constitute a breach of contract.',
-    '• A late collection fee will incur a fine of £3.00 per minute.',
-    '• Fines are payable and failure to pay will result in withdrawal of service until payment is made.',
-    '• Call at least 30 minutes in advance (or as soon as possible) if your child will be late or absent.',
-  ]
-  colPoints.forEach((point) => {
-    const splitPoint = doc.splitTextToSize(point, contentWidth)
-    doc.text(splitPoint, margin, currentY)
-    currentY += splitPoint.length * 4.2 + 2.5
-  })
+  // Collection Section
+  doc.setFont('helvetica', 'bold')
+  doc.setFontSize(10)
+  const hColl = 'Collection'
+  doc.text(hColl, margin, y)
+  doc.line(margin, y + 0.8, margin + doc.getTextWidth(hColl), y + 0.8)
 
-  currentY += 4
-  renderSectionHeader('Declarations & Signatures')
-  currentY += 4
+  y += 5.5
+  doc.setFont('helvetica', 'normal')
+  doc.setFontSize(8.5)
+  const cp1 =
+    'Full payment is required in advance for all contracted hours. No refunds or discounts are given for early collections, or absences.'
+  doc.text(doc.splitTextToSize(cp1, contentWidth), margin, y)
+  y += 9.5
 
-  // Signatures
-  const p7 = app.page7 || {
-    parentSignature: '',
-    parentName: app.page1?.parent1Name || app.parent1?.fullName || '',
-    parentDate: app.submittedAt ? app.submittedAt.split('T')[0] : '',
-    childminderName: 'Avril Cole',
-    childminderDate: app.submittedAt ? app.submittedAt.split('T')[0] : '',
-    childminderSigned: true,
-  }
+  const cp2 =
+    'Early drop offs require prior arrangement due to strict staff to child ratio limits.'
+  doc.text(doc.splitTextToSize(cp2, contentWidth), margin, y)
+  y += 6.5
 
-  doc.rect(margin, currentY, colW, 40)
-  doc.rect(col2X, currentY, colW, 40)
+  const cp3 =
+    'Arrive 5 minutes before your scheduled pick up time. Repeated late pick ups constitute a breach of contract.'
+  doc.text(doc.splitTextToSize(cp3, contentWidth), margin, y)
+  y += 6.5
 
   doc.setFont('helvetica', 'bold')
-  doc.text('Parent / Guardian Signature:', margin + 3, currentY + 5)
-  doc.text('Childminder Signature:', col2X + 3, currentY + 5)
+  const cp4 = 'A late collection fee will incur a fine of £3.00 per minute.'
+  doc.text(cp4, margin, y)
+  y += 6.5
+
+  doc.setFont('helvetica', 'normal')
+  const cp5 = 'Fines are payable and failure to pay will result in withdrawal of service until payment is made.'
+  doc.text(cp5, margin, y)
+  y += 6.5
+
+  const cp6 =
+    'Call at least 30 minutes in advance (or as soon as possible) if your child will be late or absent.'
+  doc.text(doc.splitTextToSize(cp6, contentWidth), margin, y)
+  y += 11.0
+
+  // Declarations & Signatures
+  doc.setFont('helvetica', 'bold')
+  doc.setFontSize(10)
+  const hDec = 'Declarations & Signatures'
+  doc.text(hDec, margin, y)
+  doc.line(margin, y + 0.8, margin + doc.getTextWidth(hDec), y + 0.8)
+
+  y += 7.5
+
+  // Side-by-side formal signature boxes
+  const boxW = 88
+  const boxH = 74
+  const b1X = margin
+  const b2X = margin + 94
+
+  // Box 1: Parent/Guardian
+  doc.setDrawColor(0, 0, 0)
+  doc.setLineWidth(0.3)
+  doc.rect(b1X, y, boxW, boxH)
+  doc.line(b1X, y + 8, b1X + boxW, y + 8)
+
+  doc.setFont('helvetica', 'bold')
+  doc.setFontSize(8.5)
+  doc.text('Parent / Guardian Signature', b1X + 4, y + 5.5)
 
   if (p7.parentSignature && p7.parentSignature.startsWith('data:image')) {
     try {
-      doc.addImage(p7.parentSignature, 'PNG', margin + 3, currentY + 7, 45, 16)
+      doc.addImage(p7.parentSignature, 'PNG', b1X + 8, y + 11, 55, 14)
     } catch {
-      doc.text('[Signed Electronically]', margin + 3, currentY + 16)
+      // fallback
     }
-  } else {
-    doc.text('[Signed Electronically]', margin + 3, currentY + 16)
   }
 
-  doc.setFont('times', 'italic')
-  doc.setFontSize(14)
-  doc.text('Avril Cole', col2X + 15, currentY + 16)
   doc.setFont('helvetica', 'normal')
-  doc.setFontSize(8)
+  doc.setFontSize(8.5)
+  doc.text('Signed: ___________________________', b1X + 4, y + 27)
 
-  doc.text(`Name: ${p7.parentName || '—'}`, margin + 3, currentY + 28)
-  doc.text(`Date: ${p7.parentDate || '—'}`, margin + 3, currentY + 34)
+  const pName = cleanVal(p7.parentName) || parent1Name
+  doc.setFont('helvetica', 'bold')
+  doc.text('Name:', b1X + 4, y + 38)
+  doc.setFont('helvetica', 'normal')
+  doc.text(pName || '_________________________________', b1X + 16, y + 38)
 
-  doc.text('Name: Avril Cole', col2X + 3, currentY + 28)
-  doc.text(`Date: ${p7.childminderDate || p7.parentDate || '—'}`, col2X + 3, currentY + 34)
+  const pDate = cleanVal(p7.parentDate)
+  doc.setFont('helvetica', 'bold')
+  doc.text('Date:', b1X + 4, y + 49)
+  doc.setFont('helvetica', 'normal')
+  doc.text(formatDate(pDate) || '__________________________________', b1X + 14, y + 49)
 
-  currentY += 45
-  doc.setFont('helvetica', 'italic')
-  doc.text('Please note that the Parent/Guardian signing above is responsible for paying fees.', margin, currentY)
+  doc.setFont('helvetica', 'bold')
+  doc.text('Parent / Guardian', b1X + 4, y + 62)
+
+  // Box 2: Childminder
+  doc.rect(b2X, y, boxW, boxH)
+  doc.line(b2X, y + 8, b2X + boxW, y + 8)
+
+  doc.setFont('helvetica', 'bold')
+  doc.setFontSize(8.5)
+  doc.text('Childminder Counter-Signature', b2X + 4, y + 5.5)
+
+  // Script signature for Avril Cole
+  doc.setFont('times', 'italic')
+  doc.setFontSize(16)
+  doc.setTextColor(20, 20, 20)
+  doc.text('Avril Cole', b2X + 24, y + 24)
+
+  doc.setFont('helvetica', 'normal')
+  doc.setFontSize(8.5)
+  doc.setTextColor(...COLOR_BLACK)
+  doc.text('Signed: ___________________________', b2X + 4, y + 27)
+
+  doc.setFont('helvetica', 'bold')
+  doc.text('Name:', b2X + 4, y + 38)
+  doc.setFont('helvetica', 'normal')
+  doc.text('Avril Cole', b2X + 16, y + 38)
+
+  const cmDate = cleanVal(p7.childminderDate || p7.parentDate)
+  doc.setFont('helvetica', 'bold')
+  doc.text('Date:', b2X + 4, y + 49)
+  doc.setFont('helvetica', 'normal')
+  doc.text(formatDate(cmDate) || '__________________________________', b2X + 14, y + 49)
+
+  doc.setFont('helvetica', 'bold')
+  doc.text('Childminder', b2X + 4, y + 62)
+
+  y += boxH + 9
+
+  doc.setFont('helvetica', 'bolditalic')
+  doc.setFontSize(8.5)
+  doc.text('Please note that the Parent/Guardian signing above is responsible for paying fees.', margin, y)
 
   const blob = doc.output('blob')
   const base64 = doc.output('datauristring')
@@ -688,10 +1091,21 @@ export async function generateApplicationPDF(
   return { doc, blob, base64 }
 }
 
-export async function downloadApplicationPDF(app: ApplicationRecord): Promise<void> {
+/**
+ * Downloads the completed application PDF with the child's name and reference in the filename.
+ */
+export async function downloadApplicationPDF(app: Partial<ApplicationRecord> = {}): Promise<void> {
   const { doc } = await generateApplicationPDF(app)
-  const childName = app.page1?.childFullName || app.child?.fullName || 'Child'
+  const childName = cleanVal(app.page1?.childFullName || app.child?.fullName) || 'Registration'
   const sanitized = childName.replace(/[^a-zA-Z0-9]/g, '_')
   const ref = app.applicationId || app.id || 'DH'
   doc.save(`Divine-Heritage-Application-${sanitized}-${ref}.pdf`)
+}
+
+/**
+ * Downloads a blank application template matching the website application form.
+ */
+export async function downloadBlankApplicationPDF(): Promise<void> {
+  const { doc } = await generateApplicationPDF({})
+  doc.save('Divine-Heritage-Childcare-Application-Form.pdf')
 }
