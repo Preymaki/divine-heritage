@@ -152,9 +152,8 @@ const PAGE_TITLES = [
   'Page 1: Child Details, Parents & Emergency Contact 1',
   'Page 2: Emergency Contacts, Funded Entitlements & Fees',
   'Page 3: Sessions & Hours Schedules',
-  'Page 4: Contract Duration & Terms',
-  'Page 5: Medical Information, Consent & Sickness',
-  'Page 6: Collection, Declarations & Signatures',
+  'Page 4: Medical Information, Consent & Sickness',
+  'Page 5: Collection, Declarations & Signatures',
 ]
 
 export default function Application() {
@@ -428,7 +427,7 @@ export default function Application() {
       }
     }
 
-    if (page === 6) {
+    if (page === 5) {
       if (!formData.page7.parentName.trim()) {
         newErrors.parentName = 'Parent / Guardian printed name is required'
       }
@@ -443,7 +442,7 @@ export default function Application() {
 
   function handleNext() {
     if (validatePage(currentPage)) {
-      if (currentPage < 6) {
+      if (currentPage < 5) {
         setCurrentPage(currentPage + 1)
       }
     }
@@ -457,7 +456,7 @@ export default function Application() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    if (!validatePage(6)) return
+    if (!validatePage(5)) return
 
     setSubmitting(true)
     setSubmitError(null)
@@ -574,10 +573,10 @@ export default function Application() {
                 </span>
                 <span>{PAGE_TITLES[currentPage - 1]}</span>
               </span>
-              <span className="text-white/75 font-medium">Step {currentPage} of 6</span>
+              <span className="text-white/75 font-medium">Step {currentPage} of 5</span>
             </div>
-            <div className="grid grid-cols-6 gap-1.5 sm:gap-2">
-              {[1, 2, 3, 4, 5, 6].map((pageNum) => (
+            <div className="grid grid-cols-5 gap-1.5 sm:gap-2">
+              {[1, 2, 3, 4, 5].map((pageNum) => (
                 <button
                   key={pageNum}
                   type="button"
@@ -1448,11 +1447,11 @@ export default function Application() {
                 </p>
               </div>
 
-              {/* Session & Start date required */}
+              {/* Start of contract */}
               <div className="pt-4 border-t-2 border-slate-800 space-y-4">
                 <div className="border-b border-slate-300 pb-2">
                   <h2 className="text-base md:text-lg font-bold text-slate-900 underline">
-                    Session & Start date required
+                    Start of contract
                   </h2>
                 </div>
 
@@ -1463,21 +1462,26 @@ export default function Application() {
                   </div>
                 </div>
 
-                <div className="max-w-xs">
+                <div className="max-w-xs space-y-2">
                   <label className="block text-xs font-bold text-slate-800 mb-1">
-                    Required Start Date:
+                    Start of contract:
                   </label>
                   <input
                     type="date"
-                    value={formData.page3.requiredStartDate}
-                    onChange={(e) =>
+                    value={formData.page3.requiredStartDate || formData.page4.contractStartDate}
+                    onChange={(e) => {
+                      const val = e.target.value
                       setFormData({
                         ...formData,
-                        page3: { ...formData.page3, requiredStartDate: e.target.value },
+                        page3: { ...formData.page3, requiredStartDate: val },
+                        page4: { ...formData.page4, contractStartDate: val },
                       })
-                    }
+                    }}
                     className="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
                   />
+                  <p className="text-xs font-bold text-slate-800 pt-1">
+                    A minimum of four weeks’ notice is required to end the contract.
+                  </p>
                 </div>
               </div>
 
@@ -1550,9 +1554,8 @@ export default function Application() {
                   </div>
                 )}
 
-                <div className="text-xs font-bold text-amber-900 bg-amber-50/70 px-3.5 py-2.5 rounded-xl border border-amber-200/80 space-y-1">
-                  <div>Full Day 8-6 pm</div>
-                  <div>Please note that I only Accept children for a minimum of 2 full days and 3 part time days</div>
+                <div className="text-xs font-bold text-amber-900 bg-amber-50/70 px-3.5 py-2.5 rounded-xl border border-amber-200/80">
+                  Please note that I only Accept children for a minimum of 2 full days and 3 part time days
                 </div>
               </div>
 
@@ -1774,68 +1777,15 @@ export default function Application() {
                       </div>
                     </div>
                   )}
-
-                  {/* 4 Weeks Notice Policy Charge */}
-                  <div className="text-[11px] text-slate-500 pt-1 border-t border-slate-200/60 flex flex-wrap items-center justify-between gap-2">
-                    <span>Notice / Cancellation minimum charge (4 weeks' contracted cost):</span>
-                    <strong className="text-slate-800">{weeklyDetails.fourWeeksNoticeCostStr}</strong>
-                  </div>
                 </div>
               </div>
             </div>
           )}
 
           {/* ══════════════════════════════════════════════════════════════════
-              PAGE 4
+              PAGE 4 (Medical Information)
           ══════════════════════════════════════════════════════════════════ */}
           {currentPage === 4 && (
-            <div className="bg-white rounded-3xl shadow-sm border border-slate-200 p-6 md:p-10 space-y-8 animate-fadeIn">
-              {/* Contract Duration */}
-              <div className="space-y-3">
-                <div className="border-b-2 border-slate-800 pb-2">
-                  <h2 className="text-base md:text-lg font-bold text-slate-900">
-                    Contract Duration:
-                  </h2>
-                </div>
-
-                <div className="max-w-md">
-                  <label className="block text-xs font-bold text-slate-800 mb-1">Start of contract:</label>
-                  <input
-                    type="date"
-                    value={formData.page4.contractStartDate}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        page4: { ...formData.page4, contractStartDate: e.target.value },
-                      })
-                    }
-                    className="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
-                  />
-                </div>
-
-                <p className="text-xs font-bold text-slate-800 pt-1">
-                  A minimum of four weeks’ notice is required to end the contract.
-                </p>
-              </div>
-
-              {/* Policies list from Document */}
-              <div className="pt-4 border-t border-slate-200 space-y-4 text-xs text-slate-700">
-                <div className="space-y-1">
-                  <h3 className="font-bold text-slate-900 underline">Absence:</h3>
-                  <p>Occasional day off by parent/child: Full fee applied.</p>
-                  <p>Parent/child on holiday or sickness: Full fee to be paid.</p>
-                  <p>Childminder holiday – Full fee applied</p>
-                  <p>Childminder sickness: No fee will be paid.</p>
-                </div>
-              </div>
-
-            </div>
-          )}
-
-          {/* ══════════════════════════════════════════════════════════════════
-              PAGE 5
-          ══════════════════════════════════════════════════════════════════ */}
-          {currentPage === 5 && (
             <div className="bg-white rounded-3xl shadow-sm border border-slate-200 p-6 md:p-10 space-y-6 animate-fadeIn">
               {/* Medical Information */}
               <div className="space-y-4 text-xs">
@@ -1845,15 +1795,15 @@ export default function Application() {
                   </h2>
                 </div>
 
-                {/* General Practitioner Name & Address */}
+                {/* Doctor's Name & Surgery Name/Address */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block font-bold text-slate-800 mb-1">
-                      General Practitioner's Name:
+                      Doctor's Name:
                     </label>
                     <input
                       type="text"
-                      placeholder="Doctor's name or surgery name"
+                      placeholder="Doctor's name"
                       value={formData.page5.gpName || ''}
                       onChange={(e) =>
                         setFormData({
@@ -1867,11 +1817,11 @@ export default function Application() {
 
                   <div>
                     <label className="block font-bold text-slate-800 mb-1">
-                      General Practitioner's Address:
+                      Surgery Name and Address:
                     </label>
                     <input
                       type="text"
-                      placeholder="Full surgery address"
+                      placeholder="Surgery name and address"
                       value={formData.page5.gpAddress || ''}
                       onChange={(e) =>
                         setFormData({
@@ -1905,11 +1855,11 @@ export default function Application() {
 
                   <div>
                     <label className="block font-bold text-slate-800 mb-1">
-                      Health visitor name:
+                      Health visitor name and contact number:
                     </label>
                     <input
                       type="text"
-                      placeholder="Health visitor name"
+                      placeholder="Health visitor name and contact number"
                       value={formData.page5.healthVisitorName || ''}
                       onChange={(e) =>
                         setFormData({
@@ -2031,6 +1981,52 @@ export default function Application() {
                 </div>
 
                 <div className="space-y-3 text-xs text-slate-800">
+                  {/* Please tick to give permission checkboxes */}
+                  <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-3">
+                    <span className="font-bold text-slate-900 block text-xs">
+                      Please tick to give permission:
+                    </span>
+                    <div className="space-y-2.5">
+                      {[
+                        {
+                          key: 'emergencyHospitalTreatment',
+                          label: 'My child can be taken to the hospital for treatment in the event of an emergency',
+                        },
+                        {
+                          key: 'localOutings',
+                          label: 'My child can be taken on local outing trips',
+                        },
+                        {
+                          key: 'photosVideosLearningRecord',
+                          label: 'My child to have photographs/ videos taken for the learning record',
+                        },
+                        {
+                          key: 'transportInVehicle',
+                          label: 'My child is to be transported by the childminder/setting in the vehicle used for this purpose',
+                        },
+                        {
+                          key: 'transitionRecords',
+                          label: 'My child’s records were passed on to the next setting as part of transition arrangements',
+                        },
+                      ].map(({ key, label }) => (
+                        <label key={key} className="flex items-start gap-3 cursor-pointer select-none">
+                          <input
+                            type="checkbox"
+                            checked={!!formData.page6[key as keyof typeof formData.page6]}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                page6: { ...formData.page6, [key]: e.target.checked },
+                              })
+                            }
+                            className="mt-0.5 w-4 h-4 rounded text-[var(--color-primary-600)] cursor-pointer"
+                          />
+                          <span className="text-slate-800 font-medium leading-relaxed">{label}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+
                   {/* Photo & Artwork within setting */}
                   <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
                     <span className="font-semibold text-slate-900 block">
@@ -2138,9 +2134,9 @@ export default function Application() {
           )}
 
           {/* ══════════════════════════════════════════════════════════════════
-              PAGE 6 (MERGED: COLLECTION & SIGNATURES)
+              PAGE 5 (COLLECTION & SIGNATURES)
           ══════════════════════════════════════════════════════════════════ */}
-          {currentPage === 6 && (
+          {currentPage === 5 && (
             <div className="bg-white rounded-3xl shadow-sm border border-slate-200 p-6 md:p-10 space-y-8 animate-fadeIn">
               {/* Collection Section */}
               <div className="space-y-4">
@@ -2317,10 +2313,10 @@ export default function Application() {
             )}
 
             <div className="text-xs font-semibold text-slate-500">
-              Page {currentPage} of 6
+              Page {currentPage} of 5
             </div>
 
-            {currentPage < 6 ? (
+            {currentPage < 5 ? (
               <button
                 type="button"
                 onClick={handleNext}

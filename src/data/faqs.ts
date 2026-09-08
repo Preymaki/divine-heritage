@@ -42,6 +42,13 @@ export const FAQS: FAQ[] = [
     category: 'fees',
   },
   {
+    id: 'childminder-holiday',
+    question: 'Are fees charged during childminder holidays?',
+    answer:
+      'Yes, the full fee is applied during childminder holidays as your child’s place is held and reserved.',
+    category: 'fees',
+  },
+  {
     id: 'settling-in',
     question: 'How does the settling-in process work?',
     answer:

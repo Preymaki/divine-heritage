@@ -385,10 +385,9 @@ export default function AdminApplications() {
               {[
                 { page: 1, label: 'Page 1: Child & Parents' },
                 { page: 2, label: 'Page 2: Funded Entitlements' },
-                { page: 3, label: 'Page 3: Hours Schedule' },
-                { page: 4, label: 'Page 4: Contract Duration & Terms' },
-                { page: 5, label: 'Page 5: Medical, Consent & Sickness' },
-                { page: 6, label: 'Page 6: Collection & Signatures' },
+                { page: 3, label: 'Page 3: Hours Schedule & Contract' },
+                { page: 4, label: 'Page 4: Medical, Consent & Sickness' },
+                { page: 5, label: 'Page 5: Collection & Signatures' },
               ].map((tab) => (
                 <button
                   key={tab.page}
@@ -529,13 +528,19 @@ export default function AdminApplications() {
                   {/* Session Requirements */}
                   <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200">
                     <h4 className="font-bold uppercase tracking-wider text-slate-800 mb-2">
-                      Session & Start Date Required
+                      Start of contract
                     </h4>
-                    <div>
-                      <span className="text-slate-400 block">Target Start Date:</span>
-                      <strong className="text-sm text-slate-900">
-                        {selectedApp.page3?.requiredStartDate || selectedApp.page4?.contractStartDate || selectedApp.sessions?.requiredStartDate || '—'}
-                      </strong>
+                    <div className="space-y-2">
+                      <div>
+                        <span className="text-slate-400 block">Start of contract:</span>
+                        <strong className="text-sm text-slate-900">
+                          {selectedApp.page3?.requiredStartDate || selectedApp.page4?.contractStartDate || selectedApp.sessions?.requiredStartDate || '—'}
+                        </strong>
+                      </div>
+                      <div>
+                        <span className="text-slate-400 block">Notice Requirement:</span>
+                        <strong className="text-slate-700">A minimum of four weeks’ notice is required to end the contract.</strong>
+                      </div>
                     </div>
                   </div>
 
@@ -719,12 +724,6 @@ export default function AdminApplications() {
                               </div>
                             </div>
                           )}
-
-                          {/* 4 Weeks Notice Policy Charge */}
-                          <div className="text-[11px] text-slate-500 pt-1 border-t border-slate-200/60 flex flex-wrap items-center justify-between gap-2">
-                            <span>Notice / Cancellation minimum charge (4 weeks' contracted cost):</span>
-                            <strong className="text-slate-800">{modalFees.fourWeeksNoticeCostStr}</strong>
-                          </div>
                         </div>
                       </div>
                     )
@@ -735,22 +734,6 @@ export default function AdminApplications() {
               {/* PAGE 4 */}
               {activeModalPage === 4 && (
                 <div className="space-y-6">
-                  {/* Contract Duration */}
-                  <div className="p-5 bg-slate-50 rounded-2xl border border-slate-200 space-y-3">
-                    <h4 className="font-bold uppercase tracking-wider text-slate-800 border-b pb-2">
-                      Contract Duration
-                    </h4>
-                    <div>
-                      <span className="text-slate-400 block">Start of contract:</span>
-                      <strong>{selectedApp.page4?.contractStartDate || '—'}</strong>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* PAGE 5 */}
-              {activeModalPage === 5 && (
-                <div className="space-y-6">
 
                   {/* Medical Information */}
                   <div className="p-5 bg-slate-50 rounded-2xl border border-slate-200 space-y-3">
@@ -759,11 +742,11 @@ export default function AdminApplications() {
                     </h4>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <div>
-                        <span className="text-slate-400 block">General Practitioner's Name:</span>
+                        <span className="text-slate-400 block">Doctor's Name:</span>
                         <strong>{selectedApp.page5?.gpName || (selectedApp.page5?.gpNameAddress ? selectedApp.page5?.gpNameAddress.split('\n')[0] : '—')}</strong>
                       </div>
                       <div>
-                        <span className="text-slate-400 block">General Practitioner's Address:</span>
+                        <span className="text-slate-400 block">Surgery Name and Address:</span>
                         <p className="bg-white p-2.5 rounded border border-slate-200">{selectedApp.page5?.gpAddress || selectedApp.page5?.gpNameAddress || '—'}</p>
                       </div>
                       <div>
@@ -771,7 +754,7 @@ export default function AdminApplications() {
                         <strong>{selectedApp.page5?.gpPhone || '—'}</strong>
                       </div>
                       <div>
-                        <span className="text-slate-400 block">Health visitor name:</span>
+                        <span className="text-slate-400 block">Health visitor name and contact number:</span>
                         <strong>{selectedApp.page5?.healthVisitorName || '—'}</strong>
                       </div>
                       <div>
@@ -800,6 +783,11 @@ export default function AdminApplications() {
                     </h4>
                     <div className="space-y-2">
                       {[
+                        { label: "My child can be taken to the hospital for treatment in the event of an emergency", status: selectedApp.page6?.emergencyHospitalTreatment ? '✓ Granted' : '— Not ticked' },
+                        { label: "My child can be taken on local outing trips", status: selectedApp.page6?.localOutings ? '✓ Granted' : '— Not ticked' },
+                        { label: "My child to have photographs/ videos taken for the learning record", status: selectedApp.page6?.photosVideosLearningRecord ? '✓ Granted' : '— Not ticked' },
+                        { label: "My child is to be transported by the childminder/setting in the vehicle used for this purpose", status: selectedApp.page6?.transportInVehicle ? '✓ Granted' : '— Not ticked' },
+                        { label: "My child’s records were passed on to the next setting as part of transition arrangements", status: selectedApp.page6?.transitionRecords ? '✓ Granted' : '— Not ticked' },
                         { label: "Photos and artwork displayed within setting", status: selectedApp.page6?.photosArtworkSetting === 'give' ? '✓ I give permission' : selectedApp.page6?.photosArtworkSetting === 'do_not_permit' ? '✕ Do not permit' : '— Not stated' },
                         { label: "Photos/work included on website", status: selectedApp.page6?.photosWebsite === 'give' ? '✓ I give permission' : selectedApp.page6?.photosWebsite === 'do_not_permit' ? '✕ Do not permit' : '— Not stated' },
                       ].map((item, idx) => (
@@ -823,8 +811,8 @@ export default function AdminApplications() {
                 </div>
               )}
 
-              {/* PAGE 6 (MERGED: COLLECTION & SIGNATURES) */}
-              {activeModalPage === 6 && (
+              {/* PAGE 5 (MERGED: COLLECTION & SIGNATURES) */}
+              {activeModalPage === 5 && (
                 <div className="space-y-6">
                   <div className="p-5 bg-slate-50 rounded-2xl border border-slate-200 space-y-3 text-slate-700 text-xs">
                     <h4 className="font-bold text-slate-900 text-sm">Collection</h4>

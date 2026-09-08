@@ -46,7 +46,7 @@ export async function generateApplicationPDF(
     doc.text(`Ref: ${app.applicationId || app.id}`, pageWidth - margin, 15, { align: 'right' })
 
     doc.setFontSize(8)
-    doc.text(`Page ${pageNumber} of 6`, margin, pageHeight - 8)
+    doc.text(`Page ${pageNumber} of 5`, margin, pageHeight - 8)
   }
 
   function renderSectionHeader(title: string) {
@@ -319,14 +319,17 @@ export async function generateApplicationPDF(
   doc.text('Fees are payable in advance on a weekly, 4-weekly, or monthly basis. Fees can be paid by cash, tax-free childcare voucher, Universal Credit, or online bank transfer.', margin, currentY)
   currentY += 8
 
-  // Session & Start date required
-  renderSectionHeader('Session & Start date required')
+  // Start of contract
+  renderSectionHeader('Start of contract')
   doc.setFont('helvetica', 'normal')
   doc.text('Full Day: 8-6 pm    Friday closes at 5 PM', margin, currentY)
   currentY += 5
   const reqStart = app.page3?.requiredStartDate || app.page4?.contractStartDate || app.sessions?.requiredStartDate || '—'
-  doc.text(`Required Start Date: ${reqStart}`, margin, currentY)
-  currentY += 8
+  doc.text(`Start of contract: ${reqStart}`, margin, currentY)
+  currentY += 4.5
+  doc.setFont('helvetica', 'italic')
+  doc.text('A minimum of four weeks’ notice is required to end the contract.', margin, currentY)
+  currentY += 7.5
 
   // Early Years Funded Hours Table
   doc.setFont('helvetica', 'bold')
@@ -370,8 +373,6 @@ export async function generateApplicationPDF(
   })
   currentY += 2
   doc.setFont('helvetica', 'bold')
-  doc.text('Full Day 8-6 pm', margin, currentY)
-  currentY += 4
   doc.text('Please note that I only Accept children for a minimum of 2 full days and 3 part time days', margin, currentY)
   currentY += 6
 
@@ -500,56 +501,11 @@ export async function generateApplicationPDF(
     currentY += 12
   }
 
-  doc.setFontSize(7)
-  doc.setFont('helvetica', 'normal')
-  doc.setTextColor(...TEXT_MUTED)
-  doc.text(`Notice / Cancellation minimum charge (4 weeks' contracted cost): ${feeSched.fourWeeksNoticeCostStr}`, margin + 2, currentY)
-  currentY += 5
-
   // ═══════════════════════════════════════════════════════════════════════════
-  // PAGE 4
+  // PAGE 4: Medical Information
   // ═══════════════════════════════════════════════════════════════════════════
   doc.addPage()
   renderPageHeader(4)
-  currentY = 20
-
-  renderSectionHeader('Contract Duration & Terms')
-  const page4Data = app.page4
-  const p4 = {
-    contractStartDate: page4Data?.contractStartDate || '',
-    contractEndDate: page4Data?.contractEndDate || '',
-    childRaceEthnicity: page4Data?.childRaceEthnicity || app.page1?.childRaceEthnicity || '',
-    familyRaceEthnicity: page4Data?.familyRaceEthnicity || '',
-    languagesUnderstoodChild: page4Data?.languagesUnderstoodChild || '',
-    languagesSpokenFamily: page4Data?.languagesSpokenFamily || '',
-    languagesSpokenChild: page4Data?.languagesSpokenChild || '',
-    translationRequired: page4Data?.translationRequired || '',
-    religion: page4Data?.religion || app.page1?.religion || '',
-    festivalsCelebrated: page4Data?.festivalsCelebrated || '',
-    previousChildcare: page4Data?.previousChildcare || app.page1?.previousChildcare || '',
-  }
-
-  doc.setFont('helvetica', 'bold')
-  doc.text(`Start of contract: ${p4.contractStartDate || '—'}`, margin, currentY)
-  currentY += 5
-  doc.setFont('helvetica', 'italic')
-  doc.text('A minimum of four weeks’ notice is required to end the contract.', margin, currentY)
-  currentY += 7
-
-  doc.setFont('helvetica', 'bold')
-  doc.text('Absence:', margin, currentY)
-  currentY += 4
-  doc.setFont('helvetica', 'normal')
-  doc.text('Occasional day off by parent/child: Full fee applied.\nParent/child on holiday or sickness: Full fee to be paid.\nChildminder holiday – Full fee applied\nChildminder sickness: No fee will be paid.', margin, currentY)
-  currentY += 18
-
-
-
-  // ═══════════════════════════════════════════════════════════════════════════
-  // PAGE 5
-  // ═══════════════════════════════════════════════════════════════════════════
-  doc.addPage()
-  renderPageHeader(5)
   currentY = 20
 
   renderSectionHeader('Medical Information')
@@ -567,7 +523,7 @@ export async function generateApplicationPDF(
   }
 
   doc.setFont('helvetica', 'bold')
-  doc.text("General Practitioner's Name:", margin, currentY)
+  doc.text("Doctor's Name:", margin, currentY)
   currentY += 4
   doc.setFont('helvetica', 'normal')
   const gpNameDisplay = p5.gpName || (p5.gpNameAddress ? p5.gpNameAddress.split('\n')[0] : '—')
@@ -575,7 +531,7 @@ export async function generateApplicationPDF(
   currentY += 5
 
   doc.setFont('helvetica', 'bold')
-  doc.text("General Practitioner's Address:", margin, currentY)
+  doc.text("Surgery Name & Address:", margin, currentY)
   currentY += 4
   doc.setFont('helvetica', 'normal')
   const gpAddressDisplay = p5.gpAddress || (p5.gpNameAddress ? p5.gpNameAddress : '—')
@@ -584,7 +540,7 @@ export async function generateApplicationPDF(
   currentY += gpLines.length * 4 + 2
 
   doc.setFont('helvetica', 'bold')
-  doc.text(`Phone no: ${p5.gpPhone || '—'}        Health visitor name: ${p5.healthVisitorName || '—'}`, margin, currentY)
+  doc.text(`Phone no: ${p5.gpPhone || '—'}        Health visitor name and contact number: ${p5.healthVisitorName || '—'}`, margin, currentY)
   currentY += 6
 
   doc.text(`Immunisations: Are they up to date?  ${p5.immunisationsUpToDate || '—'}        Dental treatment?  ${p5.dentalTreatment || '—'}`, margin, currentY)
@@ -618,6 +574,24 @@ export async function generateApplicationPDF(
   }
 
   doc.setFontSize(8)
+  const consentItems = [
+    { label: 'My child can be taken to the hospital for treatment in the event of an emergency', val: p6.emergencyHospitalTreatment },
+    { label: 'My child can be taken on local outing trips', val: p6.localOutings },
+    { label: 'My child to have photographs/ videos taken for the learning record', val: p6.photosVideosLearningRecord },
+    { label: 'My child is to be transported by the childminder/setting in the vehicle used for this purpose', val: p6.transportInVehicle },
+    { label: 'My child’s records were passed on to the next setting as part of transition arrangements', val: p6.transitionRecords },
+  ]
+
+  doc.setFont('helvetica', 'normal')
+  consentItems.forEach((item) => {
+    const mark = item.val ? '[✓]' : '[  ]'
+    const textStr = `${mark}  ${item.label}`
+    const split = doc.splitTextToSize(textStr, contentWidth - 4)
+    doc.text(split, margin + 2, currentY)
+    currentY += split.length * 3.8 + 1
+  })
+  currentY += 2
+
   if (p6.photosArtworkSetting) {
     doc.setFont('helvetica', 'bold')
     doc.text(`Photos/artwork displayed in setting: ${p6.photosArtworkSetting === 'give' ? 'I give permission' : 'I do not permit'}`, margin, currentY)
@@ -640,10 +614,10 @@ export async function generateApplicationPDF(
   currentY += splitSick.length * 3.8 + 6
 
   // ═══════════════════════════════════════════════════════════════════════════
-  // PAGE 6: Collection, Declarations & Signatures
+  // PAGE 5: Collection, Declarations & Signatures
   // ═══════════════════════════════════════════════════════════════════════════
   doc.addPage()
-  renderPageHeader(6)
+  renderPageHeader(5)
   currentY = 20
 
   renderSectionHeader('Collection')
