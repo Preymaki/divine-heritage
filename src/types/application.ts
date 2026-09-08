@@ -19,6 +19,13 @@ export interface Page1ParentalResponsibility {
   childFullName: string
   childDob: string
   childGender: 'Male' | 'Female' | ''
+  childRaceEthnicity?: string
+  religion?: string
+  receivingSocialServices?: 'Yes' | 'No' | ''
+  socialWorkerDetails?: string
+  specialNeedsOrDisabilities?: string
+  dietaryNeeds?: string
+  previousChildcare?: string
 
   parent1Name: string
   parent1Address: string
@@ -92,25 +99,25 @@ export interface Page3SessionDetails {
   contractedHours: Page3ContractedHours
 }
 
-// ── Page 4: Contract Duration, Race & Ethnicity ──────────────────────────────
+// ── Page 4: Contract Duration & Terms ──────────────────────────────
 
 export interface Page4ContractAndEthnicity {
   contractStartDate: string
   contractEndDate: string
 
-  childRaceEthnicity: string
-  familyRaceEthnicity: string
-  languagesUnderstoodChild: string
-  languagesSpokenFamily: string
-  languagesSpokenChild: string
-  translationRequired: string
-  religion: string
-  festivalsCelebrated: string
+  childRaceEthnicity?: string
+  familyRaceEthnicity?: string
+  languagesUnderstoodChild?: string
+  languagesSpokenFamily?: string
+  languagesSpokenChild?: string
+  translationRequired?: string
+  religion?: string
+  festivalsCelebrated?: string
 
-  previousChildcare: string
+  previousChildcare?: string
 }
 
-// ── Page 5: Previous Nursery, Family Members, Social Service, Medical ─────────
+// ── Page 5: Medical Information ─────────
 
 export interface FamilyChildItem {
   name: string
@@ -118,25 +125,25 @@ export interface FamilyChildItem {
 }
 
 export interface Page5FamilyAndHealth {
-  nurseryAttendedName: string
-  nurseryAttendedAddress: string
-
-  familyChildren: [
-    FamilyChildItem,
-    FamilyChildItem,
-    FamilyChildItem,
-    FamilyChildItem,
-    FamilyChildItem,
-    FamilyChildItem,
-  ]
-  positionInFamily: '1' | '2' | '3' | '4' | '5' | '6' | ''
-
-  childInCareOrLookedAfter: 'Yes' | 'No' | ''
-  lookedAfterDetails: string
+  gpName?: string
+  gpAddress?: string
+  gpNameAddress?: string // legacy fallback
+  gpPhone?: string
+  healthVisitorName?: string
+  immunisationsUpToDate?: 'Yes' | 'No' | ''
+  dentalTreatment?: string
 
   medicalNeedsDetails: string
   allergiesDetails: string
-  specialDietaryRequirements: string
+
+  // Legacy fields retained for backwards compatibility
+  nurseryAttendedName?: string
+  nurseryAttendedAddress?: string
+  familyChildren?: FamilyChildItem[]
+  positionInFamily?: '1' | '2' | '3' | '4' | '5' | '6' | ''
+  childInCareOrLookedAfter?: 'Yes' | 'No' | ''
+  lookedAfterDetails?: string
+  specialDietaryRequirements?: string
 }
 
 // ── Page 6: Permissions & Policies ───────────────────────────────────────────
@@ -147,6 +154,8 @@ export interface Page6Permissions {
   photosVideosLearningRecord: boolean
   transportInVehicle: boolean
   transitionRecords: boolean
+  photosArtworkSetting?: 'give' | 'do_not_permit' | ''
+  photosWebsite?: 'give' | 'do_not_permit' | ''
 }
 
 // ── Page 7: Declarations & Signatures ────────────────────────────────────────

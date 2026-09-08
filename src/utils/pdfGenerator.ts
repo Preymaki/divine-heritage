@@ -46,7 +46,7 @@ export async function generateApplicationPDF(
     doc.text(`Ref: ${app.applicationId || app.id}`, pageWidth - margin, 15, { align: 'right' })
 
     doc.setFontSize(8)
-    doc.text(`Page ${pageNumber} of 7`, margin, pageHeight - 8)
+    doc.text(`Page ${pageNumber} of 6`, margin, pageHeight - 8)
   }
 
   function renderSectionHeader(title: string) {
@@ -145,7 +145,22 @@ export async function generateApplicationPDF(
   doc.text('Gender:', margin + 155, currentY)
   doc.setFont('helvetica', 'normal')
   doc.text(p1.childGender || '—', margin + 170, currentY)
-  currentY += 8
+  currentY += 6
+
+  const childRace = p1.childRaceEthnicity || app.page4?.childRaceEthnicity || ''
+  const childRel = p1.religion || app.page4?.religion || ''
+  if (childRace || childRel) {
+    doc.setFont('helvetica', 'bold')
+    doc.text("Child's Race & Ethnic background:", margin, currentY)
+    doc.setFont('helvetica', 'normal')
+    doc.text(childRace || '—', margin + 52, currentY)
+
+    doc.setFont('helvetica', 'bold')
+    doc.text('Religion:', margin + 120, currentY)
+    doc.setFont('helvetica', 'normal')
+    doc.text(childRel || '—', margin + 135, currentY)
+    currentY += 6
+  }
 
   // Parent 1 vs Parent 2 Columns
   const colW = (contentWidth - 6) / 2
@@ -300,36 +315,14 @@ export async function generateApplicationPDF(
   currentY = 20
 
   doc.setFontSize(8)
-  doc.setFont('helvetica', 'bold')
-  doc.text('Please note that the Day rate applies if care is provided for over 5 hours.', margin, currentY)
-  currentY += 4
-  doc.text('Charges are based on an hourly rate, and I do not offer half-hour charges.', margin, currentY)
-  currentY += 4
   doc.setFont('helvetica', 'normal')
-  doc.text('Fees are payable in advance on a weekly, 4-weekly, or monthly basis. Fees can be paid by cash, tax-free childcare voucher, Universal Credit, or online bank transfer to the following account:', margin, currentY)
-  currentY += 6
-
-  // Bank Details
-  doc.setFillColor(...BG_HEADER)
-  doc.rect(margin, currentY, contentWidth, 12, 'F')
-  doc.setFont('helvetica', 'bold')
-  doc.text('Bank Details:', margin + 3, currentY + 4)
-  doc.setFont('helvetica', 'normal')
-  doc.text('NatWest Bank', margin + 3, currentY + 9)
-  doc.text('Account Name: Avril Cole', margin + 45, currentY + 9)
-  doc.text('Sort Code: 50-10-29', margin + 105, currentY + 9)
-  doc.text('Account Number: 25869043', margin + 145, currentY + 9)
-  currentY += 16
+  doc.text('Fees are payable in advance on a weekly, 4-weekly, or monthly basis. Fees can be paid by cash, tax-free childcare voucher, Universal Credit, or online bank transfer.', margin, currentY)
+  currentY += 8
 
   // Session & Start date required
   renderSectionHeader('Session & Start date required')
   doc.setFont('helvetica', 'normal')
-  doc.text('Morning: 08:00 -1:00 PM    Afternoon: 12 -12:45PM to 5-5:45 PM    Full Day: 08:00 – 6:00PM', margin, currentY)
-  currentY += 5
-  doc.text('Friday closes at 5 PM', margin, currentY)
-  currentY += 5
-  doc.setFont('helvetica', 'bold')
-  doc.text('Please note that I Only Accept Children for a minimum of 2 Full days and 3 part-time days.', margin, currentY)
+  doc.text('Full Day: 8-6 pm    Friday closes at 5 PM', margin, currentY)
   currentY += 5
   const reqStart = app.page3?.requiredStartDate || app.page4?.contractStartDate || app.sessions?.requiredStartDate || '—'
   doc.text(`Required Start Date: ${reqStart}`, margin, currentY)
@@ -349,7 +342,7 @@ export async function generateApplicationPDF(
   const times = [
     { label: '8 – 1pm', data: fSch.row8to1 },
     { label: '12 - 12:45 - 5 - 5:45 PM', data: fSch.row12to5 },
-    { label: 'Full day', data: fSch.rowFullDay },
+    { label: 'Full Day 8-6 pm', data: fSch.rowFullDay },
   ]
 
   // Table header
@@ -375,6 +368,11 @@ export async function generateApplicationPDF(
     doc.text(t.data?.totalHrs || '—', margin + 155, currentY + 3.5)
     currentY += 5
   })
+  currentY += 2
+  doc.setFont('helvetica', 'bold')
+  doc.text('Full Day 8-6 pm', margin, currentY)
+  currentY += 4
+  doc.text('Please note that I only Accept children for a minimum of 2 full days and 3 part time days', margin, currentY)
   currentY += 6
 
   // Contracted Hours Table
@@ -440,12 +438,11 @@ export async function generateApplicationPDF(
   )
   currentY += 4.5
 
-  const feeBoxW = (contentWidth - 6) / 4
+  const feeBoxW = (contentWidth - 4) / 3
   const feeMetrics = [
     { label: 'Weekly Fee', val: feeSched.grossCostStr || '£0.00', sub: `${feeSched.totalHours} hrs/week` },
     { label: '4-Weekly advance', val: feeSched.fourWeeklyCostStr || '£0.00', sub: '4 weeks contracted' },
     { label: 'Monthly advance', val: feeSched.monthlyCostStr || '£0.00', sub: 'Calendar month (52wks/12)' },
-    { label: '50% Retainer Fee', val: feeSched.retainerFee50Str || '£0.00', sub: 'Reserves next term' },
   ]
 
   feeMetrics.forEach((m, idx) => {
@@ -517,25 +514,26 @@ export async function generateApplicationPDF(
   currentY = 20
 
   renderSectionHeader('Contract Duration & Terms')
-  const p4 = app.page4 || {
-    contractStartDate: '',
-    contractEndDate: '',
-    childRaceEthnicity: '',
-    familyRaceEthnicity: '',
-    languagesUnderstoodChild: '',
-    languagesSpokenFamily: '',
-    languagesSpokenChild: '',
-    translationRequired: '',
-    religion: '',
-    festivalsCelebrated: '',
-    previousChildcare: '',
+  const page4Data = app.page4
+  const p4 = {
+    contractStartDate: page4Data?.contractStartDate || '',
+    contractEndDate: page4Data?.contractEndDate || '',
+    childRaceEthnicity: page4Data?.childRaceEthnicity || app.page1?.childRaceEthnicity || '',
+    familyRaceEthnicity: page4Data?.familyRaceEthnicity || '',
+    languagesUnderstoodChild: page4Data?.languagesUnderstoodChild || '',
+    languagesSpokenFamily: page4Data?.languagesSpokenFamily || '',
+    languagesSpokenChild: page4Data?.languagesSpokenChild || '',
+    translationRequired: page4Data?.translationRequired || '',
+    religion: page4Data?.religion || app.page1?.religion || '',
+    festivalsCelebrated: page4Data?.festivalsCelebrated || '',
+    previousChildcare: page4Data?.previousChildcare || app.page1?.previousChildcare || '',
   }
 
   doc.setFont('helvetica', 'bold')
-  doc.text(`Start of contract: ${p4.contractStartDate || '—'}        End of Contract: ${p4.contractEndDate || '—'}`, margin, currentY)
+  doc.text(`Start of contract: ${p4.contractStartDate || '—'}`, margin, currentY)
   currentY += 5
   doc.setFont('helvetica', 'italic')
-  doc.text('A minimum of four weeks’ notice is required to end the contract if no end date is stated.', margin, currentY)
+  doc.text('A minimum of four weeks’ notice is required to end the contract.', margin, currentY)
   currentY += 7
 
   doc.setFont('helvetica', 'bold')
@@ -545,48 +543,7 @@ export async function generateApplicationPDF(
   doc.text('Occasional day off by parent/child: Full fee applied.\nParent/child on holiday or sickness: Full fee to be paid.\nChildminder holiday – Full fee applied\nChildminder sickness: No fee will be paid.', margin, currentY)
   currentY += 18
 
-  doc.setFont('helvetica', 'bold')
-  doc.text('Swapping day:', margin, currentY)
-  currentY += 4
-  doc.setFont('helvetica', 'normal')
-  doc.text('The session and hours are FIXED and not interchangeable. If an extra day(s) is required, it’s chargeable.', margin, currentY)
-  currentY += 6
 
-  doc.setFont('helvetica', 'bold')
-  doc.text('Change of Contracted Day(s):', margin, currentY)
-  currentY += 4
-  doc.setFont('helvetica', 'normal')
-  doc.text('A minimum of 2 weeks’ notice is required to amend your contracted days, subject to availability.', margin, currentY)
-  currentY += 6
-
-  doc.setFont('helvetica', 'bold')
-  doc.text('Holidays & Settling-in:', margin, currentY)
-  currentY += 4
-  doc.setFont('helvetica', 'normal')
-  doc.text('The full fee will still be charged on bank holidays if the day falls on your child’s contracted or regular working day.\nSettling-in period: I offer up to 2 hours of complimentary settling-in time, prorated for part-time.\nRetainer Fee: Parents pay a 50% fee to confirm and reserve their child’s place for the following term.', margin, currentY)
-  currentY += 15
-
-  doc.setFont('helvetica', 'bold')
-  doc.text('Food & Healthy Eating:', margin, currentY)
-  currentY += 4
-  doc.setFont('helvetica', 'normal')
-  doc.text('Due to life-threatening allergies, I ask that parents bring in their children’s food. I provide healthy, complimentary snack options such as fruit, vegetables, sandwiches, rice cakes, breadsticks or similar choices.', margin, currentY)
-  currentY += 10
-
-  renderSectionHeader('Race & Ethnicity')
-  doc.text(`Child: ${p4.childRaceEthnicity || '—'}        Family: ${p4.familyRaceEthnicity || '—'}`, margin, currentY)
-  currentY += 5
-  doc.text(`Language(s) understood by child: ${p4.languagesUnderstoodChild || '—'}`, margin, currentY)
-  currentY += 5
-  doc.text(`Language(s) spoken by family: ${p4.languagesSpokenFamily || '—'}`, margin, currentY)
-  currentY += 5
-  doc.text(`Language(s) spoken by child: ${p4.languagesSpokenChild || '—'}`, margin, currentY)
-  currentY += 5
-  doc.text(`Does family require translation & in which language? ${p4.translationRequired || '—'}`, margin, currentY)
-  currentY += 5
-  doc.text(`Religion: ${p4.religion || '—'}        Festivals family celebrates: ${p4.festivalsCelebrated || '—'}`, margin, currentY)
-  currentY += 6
-  doc.text(`Child's previous childcare: ${p4.previousChildcare || '—'}`, margin, currentY)
 
   // ═══════════════════════════════════════════════════════════════════════════
   // PAGE 5
@@ -595,167 +552,118 @@ export async function generateApplicationPDF(
   renderPageHeader(5)
   currentY = 20
 
-  renderSectionHeader('Previous Nursery, Family Members, Social Service & Medical')
-  const p5 = app.page5 || {
-    nurseryAttendedName: '',
-    nurseryAttendedAddress: '',
-    familyChildren: [
-      { name: '', dob: '' },
-      { name: '', dob: '' },
-      { name: '', dob: '' },
-      { name: '', dob: '' },
-      { name: '', dob: '' },
-      { name: '', dob: '' },
-    ],
-    positionInFamily: '',
-    childInCareOrLookedAfter: '',
-    lookedAfterDetails: '',
-    medicalNeedsDetails: '',
-    allergiesDetails: '',
-    specialDietaryRequirements: '',
+  renderSectionHeader('Medical Information')
+  const page5Data = app.page5
+  const p5 = {
+    gpName: page5Data?.gpName || '',
+    gpAddress: page5Data?.gpAddress || '',
+    gpNameAddress: page5Data?.gpNameAddress || '',
+    gpPhone: page5Data?.gpPhone || '',
+    healthVisitorName: page5Data?.healthVisitorName || '',
+    immunisationsUpToDate: page5Data?.immunisationsUpToDate || '',
+    dentalTreatment: page5Data?.dentalTreatment || '',
+    medicalNeedsDetails: page5Data?.medicalNeedsDetails || app.page1?.specialNeedsOrDisabilities || '',
+    allergiesDetails: page5Data?.allergiesDetails || '',
   }
 
   doc.setFont('helvetica', 'bold')
-  doc.text(`Name of Nursery/ childcare attended:  ${p5.nurseryAttendedName || '—'}`, margin, currentY)
+  doc.text("General Practitioner's Name:", margin, currentY)
+  currentY += 4
+  doc.setFont('helvetica', 'normal')
+  const gpNameDisplay = p5.gpName || (p5.gpNameAddress ? p5.gpNameAddress.split('\n')[0] : '—')
+  doc.text(gpNameDisplay, margin, currentY)
   currentY += 5
-  doc.text(`Address (if known):  ${p5.nurseryAttendedAddress || '—'}`, margin, currentY)
-  currentY += 8
-
-  doc.text('Other Family Members (Children in age order):', margin, currentY)
-  currentY += 4
-  doc.setFont('helvetica', 'normal')
-  const famKids = p5.familyChildren || []
-  for (let i = 0; i < 3; i++) {
-    const k1 = famKids[i]
-    const k2 = famKids[i + 3]
-    doc.text(`${i + 1}. ${k1?.name || '—'} (DOB: ${k1?.dob || '—'})`, margin, currentY)
-    doc.text(`${i + 4}. ${k2?.name || '—'} (DOB: ${k2?.dob || '—'})`, margin + 90, currentY)
-    currentY += 5
-  }
-  doc.setFont('helvetica', 'bold')
-  doc.text(`Position in family:  ${p5.positionInFamily ? `Position ${p5.positionInFamily}` : '—'}`, margin, currentY)
-  currentY += 8
-
-  doc.text(`Social Service - Is your child "in care" or a "looked-after" service?  ${p5.childInCareOrLookedAfter || 'No'}`, margin, currentY)
-  currentY += 4
-  if (p5.lookedAfterDetails) {
-    doc.setFont('helvetica', 'normal')
-    doc.text(`Details: ${p5.lookedAfterDetails}`, margin, currentY)
-    currentY += 6
-  }
 
   doc.setFont('helvetica', 'bold')
-  doc.text('Medical Needs:', margin, currentY)
+  doc.text("General Practitioner's Address:", margin, currentY)
   currentY += 4
   doc.setFont('helvetica', 'normal')
-  doc.text(p5.medicalNeedsDetails || 'None stated', margin, currentY)
+  const gpAddressDisplay = p5.gpAddress || (p5.gpNameAddress ? p5.gpNameAddress : '—')
+  const gpLines = doc.splitTextToSize(gpAddressDisplay, contentWidth)
+  doc.text(gpLines, margin, currentY)
+  currentY += gpLines.length * 4 + 2
+
+  doc.setFont('helvetica', 'bold')
+  doc.text(`Phone no: ${p5.gpPhone || '—'}        Health visitor name: ${p5.healthVisitorName || '—'}`, margin, currentY)
   currentY += 6
 
-  doc.setFont('helvetica', 'bold')
-  doc.text('Allergies (penicillin, plasters, anaesthetics, food, stings/bites):', margin, currentY)
-  currentY += 4
-  doc.setFont('helvetica', 'normal')
-  doc.text(p5.allergiesDetails || 'None stated', margin, currentY)
+  doc.text(`Immunisations: Are they up to date?  ${p5.immunisationsUpToDate || '—'}        Dental treatment?  ${p5.dentalTreatment || '—'}`, margin, currentY)
   currentY += 6
 
-  doc.setFont('helvetica', 'bold')
-  doc.text('Special dietary requirements for food likes/dislikes:', margin, currentY)
+  doc.text('Any childhood illnesses/ serious condition?:', margin, currentY)
   currentY += 4
   doc.setFont('helvetica', 'normal')
-  doc.text(p5.specialDietaryRequirements || 'None stated', margin, currentY)
-  currentY += 8
+  const illnessLines = p5.medicalNeedsDetails ? doc.splitTextToSize(p5.medicalNeedsDetails, contentWidth) : ['None stated']
+  doc.text(illnessLines, margin, currentY)
+  currentY += illnessLines.length * 4 + 2
 
   doc.setFont('helvetica', 'bold')
-  doc.text('Sickness & Medication Policy Notice:', margin, currentY)
+  doc.text('Any Allergies/ health conditions (asthma, eczema, inhaler/ epipen, penicillin, food, plaster, etc):', margin, currentY)
   currentY += 4
-  doc.setFont('helvetica', 'italic')
-  const smNotice =
-    'The registered childminder will inform the parent(s) / guardian(s) as soon as reasonably possible if there has been an illness in the household within the previous 24 hours before a contracted period or if unforeseen circumstances prevent them from being available to care for the child. The parent(s) / guardian(s) will inform the registered childminder if the child has been ill within 24 hours before a contracted period and provide written permission if the childminder is required to administer medication and/ or treatment.'
-  const splitNotice = doc.splitTextToSize(smNotice, contentWidth)
-  doc.text(splitNotice, margin, currentY)
+  doc.setFont('helvetica', 'normal')
+  const allergyLines = p5.allergiesDetails ? doc.splitTextToSize(p5.allergiesDetails, contentWidth) : ['None stated']
+  doc.text(allergyLines, margin, currentY)
+  currentY += allergyLines.length * 4 + 5
 
-  // ═══════════════════════════════════════════════════════════════════════════
-  // PAGE 6
-  // ═══════════════════════════════════════════════════════════════════════════
-  doc.addPage()
-  renderPageHeader(6)
-  currentY = 20
-
-  renderSectionHeader('Please tick to give permission:')
+  // Consent on Page 5
+  renderSectionHeader('Consent - Please tick to give permission')
   const p6 = app.page6 || {
     emergencyHospitalTreatment: false,
     localOutings: false,
     photosVideosLearningRecord: false,
     transportInVehicle: false,
     transitionRecords: false,
+    photosArtworkSetting: '',
+    photosWebsite: '',
   }
 
-  const permItems = [
-    { label: 'My child can be taken to the hospital for treatment in the event of an emergency', val: p6.emergencyHospitalTreatment },
-    { label: 'My child can be taken on local outing trips', val: p6.localOutings },
-    { label: 'My child to have photographs/ videos taken for the learning record', val: p6.photosVideosLearningRecord },
-    { label: 'My child is to be transported by the childminder/setting in the vehicle used for this purpose', val: p6.transportInVehicle },
-    { label: 'My child’s records were passed on to the next setting as part of transition arrangements', val: p6.transitionRecords },
-  ]
-
   doc.setFontSize(8)
-  permItems.forEach((item) => {
+  if (p6.photosArtworkSetting) {
     doc.setFont('helvetica', 'bold')
-    doc.text(item.val ? '[ X ]' : '[   ]', margin, currentY)
-    doc.setFont('helvetica', 'normal')
-    doc.text(item.label, margin + 8, currentY)
+    doc.text(`Photos/artwork displayed in setting: ${p6.photosArtworkSetting === 'give' ? 'I give permission' : 'I do not permit'}`, margin, currentY)
     currentY += 5
-  })
-  currentY += 6
+  }
+  if (p6.photosWebsite) {
+    doc.setFont('helvetica', 'bold')
+    doc.text(`Photos/work included on website: ${p6.photosWebsite === 'give' ? 'I give permission' : 'I do not permit'}`, margin, currentY)
+    currentY += 5
+  }
+  currentY += 2
 
+  // Sickness on Page 5
   renderSectionHeader('Sickness')
   doc.setFont('helvetica', 'normal')
   const sickText =
-    "Childminders are unable to care for children who are very ill. If a child is persistently coughing and sneezing and is unable to cover their mouth, they will not be able to attend. This is because it's important to prevent the spread of infection to other children and the childminder.\n\nIf a child needs medication like Calpol before the session, they should not be sent to the childminder, as this only masks the symptom and does not prevent the spread of infection.\n\nIf a child vomits or has diarrhoea, they must be picked up immediately and cannot return until they have been symptom-free for 48 hours.\n\nPlease note that this is at my discretion. If I feel that your child is too ill, then I will not be able to provide care, and you will be required to make other arrangements.\n\nAny accidents are recorded in an accident book, which will need your signature to confirm that you have been notified. Any bumps or bruises that your child arrives with will also be recorded in an existing injury book; a brief explanation and your signature will again be required.\n\nYou will be required to fill in a medicine record should your child require any medication whilst in my care."
+    "Divine Heritage may contact you if your child is unwell (e.g., persistent coughing or sneezing) to prevent spreading illness to other children and staff.\n\nDo not send your child if they were given antibiotics or Calpol before the session.\n\nVomiting/Diarrhoea: Children must stay home for 48 hours after their last episode and until completely recovered."
   const splitSick = doc.splitTextToSize(sickText, contentWidth)
   doc.text(splitSick, margin, currentY)
   currentY += splitSick.length * 3.8 + 6
 
-  renderSectionHeader('Collection Policy')
-  const colText =
-    'If the child is collected earlier than the stated time, the full bookable fee still applies. All contracted hours must be paid for in full in advance, regardless of attendance, as a position has been reserved for your child, and it will not be possible to fill that position at short notice should your child not attend.\n\nEarly drop-offs will not be accepted without prior arrangement, as this is normally a limited service due to OFSTED number restrictions.\n\nLate drop-off does not constitute late collection.\n\nPlease remember that late collection is very distressing for the child. After 6:00 pm, I am not insured for your child to be on the premises.\n\nParents should come and collect their child/ children 5 minutes before their pick-up time.\n\nPlease inform me by telephone call at least 30 minutes beforehand, or at the earliest opportunity, if you expect to be late or if your child will not be attending for any reason.'
-  const splitCol = doc.splitTextToSize(colText, contentWidth)
-  doc.text(splitCol, margin, currentY)
-
   // ═══════════════════════════════════════════════════════════════════════════
-  // PAGE 7
+  // PAGE 6: Collection, Declarations & Signatures
   // ═══════════════════════════════════════════════════════════════════════════
   doc.addPage()
-  renderPageHeader(7)
+  renderPageHeader(6)
   currentY = 20
 
-  renderSectionHeader('Terms, Termination, House Rules & Signatures')
-  const p7Rules =
-    'Repeated late collection will be considered a breach of contract. The following procedures will be implemented in all late collections.\n\nA standard late pickup fee of £5.00 will be charged during the first 10 minutes after your scheduled pickup time. An additional £5 will be charged for every 5 minutes thereafter. (Scale: 1–10m late: £5.00 | 11–15m: £10.00 | 16–20m: £15.00 | 21–25m: £20.00 | 26–30m: £25.00).\n\nThe total late pickup charge should be paid by the next time you drop off your child.\n\nFailure to pay any fine incurred may result in the withdrawal of the services provided until payment is made.\n\nParents are to pay a 50% retainer fee for term-time childcare. The fee confirms and reserves your child’s place for the following term.\n\nI will give a minimum of FOUR (4) weeks’ notice of my holidays. Full payment will be required when I am on holiday.\n\nPlease do not hesitate to raise any concerns or issues you may have while your child or children are in my care. I am happy to discuss any concerns with you at any time, preferably during pick-ups.'
-  const splitP7Rules = doc.splitTextToSize(p7Rules, contentWidth)
-  doc.text(splitP7Rules, margin, currentY)
-  currentY += splitP7Rules.length * 3.8 + 6
+  renderSectionHeader('Collection')
+  const colPoints = [
+    '• Full payment is required in advance for all contracted hours. No refunds or discounts are given for early collections, or absences.',
+    '• Early drop offs require prior arrangement due to strict staff to child ratio limits.',
+    '• Arrive 5 minutes before your scheduled pick up time. Repeated late pick ups constitute a breach of contract.',
+    '• A late collection fee will incur a fine of £3.00 per minute.',
+    '• Fines are payable and failure to pay will result in withdrawal of service until payment is made.',
+    '• Call at least 30 minutes in advance (or as soon as possible) if your child will be late or absent.',
+  ]
+  colPoints.forEach((point) => {
+    const splitPoint = doc.splitTextToSize(point, contentWidth)
+    doc.text(splitPoint, margin, currentY)
+    currentY += splitPoint.length * 4.2 + 2.5
+  })
 
-  doc.setFont('helvetica', 'bold')
-  doc.text('TERMINATION/ AMENDMENT OF CONTRACT', margin, currentY)
   currentY += 4
-  doc.setFont('helvetica', 'normal')
-  const termText =
-    'Four (4) full weeks’ notice, starting the following Monday or later, is required by either party to terminate or amend this agreement. This contract may be terminated without notice if the child’s behaviour becomes such that the safety and well-being of other children in my care are threatened by the parent(s) / guardian(s) or the child’s behaviour.\n\nYou can cancel this agreement within 14 days of signing the form. After that, a minimum charge of 4 weeks’ contracted cost will apply.'
-  const splitTerm = doc.splitTextToSize(termText, contentWidth)
-  doc.text(splitTerm, margin, currentY)
-  currentY += splitTerm.length * 3.8 + 6
-
-  doc.setFont('helvetica', 'bold')
-  doc.text('Bringing Things & Health and Safety:', margin, currentY)
+  renderSectionHeader('Declarations & Signatures')
   currentY += 4
-  doc.setFont('helvetica', 'normal')
-  doc.text(
-    'Children are allowed to bring only one personal comfort toy during the settling-in period.\nBuggies and pushchairs can be folded and stored in the shed, but they are left at the owner’s risk.\nBikes and scooters can be left, but at your own risk.\nThis Agreement is subject to review at the start of every calendar year.\n(This agreement is valid until it is end-dated, or a new one is signed.)',
-    margin,
-    currentY,
-  )
-  currentY += 24
 
   // Signatures
   const p7 = app.page7 || {

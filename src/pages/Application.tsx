@@ -14,10 +14,6 @@ import {
   Download,
   RotateCcw,
   AlertCircle,
-  User,
-  Phone,
-  Mail,
-  MapPin,
 } from 'lucide-react'
 import SectionWrapper from '@components/ui/SectionWrapper'
 import type {
@@ -39,6 +35,13 @@ const INITIAL_FORM_DATA: ApplicationFormData = {
     childFullName: '',
     childDob: '',
     childGender: '',
+    childRaceEthnicity: '',
+    religion: '',
+    receivingSocialServices: '',
+    socialWorkerDetails: '',
+    specialNeedsOrDisabilities: '',
+    dietaryNeeds: '',
+    previousChildcare: '',
     parent1Name: '',
     parent1Address: '',
     parent1Mobile: '',
@@ -102,6 +105,15 @@ const INITIAL_FORM_DATA: ApplicationFormData = {
     previousChildcare: '',
   },
   page5: {
+    gpName: '',
+    gpAddress: '',
+    gpNameAddress: '',
+    gpPhone: '',
+    healthVisitorName: '',
+    immunisationsUpToDate: '',
+    dentalTreatment: '',
+    medicalNeedsDetails: '',
+    allergiesDetails: '',
     nurseryAttendedName: '',
     nurseryAttendedAddress: '',
     familyChildren: [
@@ -115,8 +127,6 @@ const INITIAL_FORM_DATA: ApplicationFormData = {
     positionInFamily: '',
     childInCareOrLookedAfter: '',
     lookedAfterDetails: '',
-    medicalNeedsDetails: '',
-    allergiesDetails: '',
     specialDietaryRequirements: '',
   },
   page6: {
@@ -125,6 +135,8 @@ const INITIAL_FORM_DATA: ApplicationFormData = {
     photosVideosLearningRecord: false,
     transportInVehicle: false,
     transitionRecords: false,
+    photosArtworkSetting: '',
+    photosWebsite: '',
   },
   page7: {
     parentSignature: '',
@@ -137,13 +149,12 @@ const INITIAL_FORM_DATA: ApplicationFormData = {
 }
 
 const PAGE_TITLES = [
-  'Page 1: Parental Responsibility & Emergency Contact 1',
+  'Page 1: Child Details, Parents & Emergency Contact 1',
   'Page 2: Emergency Contacts, Funded Entitlements & Fees',
-  'Page 3: Bank Details, Sessions & Hours Schedules',
-  'Page 4: Contract Duration, Terms & Race/Ethnicity',
-  'Page 5: Nursery, Family Members, Care & Medical Needs',
-  'Page 6: Permissions, Sickness & Collection Policies',
-  'Page 7: Terms, Termination & Signatures',
+  'Page 3: Sessions & Hours Schedules',
+  'Page 4: Contract Duration & Terms',
+  'Page 5: Medical Information, Consent & Sickness',
+  'Page 6: Collection, Declarations & Signatures',
 ]
 
 export default function Application() {
@@ -308,7 +319,7 @@ export default function Application() {
 
   // Setup canvas drawing
   useEffect(() => {
-    if (currentPage !== 7) return
+    if (currentPage !== 6) return
     const canvas = canvasRef.current
     if (!canvas) return
     const ctx = canvas.getContext('2d')
@@ -417,7 +428,7 @@ export default function Application() {
       }
     }
 
-    if (page === 7) {
+    if (page === 6) {
       if (!formData.page7.parentName.trim()) {
         newErrors.parentName = 'Parent / Guardian printed name is required'
       }
@@ -432,7 +443,7 @@ export default function Application() {
 
   function handleNext() {
     if (validatePage(currentPage)) {
-      if (currentPage < 7) {
+      if (currentPage < 6) {
         setCurrentPage(currentPage + 1)
       }
     }
@@ -446,7 +457,7 @@ export default function Application() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    if (!validatePage(7)) return
+    if (!validatePage(6)) return
 
     setSubmitting(true)
     setSubmitError(null)
@@ -548,46 +559,10 @@ export default function Application() {
         />
 
         <div className="max-w-4xl mx-auto relative z-10">
-          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 pb-6 border-b border-white/10">
-            <div className="max-w-xl">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--color-accent-500)]/20 border border-[var(--color-accent-400)]/30 text-[var(--color-accent-300)] text-xs font-bold uppercase tracking-wider mb-3">
-                <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-accent-400)]" aria-hidden="true" />
-                Official Childcare Enrolment
-              </div>
-              <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold font-[var(--font-family-heading)] text-white tracking-tight drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">
-                Divine Heritage Application Form
-              </h1>
-              <p className="mt-2 text-white/80 text-xs sm:text-sm md:text-base leading-relaxed">
-                Please complete this 7-step official enrolment form. Your progress is saved as you complete each section.
-              </p>
-            </div>
-
-            {/* Childminder Details Card */}
-            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/15 shadow-sm text-xs shrink-0 max-w-sm">
-              <div className="flex items-center gap-2.5 mb-2.5 pb-2 border-b border-white/10">
-                <div className="w-7 h-7 rounded-lg bg-[var(--color-primary-500)]/40 border border-white/20 flex items-center justify-center text-[var(--color-accent-300)]">
-                  <User size={14} />
-                </div>
-                <div>
-                  <div className="font-bold text-white text-sm">Avril Cole</div>
-                  <div className="text-white/60 text-[11px]">Registered Childminder</div>
-                </div>
-              </div>
-              <div className="space-y-1.5 text-white/85">
-                <div className="flex items-center gap-2">
-                  <Phone size={13} className="text-[var(--color-accent-300)] shrink-0" />
-                  <a href="tel:07939303144" className="hover:text-white transition-colors">07939 303144</a>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Mail size={13} className="text-[var(--color-accent-300)] shrink-0" />
-                  <a href="mailto:divineheritagechildcare@gmail.com" className="hover:text-white transition-colors truncate">divineheritagechildcare@gmail.com</a>
-                </div>
-                <div className="flex items-start gap-2 text-white/70 text-[11px] pt-0.5">
-                  <MapPin size={13} className="text-[var(--color-accent-300)] shrink-0 mt-0.5" />
-                  <span>5 Pitman Building, Freda St, London SE16 4BW</span>
-                </div>
-              </div>
-            </div>
+          <div className="pb-6 border-b border-white/10">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold font-[var(--font-family-heading)] text-white tracking-tight drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">
+              Divine Heritage Childcare Application Form
+            </h1>
           </div>
 
           {/* Page Tabs Indicator */}
@@ -599,10 +574,10 @@ export default function Application() {
                 </span>
                 <span>{PAGE_TITLES[currentPage - 1]}</span>
               </span>
-              <span className="text-white/75 font-medium">Step {currentPage} of 7</span>
+              <span className="text-white/75 font-medium">Step {currentPage} of 6</span>
             </div>
-            <div className="grid grid-cols-7 gap-1.5 sm:gap-2">
-              {[1, 2, 3, 4, 5, 6, 7].map((pageNum) => (
+            <div className="grid grid-cols-6 gap-1.5 sm:gap-2">
+              {[1, 2, 3, 4, 5, 6].map((pageNum) => (
                 <button
                   key={pageNum}
                   type="button"
@@ -723,6 +698,166 @@ export default function Application() {
                       <span>Female □</span>
                     </label>
                   </div>
+                </div>
+
+                {/* Second Line: Child's Race & Ethnic background, Religion */}
+                <div className="md:col-span-7">
+                  <label className="block text-xs font-bold text-slate-800 mb-1">
+                    Child's Race & Ethnic background:
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.page1.childRaceEthnicity || ''}
+                    onChange={(e) => {
+                      const val = e.target.value
+                      setFormData((prev) => ({
+                        ...prev,
+                        page1: { ...prev.page1, childRaceEthnicity: val },
+                        page4: { ...prev.page4, childRaceEthnicity: val },
+                      }))
+                    }}
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
+                  />
+                </div>
+
+                <div className="md:col-span-5">
+                  <label className="block text-xs font-bold text-slate-800 mb-1">
+                    Religion:
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.page1.religion || ''}
+                    onChange={(e) => {
+                      const val = e.target.value
+                      setFormData((prev) => ({
+                        ...prev,
+                        page1: { ...prev.page1, religion: val },
+                        page4: { ...prev.page4, religion: val },
+                      }))
+                    }}
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
+                  />
+                </div>
+
+                {/* Social Services */}
+                <div className="md:col-span-12 space-y-2 pt-1">
+                  <div className="flex flex-wrap items-center gap-4">
+                    <label className="block text-xs font-bold text-slate-800">
+                      Is your child currently receiving support from or working with social services?
+                    </label>
+                    <div className="flex items-center gap-4">
+                      <label className="inline-flex items-center gap-1.5 text-xs text-slate-800 cursor-pointer">
+                        <input
+                          type="radio"
+                          name="receivingSocialServices"
+                          value="Yes"
+                          checked={formData.page1.receivingSocialServices === 'Yes'}
+                          onChange={() =>
+                            setFormData((prev) => ({
+                              ...prev,
+                              page1: { ...prev.page1, receivingSocialServices: 'Yes' },
+                              page5: { ...prev.page5, childInCareOrLookedAfter: 'Yes' },
+                            }))
+                          }
+                        />
+                        <span>Yes □</span>
+                      </label>
+                      <label className="inline-flex items-center gap-1.5 text-xs text-slate-800 cursor-pointer">
+                        <input
+                          type="radio"
+                          name="receivingSocialServices"
+                          value="No"
+                          checked={formData.page1.receivingSocialServices === 'No'}
+                          onChange={() =>
+                            setFormData((prev) => ({
+                              ...prev,
+                              page1: { ...prev.page1, receivingSocialServices: 'No' },
+                              page5: { ...prev.page5, childInCareOrLookedAfter: 'No' },
+                            }))
+                          }
+                        />
+                        <span>No □</span>
+                      </label>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-xs text-slate-700 mb-1">
+                      If yes, please provide the name of social worker or team (optional):
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.page1.socialWorkerDetails || ''}
+                      onChange={(e) => {
+                        const val = e.target.value
+                        setFormData((prev) => ({
+                          ...prev,
+                          page1: { ...prev.page1, socialWorkerDetails: val },
+                          page5: { ...prev.page5, lookedAfterDetails: val },
+                        }))
+                      }}
+                      className="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
+                    />
+                  </div>
+                </div>
+
+                {/* Special Educational Needs or Disabilities */}
+                <div className="md:col-span-12">
+                  <label className="block text-xs font-bold text-slate-800 mb-1">
+                    Does your child have any special Educational needs or Disabilities? ( If yes, please share  details below)
+                  </label>
+                  <textarea
+                    rows={2}
+                    value={formData.page1.specialNeedsOrDisabilities || ''}
+                    onChange={(e) => {
+                      const val = e.target.value
+                      setFormData((prev) => ({
+                        ...prev,
+                        page1: { ...prev.page1, specialNeedsOrDisabilities: val },
+                        page5: { ...prev.page5, medicalNeedsDetails: val },
+                      }))
+                    }}
+                    className="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
+                  />
+                </div>
+
+                {/* Dietary needs */}
+                <div className="md:col-span-12">
+                  <label className="block text-xs font-bold text-slate-800 mb-1">
+                    Any dietary needs for food or drinks?
+                  </label>
+                  <textarea
+                    rows={2}
+                    value={formData.page1.dietaryNeeds || ''}
+                    onChange={(e) => {
+                      const val = e.target.value
+                      setFormData((prev) => ({
+                        ...prev,
+                        page1: { ...prev.page1, dietaryNeeds: val },
+                        page5: { ...prev.page5, specialDietaryRequirements: val },
+                      }))
+                    }}
+                    className="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
+                  />
+                </div>
+
+                {/* Child's Previous Childcare */}
+                <div className="md:col-span-12">
+                  <label className="block text-xs font-bold text-slate-800 mb-1">
+                    Child's Previous Childcare
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.page1.previousChildcare || ''}
+                    onChange={(e) => {
+                      const val = e.target.value
+                      setFormData((prev) => ({
+                        ...prev,
+                        page1: { ...prev.page1, previousChildcare: val },
+                        page4: { ...prev.page4, previousChildcare: val },
+                      }))
+                    }}
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
+                  />
                 </div>
               </div>
 
@@ -1306,23 +1441,11 @@ export default function Application() {
           ══════════════════════════════════════════════════════════════════ */}
           {currentPage === 3 && (
             <div className="bg-white rounded-3xl shadow-sm border border-slate-200 p-6 md:p-10 space-y-8 animate-fadeIn">
-              {/* Payment Notes & Bank Details */}
-              <div className="space-y-3 text-xs text-slate-700 leading-relaxed">
-                <p className="font-bold">Please note that the Day rate applies if care is provided for over 5 hours.</p>
-                <p className="font-bold">Charges are based on an hourly rate, and I do not offer half-hour charges.</p>
+              {/* Payment Notes */}
+              <div className="text-xs text-slate-700 leading-relaxed">
                 <p>
-                  Fees are payable in advance on a weekly, 4-weekly, or monthly basis. Fees can be paid by cash, tax-free childcare voucher, Universal Credit, or online bank transfer to the following account:
+                  Fees are payable in advance on a weekly, 4-weekly, or monthly basis. Fees can be paid by cash, tax-free childcare voucher, Universal Credit, or online bank transfer.
                 </p>
-
-                <div className="border border-slate-300 rounded-xl p-4 bg-slate-50 space-y-1">
-                  <div className="font-bold text-slate-900 underline mb-1">Bank Details:</div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    <div>NatWest Bank</div>
-                    <div>Account Name: Avril Cole</div>
-                    <div>Sort Code: 50-10-29</div>
-                    <div>Account Number: 25869043</div>
-                  </div>
-                </div>
               </div>
 
               {/* Session & Start date required */}
@@ -1333,15 +1456,10 @@ export default function Application() {
                   </h2>
                 </div>
 
-                <div className="text-xs text-slate-700 space-y-1 bg-slate-50 p-3 rounded-xl border border-slate-200">
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                    <div><strong>Morning:</strong> 08:00 -1:00 PM</div>
-                    <div><strong>Afternoon:</strong> 12 -12:45PM to 5-5:45 PM</div>
-                    <div><strong>Full Day:</strong> 08:00 – 6:00PM</div>
-                  </div>
-                  <div className="font-semibold text-slate-800 pt-1">Friday closes at 5 PM</div>
-                  <div className="font-bold text-amber-900 pt-1">
-                    Please note that I Only Accept Children for a minimum of 2 Full days and 3 part-time days.
+                <div className="text-xs text-slate-700 bg-slate-50 p-3 rounded-xl border border-slate-200">
+                  <div className="flex flex-wrap items-center gap-x-6 gap-y-1">
+                    <div><strong>Full Day:</strong> 8-6 pm</div>
+                    <div className="font-semibold text-slate-800">Friday closes at 5 PM</div>
                   </div>
                 </div>
 
@@ -1388,7 +1506,7 @@ export default function Application() {
                         [
                           { key: 'row8to1', label: '8 – 1pm (5 hrs/day)' },
                           { key: 'row12to5', label: '12 - 12:45 - 5 - 5:45 PM (5 hrs/day)' },
-                          { key: 'rowFullDay', label: 'Full day (max 10 hrs/day)' },
+                          { key: 'rowFullDay', label: 'Full Day 8-6 pm' },
                         ] as const
                       ).map(({ key, label }) => (
                         <tr key={key} className="hover:bg-slate-50/50">
@@ -1431,6 +1549,11 @@ export default function Application() {
                     <strong>{fundedSummary.totalFundedHrs} hrs / week</strong>
                   </div>
                 )}
+
+                <div className="text-xs font-bold text-amber-900 bg-amber-50/70 px-3.5 py-2.5 rounded-xl border border-amber-200/80 space-y-1">
+                  <div>Full Day 8-6 pm</div>
+                  <div>Please note that I only Accept children for a minimum of 2 full days and 3 part time days</div>
+                </div>
               </div>
 
               {/* Contracted Hours Table */}
@@ -1594,7 +1717,7 @@ export default function Application() {
                     )}
                   </div>
 
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
                     {/* Weekly Cost */}
                     <div className="p-3 bg-white rounded-xl border border-slate-200 shadow-xs">
                       <span className="text-slate-500 block text-[11px]">Weekly Fee:</span>
@@ -1625,17 +1748,6 @@ export default function Application() {
                       </strong>
                       <span className="text-[10px] text-slate-400 block mt-0.5">
                         Calendar month (52wks/12)
-                      </span>
-                    </div>
-
-                    {/* 50% Retainer Fee */}
-                    <div className="p-3 bg-white rounded-xl border border-slate-200 shadow-xs">
-                      <span className="text-slate-500 block text-[11px]">50% Retainer Fee:</span>
-                      <strong className="text-base text-[var(--color-primary-700)] font-bold block mt-0.5">
-                        {weeklyDetails.retainerFee50Str || '£0.00'}
-                      </strong>
-                      <span className="text-[10px] text-slate-400 block mt-0.5">
-                        To reserve place next term
                       </span>
                     </div>
                   </div>
@@ -1686,39 +1798,23 @@ export default function Application() {
                   </h2>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-xs font-bold text-slate-800 mb-1">Start of contract:</label>
-                    <input
-                      type="date"
-                      value={formData.page4.contractStartDate}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          page4: { ...formData.page4, contractStartDate: e.target.value },
-                        })
-                      }
-                      className="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-bold text-slate-800 mb-1">End of Contract:</label>
-                    <input
-                      type="date"
-                      value={formData.page4.contractEndDate}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          page4: { ...formData.page4, contractEndDate: e.target.value },
-                        })
-                      }
-                      className="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
-                    />
-                  </div>
+                <div className="max-w-md">
+                  <label className="block text-xs font-bold text-slate-800 mb-1">Start of contract:</label>
+                  <input
+                    type="date"
+                    value={formData.page4.contractStartDate}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        page4: { ...formData.page4, contractStartDate: e.target.value },
+                      })
+                    }
+                    className="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
+                  />
                 </div>
 
                 <p className="text-xs font-bold text-slate-800 pt-1">
-                  A minimum of four weeks’ notice is required to end the contract if no end date is stated.
+                  A minimum of four weeks’ notice is required to end the contract.
                 </p>
               </div>
 
@@ -1731,183 +1827,8 @@ export default function Application() {
                   <p>Childminder holiday – Full fee applied</p>
                   <p>Childminder sickness: No fee will be paid.</p>
                 </div>
-
-                <div className="space-y-1">
-                  <h3 className="font-bold text-slate-900 underline">Swapping day:</h3>
-                  <p>The session and hours are FIXED and not interchangeable. If an extra day(s) is required, it’s chargeable.</p>
-                </div>
-
-                <div className="space-y-1">
-                  <h3 className="font-bold text-slate-900 underline">Change of Contracted Day(s):</h3>
-                  <p>A minimum of 2 weeks’ notice is required to amend your contracted days, subject to availability.</p>
-                </div>
-
-                <div className="space-y-1">
-                  <h3 className="font-bold text-slate-900 underline">Holidays:</h3>
-                  <p>The full fee will still be charged on bank holidays if the day falls on your child’s contracted or regular working day.</p>
-                </div>
-
-                <div>
-                  <span className="font-bold text-slate-900">Settling-in period:</span> I offer up to 2 hours of complimentary settling-in time, prorated for part-time.
-                </div>
-
-                <div>
-                  <span className="font-bold text-slate-900">Retainer Fee:</span> Parents pay a 50% fee to confirm and reserve their child’s place for the following term.
-                </div>
-
-                <div className="space-y-1">
-                  <h3 className="font-bold text-slate-900 underline">Food & Healthy Eating</h3>
-                  <p>
-                    Due to life-threatening allergies, I ask that parents bring in their children’s food. I provide healthy, complimentary snack options such as fruit, vegetables, sandwiches, rice cakes, breadsticks or similar choices.
-                  </p>
-                </div>
               </div>
 
-              {/* Race & Ethnicity */}
-              <div className="pt-4 border-t-2 border-slate-800 space-y-4">
-                <div className="border-b border-slate-300 pb-2">
-                  <h2 className="text-base md:text-lg font-bold text-slate-900 underline">
-                    Race & Ethnicity
-                  </h2>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-                  <div>
-                    <label className="block font-bold text-slate-800 mb-1">Child:</label>
-                    <input
-                      type="text"
-                      value={formData.page4.childRaceEthnicity}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          page4: { ...formData.page4, childRaceEthnicity: e.target.value },
-                        })
-                      }
-                      className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block font-bold text-slate-800 mb-1">Family:</label>
-                    <input
-                      type="text"
-                      value={formData.page4.familyRaceEthnicity}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          page4: { ...formData.page4, familyRaceEthnicity: e.target.value },
-                        })
-                      }
-                      className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block font-bold text-slate-800 mb-1">Language(s) understood by the child:</label>
-                    <input
-                      type="text"
-                      value={formData.page4.languagesUnderstoodChild}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          page4: { ...formData.page4, languagesUnderstoodChild: e.target.value },
-                        })
-                      }
-                      className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block font-bold text-slate-800 mb-1">Language(s) spoken by family:</label>
-                    <input
-                      type="text"
-                      value={formData.page4.languagesSpokenFamily}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          page4: { ...formData.page4, languagesSpokenFamily: e.target.value },
-                        })
-                      }
-                      className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block font-bold text-slate-800 mb-1">Language(s) spoken by the child:</label>
-                    <input
-                      type="text"
-                      value={formData.page4.languagesSpokenChild}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          page4: { ...formData.page4, languagesSpokenChild: e.target.value },
-                        })
-                      }
-                      className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block font-bold text-slate-800 mb-1">Does the family require translation & in which language?</label>
-                    <input
-                      type="text"
-                      value={formData.page4.translationRequired}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          page4: { ...formData.page4, translationRequired: e.target.value },
-                        })
-                      }
-                      className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block font-bold text-slate-800 mb-1">Religion:</label>
-                    <input
-                      type="text"
-                      value={formData.page4.religion}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          page4: { ...formData.page4, religion: e.target.value },
-                        })
-                      }
-                      className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block font-bold text-slate-800 mb-1">Festivals family celebrates festivals:</label>
-                    <input
-                      type="text"
-                      value={formData.page4.festivalsCelebrated}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          page4: { ...formData.page4, festivalsCelebrated: e.target.value },
-                        })
-                      }
-                      className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
-                    />
-                  </div>
-                </div>
-
-                <div className="pt-2">
-                  <label className="block text-xs font-bold text-slate-800 mb-1">Child's previous childcare:</label>
-                  <input
-                    type="text"
-                    value={formData.page4.previousChildcare}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        page4: { ...formData.page4, previousChildcare: e.target.value },
-                      })
-                    }
-                    className="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
-                  />
-                </div>
-              </div>
             </div>
           )}
 
@@ -1915,215 +1836,161 @@ export default function Application() {
               PAGE 5
           ══════════════════════════════════════════════════════════════════ */}
           {currentPage === 5 && (
-            <div className="bg-white rounded-3xl shadow-sm border border-slate-200 p-6 md:p-10 space-y-8 animate-fadeIn">
-              {/* Previous Nursery attended */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-                <div>
-                  <label className="block font-bold text-slate-800 mb-1">Name of Nursery/ childcare attended:</label>
-                  <input
-                    type="text"
-                    value={formData.page5.nurseryAttendedName}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        page5: { ...formData.page5, nurseryAttendedName: e.target.value },
-                      })
-                    }
-                    className="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
-                  />
-                </div>
-                <div>
-                  <label className="block font-bold text-slate-800 mb-1">Address (if known):</label>
-                  <input
-                    type="text"
-                    value={formData.page5.nurseryAttendedAddress}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        page5: { ...formData.page5, nurseryAttendedAddress: e.target.value },
-                      })
-                    }
-                    className="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-xs focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
-                  />
-                </div>
-              </div>
-
-              {/* Other Family Members */}
-              <div className="pt-4 border-t-2 border-slate-800 space-y-4">
-                <div className="border-b border-slate-300 pb-2">
-                  <h2 className="text-base md:text-lg font-bold text-slate-900 underline">
-                    Other Family Members:
+            <div className="bg-white rounded-3xl shadow-sm border border-slate-200 p-6 md:p-10 space-y-6 animate-fadeIn">
+              {/* Medical Information */}
+              <div className="space-y-4 text-xs">
+                <div className="border-b-2 border-slate-800 pb-2">
+                  <h2 className="text-base md:text-lg font-bold text-slate-900">
+                    Medical Information
                   </h2>
                 </div>
-                <p className="text-xs text-slate-700">Please provide the names of all children in the family in age order:</p>
+
+                {/* General Practitioner Name & Address */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block font-bold text-slate-800 mb-1">
+                      General Practitioner's Name:
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Doctor's name or surgery name"
+                      value={formData.page5.gpName || ''}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          page5: { ...formData.page5, gpName: e.target.value },
+                        })
+                      }
+                      className="w-full px-3.5 py-2 border border-slate-300 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block font-bold text-slate-800 mb-1">
+                      General Practitioner's Address:
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Full surgery address"
+                      value={formData.page5.gpAddress || ''}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          page5: { ...formData.page5, gpAddress: e.target.value },
+                        })
+                      }
+                      className="w-full px-3.5 py-2 border border-slate-300 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
+                    />
+                  </div>
+                </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {/* Column 1: 1, 2, 3 */}
-                  <div className="space-y-2">
-                    {[0, 1, 2].map((idx) => (
-                      <div key={idx} className="grid grid-cols-12 gap-2 text-xs items-center bg-slate-50 p-2 rounded-lg border border-slate-200">
-                        <span className="col-span-1 font-bold">{idx + 1}.</span>
-                        <div className="col-span-6">
-                          <input
-                            type="text"
-                            placeholder="Name"
-                            value={formData.page5.familyChildren[idx].name}
-                            onChange={(e) => {
-                              const updated = [...formData.page5.familyChildren] as any
-                              updated[idx].name = e.target.value
-                              setFormData({ ...formData, page5: { ...formData.page5, familyChildren: updated } })
-                            }}
-                            className="w-full px-2 py-1 border border-slate-300 rounded bg-white text-xs"
-                          />
-                        </div>
-                        <div className="col-span-5">
-                          <input
-                            type="text"
-                            placeholder="D.O.B"
-                            value={formData.page5.familyChildren[idx].dob}
-                            onChange={(e) => {
-                              const updated = [...formData.page5.familyChildren] as any
-                              updated[idx].dob = e.target.value
-                              setFormData({ ...formData, page5: { ...formData.page5, familyChildren: updated } })
-                            }}
-                            className="w-full px-2 py-1 border border-slate-300 rounded bg-white text-xs"
-                          />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Column 2: 4, 5, 6 */}
-                  <div className="space-y-2">
-                    {[3, 4, 5].map((idx) => (
-                      <div key={idx} className="grid grid-cols-12 gap-2 text-xs items-center bg-slate-50 p-2 rounded-lg border border-slate-200">
-                        <span className="col-span-1 font-bold">{idx + 1}.</span>
-                        <div className="col-span-6">
-                          <input
-                            type="text"
-                            placeholder="Name"
-                            value={formData.page5.familyChildren[idx].name}
-                            onChange={(e) => {
-                              const updated = [...formData.page5.familyChildren] as any
-                              updated[idx].name = e.target.value
-                              setFormData({ ...formData, page5: { ...formData.page5, familyChildren: updated } })
-                            }}
-                            className="w-full px-2 py-1 border border-slate-300 rounded bg-white text-xs"
-                          />
-                        </div>
-                        <div className="col-span-5">
-                          <input
-                            type="text"
-                            placeholder="D.O.B"
-                            value={formData.page5.familyChildren[idx].dob}
-                            onChange={(e) => {
-                              const updated = [...formData.page5.familyChildren] as any
-                              updated[idx].dob = e.target.value
-                              setFormData({ ...formData, page5: { ...formData.page5, familyChildren: updated } })
-                            }}
-                            className="w-full px-2 py-1 border border-slate-300 rounded bg-white text-xs"
-                          />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Position in family */}
-                <div className="flex flex-wrap items-center gap-4 text-xs pt-2">
-                  <span className="font-bold text-slate-800">Position in family:</span>
-                  {(['1', '2', '3', '4', '5', '6'] as const).map((pos) => (
-                    <label key={pos} className="inline-flex items-center gap-1 cursor-pointer">
-                      <input
-                        type="radio"
-                        name="positionInFamily"
-                        value={pos}
-                        checked={formData.page5.positionInFamily === pos}
-                        onChange={() =>
-                          setFormData({
-                            ...formData,
-                            page5: { ...formData.page5, positionInFamily: pos },
-                          })
-                        }
-                      />
-                      <span>{pos}□</span>
+                  <div>
+                    <label className="block font-bold text-slate-800 mb-1">
+                      Phone no:
                     </label>
-                  ))}
-                </div>
-              </div>
-
-              {/* Social Service */}
-              <div className="pt-4 border-t-2 border-slate-800 space-y-3 text-xs">
-                <div className="border-b border-slate-300 pb-2">
-                  <h2 className="text-base font-bold text-slate-900">
-                    Social Service:
-                  </h2>
-                </div>
-
-                <div className="flex flex-wrap items-center gap-4">
-                  <span className="text-slate-800">Is your child “in care” or a “looked-after” service?</span>
-                  <label className="inline-flex items-center gap-1 cursor-pointer">
                     <input
-                      type="radio"
-                      name="childInCareOrLookedAfter"
-                      value="Yes"
-                      checked={formData.page5.childInCareOrLookedAfter === 'Yes'}
-                      onChange={() =>
+                      type="tel"
+                      placeholder="Surgery phone number"
+                      value={formData.page5.gpPhone || ''}
+                      onChange={(e) =>
                         setFormData({
                           ...formData,
-                          page5: { ...formData.page5, childInCareOrLookedAfter: 'Yes' },
+                          page5: { ...formData.page5, gpPhone: e.target.value },
                         })
                       }
+                      className="w-full px-3.5 py-2 border border-slate-300 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
                     />
-                    <span>Yes □</span>
-                  </label>
-                  <label className="inline-flex items-center gap-1 cursor-pointer">
+                  </div>
+
+                  <div>
+                    <label className="block font-bold text-slate-800 mb-1">
+                      Health visitor name:
+                    </label>
                     <input
-                      type="radio"
-                      name="childInCareOrLookedAfter"
-                      value="No"
-                      checked={formData.page5.childInCareOrLookedAfter === 'No'}
-                      onChange={() =>
+                      type="text"
+                      placeholder="Health visitor name"
+                      value={formData.page5.healthVisitorName || ''}
+                      onChange={(e) =>
                         setFormData({
                           ...formData,
-                          page5: { ...formData.page5, childInCareOrLookedAfter: 'No' },
+                          page5: { ...formData.page5, healthVisitorName: e.target.value },
                         })
                       }
+                      className="w-full px-3.5 py-2 border border-slate-300 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
                     />
-                    <span>No □</span>
-                  </label>
+                  </div>
                 </div>
 
-                <div>
-                  <label className="block text-slate-800 mb-1">If so, please give the details below:</label>
+                {/* Immunisations & Dental */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-slate-200">
+                  <div className="space-y-1.5">
+                    <label className="block font-bold text-slate-800">
+                      Immunisations: Are they up to date?
+                    </label>
+                    <div className="flex items-center gap-6 pt-1">
+                      <label className="inline-flex items-center gap-2 cursor-pointer font-medium">
+                        <input
+                          type="radio"
+                          name="immunisationsUpToDate"
+                          value="Yes"
+                          checked={formData.page5.immunisationsUpToDate === 'Yes'}
+                          onChange={() =>
+                            setFormData({
+                              ...formData,
+                              page5: { ...formData.page5, immunisationsUpToDate: 'Yes' },
+                            })
+                          }
+                          className="w-4 h-4 text-[var(--color-primary-600)]"
+                        />
+                        <span>Yes</span>
+                      </label>
+                      <label className="inline-flex items-center gap-2 cursor-pointer font-medium">
+                        <input
+                          type="radio"
+                          name="immunisationsUpToDate"
+                          value="No"
+                          checked={formData.page5.immunisationsUpToDate === 'No'}
+                          onChange={() =>
+                            setFormData({
+                              ...formData,
+                              page5: { ...formData.page5, immunisationsUpToDate: 'No' },
+                            })
+                          }
+                          className="w-4 h-4 text-[var(--color-primary-600)]"
+                        />
+                        <span>No</span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block font-bold text-slate-800 mb-1">
+                      Dental treatment?
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Regular checkups, dentist name, or none"
+                      value={formData.page5.dentalTreatment || ''}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          page5: { ...formData.page5, dentalTreatment: e.target.value },
+                        })
+                      }
+                      className="w-full px-3.5 py-2 border border-slate-300 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
+                    />
+                  </div>
+                </div>
+
+                {/* Childhood illnesses / serious conditions */}
+                <div className="pt-2 border-t border-slate-200">
+                  <label className="block font-bold text-slate-800 mb-1">
+                    Any childhood illneses/ serious condition? If yes, please give details below.
+                  </label>
                   <textarea
                     rows={2}
-                    value={formData.page5.lookedAfterDetails}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        page5: { ...formData.page5, lookedAfterDetails: e.target.value },
-                      })
-                    }
-                    className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
-                  />
-                </div>
-              </div>
-
-              {/* Medical Needs */}
-              <div className="pt-4 border-t-2 border-slate-800 space-y-3 text-xs">
-                <div className="border-b border-slate-300 pb-2">
-                  <h2 className="text-base font-bold text-slate-900">
-                    Medical Needs:
-                  </h2>
-                </div>
-
-                <div>
-                  <label className="block text-slate-800 mb-1">
-                    Does your child have any medical needs (i.e., medical, religious, cultural? If so, please give the details below:
-                  </label>
-                  <textarea
-                    rows={2}
+                    placeholder="Details if yes, or leave blank if none"
                     value={formData.page5.medicalNeedsDetails}
                     onChange={(e) =>
                       setFormData({
@@ -2135,12 +2002,14 @@ export default function Application() {
                   />
                 </div>
 
+                {/* Allergies / health conditions */}
                 <div>
-                  <label className="block text-slate-800 mb-1">
-                    Any allergies, e.g. penicillin, plasters, anaesthetics, food allergies, wasp stings/ insect bites?
+                  <label className="block font-bold text-slate-800 mb-1">
+                    Any Allergies/ health conditions, e.g asthma, eczema, inhaler/ epipen, penicillin, food, plaster, etc
                   </label>
                   <textarea
                     rows={2}
+                    placeholder="Details of allergies, conditions, medications, or leave blank if none"
                     value={formData.page5.allergiesDetails}
                     onChange={(e) =>
                       setFormData({
@@ -2151,265 +2020,165 @@ export default function Application() {
                     className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
                   />
                 </div>
-
-                <div>
-                  <label className="block text-slate-800 mb-1">
-                    Any special dietary requirements for food likes/dislikes?
-                  </label>
-                  <textarea
-                    rows={2}
-                    value={formData.page5.specialDietaryRequirements}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        page5: { ...formData.page5, specialDietaryRequirements: e.target.value },
-                      })
-                    }
-                    className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
-                  />
-                </div>
               </div>
 
-              {/* Sickness & Medication notice */}
-              <div className="pt-4 border-t-2 border-slate-800 space-y-2 text-xs text-slate-700 leading-relaxed bg-slate-50 p-4 rounded-xl border border-slate-200">
-                <h3 className="font-bold text-slate-900 underline">Sickness & Medication:</h3>
-                <p>
-                  The registered childminder will inform the parent(s) / guardian(s) as soon as reasonably possible if there has been an illness in the household within the previous 24 hours before a contracted period or if unforeseen circumstances prevent them from being available to care for the child. The parent(s) / guardian(s) will inform the registered childminder if the child has been ill within 24 hours before a contracted period and provide written permission if the childminder is required to administer medication and/ or treatment.
-                </p>
-              </div>
-            </div>
-          )}
-
-          {/* ══════════════════════════════════════════════════════════════════
-              PAGE 6
-          ══════════════════════════════════════════════════════════════════ */}
-          {currentPage === 6 && (
-            <div className="bg-white rounded-3xl shadow-sm border border-slate-200 p-6 md:p-10 space-y-8 animate-fadeIn">
-              {/* Permissions */}
-              <div className="space-y-4">
-                <div className="border-b-2 border-slate-800 pb-2">
+              {/* Consent - Please tick to give permission */}
+              <div className="space-y-4 pt-4 border-t-2 border-slate-800">
+                <div className="pb-1">
                   <h2 className="text-base md:text-lg font-bold text-slate-900">
-                    Please tick to give permission:
+                    Consent - Please tick to give permission
                   </h2>
                 </div>
 
                 <div className="space-y-3 text-xs text-slate-800">
-                  <label className="flex items-start gap-2.5 cursor-pointer p-2.5 rounded-xl hover:bg-slate-50 border border-transparent hover:border-slate-200">
-                    <input
-                      type="checkbox"
-                      checked={formData.page6.emergencyHospitalTreatment}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          page6: { ...formData.page6, emergencyHospitalTreatment: e.target.checked },
-                        })
-                      }
-                      className="mt-0.5 w-4 h-4 rounded text-[var(--color-primary-600)]"
-                    />
-                    <span>My child can be taken to the hospital for treatment in the event of an emergency □</span>
-                  </label>
-
-                  <label className="flex items-start gap-2.5 cursor-pointer p-2.5 rounded-xl hover:bg-slate-50 border border-transparent hover:border-slate-200">
-                    <input
-                      type="checkbox"
-                      checked={formData.page6.localOutings}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          page6: { ...formData.page6, localOutings: e.target.checked },
-                        })
-                      }
-                      className="mt-0.5 w-4 h-4 rounded text-[var(--color-primary-600)]"
-                    />
-                    <span>My child can be taken on local outing trips □</span>
-                  </label>
-
-                  <label className="flex items-start gap-2.5 cursor-pointer p-2.5 rounded-xl hover:bg-slate-50 border border-transparent hover:border-slate-200">
-                    <input
-                      type="checkbox"
-                      checked={formData.page6.photosVideosLearningRecord}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          page6: { ...formData.page6, photosVideosLearningRecord: e.target.checked },
-                        })
-                      }
-                      className="mt-0.5 w-4 h-4 rounded text-[var(--color-primary-600)]"
-                    />
-                    <span>My child to have photographs/ videos taken for the learning record □</span>
-                  </label>
-
-                  <label className="flex items-start gap-2.5 cursor-pointer p-2.5 rounded-xl hover:bg-slate-50 border border-transparent hover:border-slate-200">
-                    <input
-                      type="checkbox"
-                      checked={formData.page6.transportInVehicle}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          page6: { ...formData.page6, transportInVehicle: e.target.checked },
-                        })
-                      }
-                      className="mt-0.5 w-4 h-4 rounded text-[var(--color-primary-600)]"
-                    />
-                    <span>My child is to be transported by the childminder/setting in the vehicle used for this purpose □</span>
-                  </label>
-
-                  <label className="flex items-start gap-2.5 cursor-pointer p-2.5 rounded-xl hover:bg-slate-50 border border-transparent hover:border-slate-200">
-                    <input
-                      type="checkbox"
-                      checked={formData.page6.transitionRecords}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          page6: { ...formData.page6, transitionRecords: e.target.checked },
-                        })
-                      }
-                      className="mt-0.5 w-4 h-4 rounded text-[var(--color-primary-600)]"
-                    />
-                    <span>My child’s records were passed on to the next setting as part of transition arrangements □</span>
-                  </label>
-                </div>
-              </div>
-
-              {/* Sickness Policy Text */}
-              <div className="pt-4 border-t-2 border-slate-800 space-y-2 text-xs text-slate-700 leading-relaxed bg-slate-50 p-5 rounded-2xl border border-slate-200">
-                <h3 className="font-bold text-slate-900 underline text-sm">Sickness</h3>
-                <p>
-                  Childminders are unable to care for children who are very ill. If a child is persistently coughing and sneezing and is unable to cover their mouth, they will not be able to attend. This is because it's important to prevent the spread of infection to other children and the childminder.
-                </p>
-                <p>
-                  If a child needs medication like Calpol before the session, they should not be sent to the childminder, as this only masks the symptom and does not prevent the spread of infection.
-                </p>
-                <p>
-                  If a child vomits or has diarrhoea, they must be picked up immediately and cannot return until they have been symptom-free for 48 hours.
-                </p>
-                <p>
-                  Please note that this is at my discretion. If I feel that your child is too ill, then I will not be able to provide care, and you will be required to make other arrangements.
-                </p>
-                <p>
-                  Any accidents are recorded in an accident book, which will need your signature to confirm that you have been notified. Any bumps or bruises that your child arrives with will also be recorded in an existing injury book; a brief explanation and your signature will again be required.
-                </p>
-                <p>
-                  You will be required to fill in a medicine record should your child require any medication whilst in my care.
-                </p>
-              </div>
-
-              {/* Collection Policy Text */}
-              <div className="pt-4 border-t-2 border-slate-800 space-y-2 text-xs text-slate-700 leading-relaxed bg-slate-50 p-5 rounded-2xl border border-slate-200">
-                <h3 className="font-bold text-slate-900 underline text-sm">Collection Policy</h3>
-                <p>
-                  If the child is collected earlier than the stated time, the full bookable fee still applies. All contracted hours must be paid for in full in advance, regardless of attendance, as a position has been reserved for your child, and it will not be possible to fill that position at short notice should your child not attend.
-                </p>
-                <p>
-                  Early drop-offs will not be accepted without prior arrangement, as this is normally a limited service due to OFSTED number restrictions.
-                </p>
-                <p>
-                  Late drop-off does not constitute late collection.
-                </p>
-                <p className="font-bold text-slate-900">
-                  Please remember that late collection is very distressing for the child. After 6:00 pm, I am not insured for your child to be on the premises.
-                </p>
-                <p className="font-bold underline">
-                  Parents should come and collect their child/ children 5 minutes before their pick-up time.
-                </p>
-                <p>
-                  Please inform me by telephone call at least 30 minutes beforehand, or at the earliest opportunity, if you expect to be late or if your child will not be attending for any reason.
-                </p>
-              </div>
-            </div>
-          )}
-
-          {/* ══════════════════════════════════════════════════════════════════
-              PAGE 7
-          ══════════════════════════════════════════════════════════════════ */}
-          {currentPage === 7 && (
-            <div className="bg-white rounded-3xl shadow-sm border border-slate-200 p-6 md:p-10 space-y-8 animate-fadeIn">
-              {/* Late Collection Breach and Terms */}
-              <div className="space-y-3 text-xs text-slate-700 leading-relaxed bg-slate-50 p-5 rounded-2xl border border-slate-200">
-                <p className="font-bold text-slate-900">
-                  Repeated late collection will be considered a breach of contract. The following procedures will be implemented in all late collections.
-                </p>
-                <p>
-                  A standard late pickup fee of £5.00 will be charged during the first 10 minutes after your scheduled pickup time. An additional £5 will be charged for every 5 minutes thereafter.
-                </p>
-                <p className="font-bold">
-                  The total late pickup charge should be paid by the next time you drop off your child.
-                </p>
-                <p>
-                  Failure to pay any fine incurred may result in the withdrawal of the services provided until payment is made.
-                </p>
-                <p>
-                  Parents are to pay a 50% retainer fee for term-time childcare. The fee confirms and reserves your child’s place for the following term.
-                </p>
-                <p>
-                  I will give a minimum of FOUR (4) weeks’ notice of my holidays. Full payment will be required when I am on holiday.
-                </p>
-                <p>
-                  Please do not hesitate to raise any concerns or issues you may have while your child or children are in my care. I am happy to discuss any concerns with you at any time, preferably during pick-ups.
-                </p>
-
-                {/* ── Automatic Late Pickup Fee Scale ── */}
-                <div className="mt-3 pt-3 border-t border-slate-200">
-                  <span className="font-bold text-slate-800 text-[11px] block mb-2">
-                    Late Pickup Fee Reference (Calculated per Contract Terms):
-                  </span>
-                  <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 text-center text-xs">
-                    <div className="p-2 bg-white rounded-lg border border-slate-200">
-                      <span className="text-slate-500 text-[10px] block">1–10 minutes late</span>
-                      <strong className="text-slate-900 text-sm">£5.00</strong>
+                  {/* Photo & Artwork within setting */}
+                  <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+                    <span className="font-semibold text-slate-900 block">
+                      I give/do not permit my child's photos and artwork to be used and displayed within the setting
+                    </span>
+                    <div className="flex items-center gap-6">
+                      <label className="inline-flex items-center gap-2 cursor-pointer font-medium">
+                        <input
+                          type="radio"
+                          name="photosArtworkSetting"
+                          value="give"
+                          checked={formData.page6.photosArtworkSetting === 'give'}
+                          onChange={() =>
+                            setFormData({
+                              ...formData,
+                              page6: { ...formData.page6, photosArtworkSetting: 'give' },
+                            })
+                          }
+                          className="w-4 h-4 text-[var(--color-primary-600)]"
+                        />
+                        <span>I give permission</span>
+                      </label>
+                      <label className="inline-flex items-center gap-2 cursor-pointer font-medium">
+                        <input
+                          type="radio"
+                          name="photosArtworkSetting"
+                          value="do_not_permit"
+                          checked={formData.page6.photosArtworkSetting === 'do_not_permit'}
+                          onChange={() =>
+                            setFormData({
+                              ...formData,
+                              page6: { ...formData.page6, photosArtworkSetting: 'do_not_permit' },
+                            })
+                          }
+                          className="w-4 h-4 text-[var(--color-primary-600)]"
+                        />
+                        <span>I do not permit</span>
+                      </label>
                     </div>
-                    <div className="p-2 bg-white rounded-lg border border-slate-200">
-                      <span className="text-slate-500 text-[10px] block">11–15 minutes late</span>
-                      <strong className="text-slate-900 text-sm">£10.00</strong>
-                    </div>
-                    <div className="p-2 bg-white rounded-lg border border-slate-200">
-                      <span className="text-slate-500 text-[10px] block">16–20 minutes late</span>
-                      <strong className="text-slate-900 text-sm">£15.00</strong>
-                    </div>
-                    <div className="p-2 bg-white rounded-lg border border-slate-200">
-                      <span className="text-slate-500 text-[10px] block">21–25 minutes late</span>
-                      <strong className="text-slate-900 text-sm">£20.00</strong>
-                    </div>
-                    <div className="p-2 bg-white rounded-lg border border-slate-200">
-                      <span className="text-slate-500 text-[10px] block">26–30 minutes late</span>
-                      <strong className="text-slate-900 text-sm">£25.00</strong>
+                  </div>
+
+                  {/* Photo on website */}
+                  <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+                    <span className="font-semibold text-slate-900 block">
+                      I give/ do not permit photos/work featuring my child to be included on the website
+                    </span>
+                    <div className="flex items-center gap-6">
+                      <label className="inline-flex items-center gap-2 cursor-pointer font-medium">
+                        <input
+                          type="radio"
+                          name="photosWebsite"
+                          value="give"
+                          checked={formData.page6.photosWebsite === 'give'}
+                          onChange={() =>
+                            setFormData({
+                              ...formData,
+                              page6: { ...formData.page6, photosWebsite: 'give' },
+                            })
+                          }
+                          className="w-4 h-4 text-[var(--color-primary-600)]"
+                        />
+                        <span>I give permission</span>
+                      </label>
+                      <label className="inline-flex items-center gap-2 cursor-pointer font-medium">
+                        <input
+                          type="radio"
+                          name="photosWebsite"
+                          value="do_not_permit"
+                          checked={formData.page6.photosWebsite === 'do_not_permit'}
+                          onChange={() =>
+                            setFormData({
+                              ...formData,
+                              page6: { ...formData.page6, photosWebsite: 'do_not_permit' },
+                            })
+                          }
+                          className="w-4 h-4 text-[var(--color-primary-600)]"
+                        />
+                        <span>I do not permit</span>
+                      </label>
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* Termination / Amendment of Contract */}
-              <div className="pt-2 space-y-2 text-xs text-slate-700 leading-relaxed">
-                <h3 className="font-bold text-slate-900 underline text-sm">TERMINATION/ AMENDMENT OF CONTRACT</h3>
-                <p>
-                  Four (4) full weeks’ notice, starting the following Monday or later, is required by either party to terminate or amend this agreement. This contract may be terminated without notice if the child’s behaviour becomes such that the safety and well-being of other children in my care are threatened by the parent(s) / guardian(s) or the child’s behaviour.
-                </p>
-                <p>
-                  You can cancel this agreement within 14 days of signing the form. After that, a minimum charge of 4 weeks' contracted cost will apply.
-                </p>
+              {/* Sickness Policy */}
+              <div className="pt-4 border-t-2 border-slate-800 space-y-3">
+                <div className="pb-1">
+                  <h2 className="text-base md:text-lg font-bold text-slate-900">
+                    Sickness
+                  </h2>
+                </div>
+                <div className="space-y-2.5 text-xs text-slate-700 leading-relaxed bg-slate-50 p-5 rounded-2xl border border-slate-200">
+                  <p>
+                    Divine Heritage may contact you if your child is unwell (e.g., persistent coughing or sneezing) to prevent spreading illness to other children and staff.
+                  </p>
+                  <p>
+                    Do not send your child if they were given antibiotics or Calpol before the session.
+                  </p>
+                  <p>
+                    Vomiting/Diarrhoea: Children must stay home for 48 hours after their last episode and until completely recovered.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ══════════════════════════════════════════════════════════════════
+              PAGE 6 (MERGED: COLLECTION & SIGNATURES)
+          ══════════════════════════════════════════════════════════════════ */}
+          {currentPage === 6 && (
+            <div className="bg-white rounded-3xl shadow-sm border border-slate-200 p-6 md:p-10 space-y-8 animate-fadeIn">
+              {/* Collection Section */}
+              <div className="space-y-4">
+                <div className="border-b-2 border-slate-800 pb-2">
+                  <h2 className="text-base md:text-lg font-bold text-slate-900">
+                    Collection
+                  </h2>
+                </div>
+                <div className="space-y-4 text-sm text-slate-700 leading-relaxed bg-slate-50 p-6 md:p-8 rounded-2xl border border-slate-200">
+                  <p>
+                    Full payment is required in advance for all contracted hours. No refunds or discounts are given for early collections, or absences.
+                  </p>
+                  <p>
+                    Early drop offs require prior arrangement due to strict staff to child ratio limits.
+                  </p>
+                  <p>
+                    Arrive 5 minutes before your scheduled pick up time. Repeated late pick ups constitute a breach of contract.
+                  </p>
+                  <p className="font-semibold text-slate-900">
+                    A late collection fee will incur a fine of £3.00 per minute.
+                  </p>
+                  <p>
+                    Fines are payable and failure to pay will result in withdrawal of service until payment is made.
+                  </p>
+                  <p>
+                    Call at least 30 minutes in advance (or as soon as possible) if your child will be late or absent.
+                  </p>
+                </div>
               </div>
 
-              {/* Bringing Things */}
-              <div className="space-y-1 text-xs text-slate-700">
-                <h3 className="font-bold text-slate-900 underline">Bringing Things</h3>
-                <p>Children are allowed to bring only one personal comfort toy during the settling-in period</p>
-              </div>
-
-              {/* Health & Safety */}
-              <div className="space-y-1 text-xs text-slate-700">
-                <h3 className="font-bold text-slate-900 underline">Health & Safety</h3>
-                <p>Buggies and pushchairs can be folded and stored in the shed, but they are left at the owner’s risk.</p>
-                <p>Bikes and scooters can be left, but at your own risk.</p>
-              </div>
-
-              {/* Agreement review clause */}
-              <div className="space-y-1 text-xs text-slate-800 font-semibold bg-amber-50/60 p-3 rounded-xl border border-amber-200">
-                <p>This Agreement is subject to review at the start of every calendar year.</p>
-                <p className="italic text-slate-600">(This agreement is valid until it is end-dated, or a new one is signed.)</p>
-              </div>
-
-              {/* Signatures */}
+              {/* Declarations & Signatures Section */}
               <div className="pt-4 border-t-2 border-slate-800 space-y-6">
+                <div className="border-b border-slate-200 pb-2">
+                  <h2 className="text-base md:text-lg font-bold text-slate-900">
+                    Declarations & Signatures
+                  </h2>
+                </div>
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   {/* Parent Signature Box */}
                   <div className="p-5 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-300 space-y-4">
@@ -2548,10 +2317,10 @@ export default function Application() {
             )}
 
             <div className="text-xs font-semibold text-slate-500">
-              Page {currentPage} of 7
+              Page {currentPage} of 6
             </div>
 
-            {currentPage < 7 ? (
+            {currentPage < 6 ? (
               <button
                 type="button"
                 onClick={handleNext}

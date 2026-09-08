@@ -65,7 +65,7 @@ export default function AdminApplications() {
   const [statusFilter, setStatusFilter] = useState<ApplicationStatus | 'all'>('all')
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedApp, setSelectedApp] = useState<ApplicationRecord | null>(null)
-  const [activeModalPage, setActiveModalPage] = useState<1 | 2 | 3 | 4 | 5 | 6 | 7>(1)
+  const [activeModalPage, setActiveModalPage] = useState<1 | 2 | 3 | 4 | 5 | 6>(1)
 
   useEffect(() => {
     const unsub = subscribeToApplications(
@@ -383,13 +383,12 @@ export default function AdminApplications() {
             {/* Modal Nav Tabs (Pages 1 to 7) */}
             <div className="flex border-b border-slate-200 bg-slate-50 px-4 sm:px-6 overflow-x-auto no-scrollbar text-xs">
               {[
-                { page: 1, label: 'Page 1: Parents & Contacts' },
+                { page: 1, label: 'Page 1: Child & Parents' },
                 { page: 2, label: 'Page 2: Funded Entitlements' },
                 { page: 3, label: 'Page 3: Hours Schedule' },
-                { page: 4, label: 'Page 4: Contract & Race/Ethnicity' },
-                { page: 5, label: 'Page 5: Family & Health' },
-                { page: 6, label: 'Page 6: Permissions & Policies' },
-                { page: 7, label: 'Page 7: Signatures' },
+                { page: 4, label: 'Page 4: Contract Duration & Terms' },
+                { page: 5, label: 'Page 5: Medical, Consent & Sickness' },
+                { page: 6, label: 'Page 6: Collection & Signatures' },
               ].map((tab) => (
                 <button
                   key={tab.page}
@@ -433,6 +432,15 @@ export default function AdminApplications() {
                       <div><span className="text-slate-400 block">Full name of Child:</span><strong>{selectedApp.page1?.childFullName || selectedApp.child?.fullName || '—'}</strong></div>
                       <div><span className="text-slate-400 block">Date of Birth:</span><strong>{selectedApp.page1?.childDob || selectedApp.child?.dob || '—'}</strong></div>
                       <div><span className="text-slate-400 block">Gender:</span><strong>{selectedApp.page1?.childGender || selectedApp.child?.sex || '—'}</strong></div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-3 border-t border-slate-200">
+                      <div><span className="text-slate-400 block">Child's Race & Ethnic Background:</span><strong>{selectedApp.page1?.childRaceEthnicity || selectedApp.page4?.childRaceEthnicity || '—'}</strong></div>
+                      <div><span className="text-slate-400 block">Religion:</span><strong>{selectedApp.page1?.religion || selectedApp.page4?.religion || '—'}</strong></div>
+                      <div><span className="text-slate-400 block">Social Services Support:</span><strong>{selectedApp.page1?.receivingSocialServices || selectedApp.page5?.childInCareOrLookedAfter || '—'}{selectedApp.page1?.socialWorkerDetails ? ` (${selectedApp.page1.socialWorkerDetails})` : selectedApp.page5?.lookedAfterDetails ? ` (${selectedApp.page5.lookedAfterDetails})` : ''}</strong></div>
+                      <div><span className="text-slate-400 block">Special Needs / Disabilities:</span><strong>{selectedApp.page1?.specialNeedsOrDisabilities || selectedApp.page5?.medicalNeedsDetails || '—'}</strong></div>
+                      <div><span className="text-slate-400 block">Dietary Needs:</span><strong>{selectedApp.page1?.dietaryNeeds || selectedApp.page5?.specialDietaryRequirements || '—'}</strong></div>
+                      <div><span className="text-slate-400 block">Child's Previous Childcare:</span><strong>{selectedApp.page1?.previousChildcare || selectedApp.page4?.previousChildcare || '—'}</strong></div>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-3 border-t border-slate-200">
@@ -554,7 +562,7 @@ export default function AdminApplications() {
                             {[
                               { key: 'row8to1', label: '8 – 1pm' },
                               { key: 'row12to5', label: '12 - 12:45 - 5 - 5:45 PM' },
-                              { key: 'rowFullDay', label: 'Full day' },
+                              { key: 'rowFullDay', label: 'Full Day 8-6 pm' },
                             ].map(({ key, label }) => {
                               const row = (selectedApp.page3?.fundedSchedule as any)?.[key]
                               return (
@@ -657,7 +665,7 @@ export default function AdminApplications() {
                             )}
                           </div>
 
-                          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+                          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
                             <div className="p-3 bg-white rounded-xl border border-slate-200 shadow-xs">
                               <span className="text-slate-500 block text-[11px]">Weekly Fee:</span>
                               <strong className="text-base text-slate-900 font-bold block mt-0.5">
@@ -685,16 +693,6 @@ export default function AdminApplications() {
                               </strong>
                               <span className="text-[10px] text-slate-400 block mt-0.5">
                                 Calendar month (52wks/12)
-                              </span>
-                            </div>
-
-                            <div className="p-3 bg-white rounded-xl border border-slate-200 shadow-xs">
-                              <span className="text-slate-500 block text-[11px]">50% Retainer Fee:</span>
-                              <strong className="text-base text-[var(--color-primary-700)] font-bold block mt-0.5">
-                                {modalFees.retainerFee50Str || '£0.00'}
-                              </strong>
-                              <span className="text-[10px] text-slate-400 block mt-0.5">
-                                To reserve place next term
                               </span>
                             </div>
                           </div>
@@ -742,30 +740,9 @@ export default function AdminApplications() {
                     <h4 className="font-bold uppercase tracking-wider text-slate-800 border-b pb-2">
                       Contract Duration
                     </h4>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      <div><span className="text-slate-400 block">Start of contract:</span><strong>{selectedApp.page4?.contractStartDate || '—'}</strong></div>
-                      <div><span className="text-slate-400 block">End of Contract:</span><strong>{selectedApp.page4?.contractEndDate || '—'}</strong></div>
-                    </div>
-                  </div>
-
-                  {/* Race & Ethnicity */}
-                  <div className="p-5 bg-slate-50 rounded-2xl border border-slate-200 space-y-3">
-                    <h4 className="font-bold uppercase tracking-wider text-[var(--color-primary-800)] border-b pb-2">
-                      Race & Ethnicity
-                    </h4>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      <div><span className="text-slate-400 block">Child:</span><strong>{selectedApp.page4?.childRaceEthnicity || '—'}</strong></div>
-                      <div><span className="text-slate-400 block">Family:</span><strong>{selectedApp.page4?.familyRaceEthnicity || '—'}</strong></div>
-                      <div><span className="text-slate-400 block">Language(s) understood by child:</span><strong>{selectedApp.page4?.languagesUnderstoodChild || '—'}</strong></div>
-                      <div><span className="text-slate-400 block">Language(s) spoken by family:</span><strong>{selectedApp.page4?.languagesSpokenFamily || '—'}</strong></div>
-                      <div><span className="text-slate-400 block">Language(s) spoken by child:</span><strong>{selectedApp.page4?.languagesSpokenChild || '—'}</strong></div>
-                      <div><span className="text-slate-400 block">Translation required & language:</span><strong>{selectedApp.page4?.translationRequired || '—'}</strong></div>
-                      <div><span className="text-slate-400 block">Religion:</span><strong>{selectedApp.page4?.religion || '—'}</strong></div>
-                      <div><span className="text-slate-400 block">Festivals family celebrates:</span><strong>{selectedApp.page4?.festivalsCelebrated || '—'}</strong></div>
-                    </div>
-                    <div className="pt-2">
-                      <span className="text-slate-400 block">Child's previous childcare:</span>
-                      <strong>{selectedApp.page4?.previousChildcare || '—'}</strong>
+                    <div>
+                      <span className="text-slate-400 block">Start of contract:</span>
+                      <strong>{selectedApp.page4?.contractStartDate || '—'}</strong>
                     </div>
                   </div>
                 </div>
@@ -774,93 +751,61 @@ export default function AdminApplications() {
               {/* PAGE 5 */}
               {activeModalPage === 5 && (
                 <div className="space-y-6">
-                  {/* Nursery attended */}
-                  <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
-                    <h4 className="font-bold uppercase tracking-wider text-slate-800">
-                      Previous Nursery / Childcare Attended
-                    </h4>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      <div><span className="text-slate-400 block">Name:</span><strong>{selectedApp.page5?.nurseryAttendedName || '—'}</strong></div>
-                      <div><span className="text-slate-400 block">Address:</span><strong>{selectedApp.page5?.nurseryAttendedAddress || '—'}</strong></div>
-                    </div>
-                  </div>
 
-                  {/* Other Family Members */}
+                  {/* Medical Information */}
                   <div className="p-5 bg-slate-50 rounded-2xl border border-slate-200 space-y-3">
                     <h4 className="font-bold uppercase tracking-wider text-slate-800 border-b pb-2">
-                      Other Family Members
+                      Medical Information
                     </h4>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      {(selectedApp.page5?.familyChildren || []).map((ch, i) => (
-                        <div key={i} className="p-2 bg-white rounded border border-slate-200">
-                          <span className="text-slate-400 block">{i + 1}. Child:</span>
-                          <strong>{ch.name || '—'} {ch.dob ? `(DOB: ${ch.dob})` : ''}</strong>
-                        </div>
-                      ))}
-                    </div>
-                    <div>
-                      <span className="text-slate-400 block">Position in family:</span>
-                      <strong>{selectedApp.page5?.positionInFamily ? `Position ${selectedApp.page5.positionInFamily}` : '—'}</strong>
-                    </div>
-                  </div>
-
-                  {/* Social Service */}
-                  <div className="p-5 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
-                    <h4 className="font-bold uppercase tracking-wider text-slate-800">
-                      Social Service
-                    </h4>
-                    <div>
-                      <span className="text-slate-400 block">Is child “in care” or “looked-after”:</span>
-                      <strong>{selectedApp.page5?.childInCareOrLookedAfter || '—'}</strong>
-                    </div>
-                    {selectedApp.page5?.lookedAfterDetails && (
                       <div>
-                        <span className="text-slate-400 block">Details:</span>
-                        <p className="bg-white p-2.5 rounded border border-slate-200">{selectedApp.page5.lookedAfterDetails}</p>
+                        <span className="text-slate-400 block">General Practitioner's Name:</span>
+                        <strong>{selectedApp.page5?.gpName || (selectedApp.page5?.gpNameAddress ? selectedApp.page5?.gpNameAddress.split('\n')[0] : '—')}</strong>
                       </div>
-                    )}
-                  </div>
-
-                  {/* Medical Needs */}
-                  <div className="p-5 bg-slate-50 rounded-2xl border border-slate-200 space-y-3">
-                    <h4 className="font-bold uppercase tracking-wider text-slate-800 border-b pb-2">
-                      Medical & Dietary Needs
-                    </h4>
+                      <div>
+                        <span className="text-slate-400 block">General Practitioner's Address:</span>
+                        <p className="bg-white p-2.5 rounded border border-slate-200">{selectedApp.page5?.gpAddress || selectedApp.page5?.gpNameAddress || '—'}</p>
+                      </div>
+                      <div>
+                        <span className="text-slate-400 block">Phone no:</span>
+                        <strong>{selectedApp.page5?.gpPhone || '—'}</strong>
+                      </div>
+                      <div>
+                        <span className="text-slate-400 block">Health visitor name:</span>
+                        <strong>{selectedApp.page5?.healthVisitorName || '—'}</strong>
+                      </div>
+                      <div>
+                        <span className="text-slate-400 block">Immunisations up to date?:</span>
+                        <strong>{selectedApp.page5?.immunisationsUpToDate || '—'}</strong>
+                      </div>
+                      <div>
+                        <span className="text-slate-400 block">Dental treatment:</span>
+                        <strong>{selectedApp.page5?.dentalTreatment || '—'}</strong>
+                      </div>
+                    </div>
                     <div>
-                      <span className="text-slate-400 block">Medical, religious, or cultural needs:</span>
+                      <span className="text-slate-400 block">Any childhood illnesses/ serious condition:</span>
                       <p className="bg-white p-2.5 rounded border border-slate-200">{selectedApp.page5?.medicalNeedsDetails || 'None stated'}</p>
                     </div>
                     <div>
-                      <span className="text-slate-400 block">Allergies (penicillin, plasters, anaesthetics, food, stings):</span>
+                      <span className="text-slate-400 block">Any Allergies/ health conditions:</span>
                       <p className="bg-white p-2.5 rounded border border-slate-200">{selectedApp.page5?.allergiesDetails || 'None stated'}</p>
                     </div>
-                    <div>
-                      <span className="text-slate-400 block">Special dietary requirements for food likes/dislikes:</span>
-                      <p className="bg-white p-2.5 rounded border border-slate-200">{selectedApp.page5?.specialDietaryRequirements || 'None stated'}</p>
-                    </div>
                   </div>
-                </div>
-              )}
 
-              {/* PAGE 6 */}
-              {activeModalPage === 6 && (
-                <div className="space-y-6">
-                  {/* Permissions */}
+                  {/* Consent & Permissions */}
                   <div className="p-5 bg-slate-50 rounded-2xl border border-slate-200 space-y-3">
                     <h4 className="font-bold uppercase tracking-wider text-[var(--color-primary-800)] border-b pb-2">
-                      Permissions Granted:
+                      Consent & Permissions:
                     </h4>
                     <div className="space-y-2">
                       {[
-                        { label: 'My child can be taken to the hospital for treatment in the event of an emergency', val: selectedApp.page6?.emergencyHospitalTreatment },
-                        { label: 'My child can be taken on local outing trips', val: selectedApp.page6?.localOutings },
-                        { label: 'My child to have photographs/ videos taken for the learning record', val: selectedApp.page6?.photosVideosLearningRecord },
-                        { label: 'My child is to be transported by the childminder/setting in the vehicle used for this purpose', val: selectedApp.page6?.transportInVehicle },
-                        { label: 'My child’s records were passed on to the next setting as part of transition arrangements', val: selectedApp.page6?.transitionRecords },
+                        { label: "Photos and artwork displayed within setting", status: selectedApp.page6?.photosArtworkSetting === 'give' ? '✓ I give permission' : selectedApp.page6?.photosArtworkSetting === 'do_not_permit' ? '✕ Do not permit' : '— Not stated' },
+                        { label: "Photos/work included on website", status: selectedApp.page6?.photosWebsite === 'give' ? '✓ I give permission' : selectedApp.page6?.photosWebsite === 'do_not_permit' ? '✕ Do not permit' : '— Not stated' },
                       ].map((item, idx) => (
                         <div key={idx} className="flex items-center gap-2 p-2 bg-white rounded border border-slate-200">
-                          <span className={item.val ? 'text-emerald-600 font-bold' : 'text-slate-400'}>
-                            {item.val ? '✓ Granted' : '— Not selected'}
+                          <span className={item.status.startsWith('✓') ? 'text-emerald-600 font-bold' : item.status.startsWith('✕') ? 'text-rose-600 font-bold' : 'text-slate-400'}>
+                            {item.status}
                           </span>
                           <span className="text-slate-800">{item.label}</span>
                         </div>
@@ -868,48 +813,29 @@ export default function AdminApplications() {
                     </div>
                   </div>
 
-                  {/* Policy confirmations */}
+                  {/* Sickness Policy Confirmation */}
                   <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-2 text-slate-600">
-                    <h4 className="font-bold text-slate-800">Policies Acknowledged</h4>
-                    <p>• Sickness Policy (Calpol, 48-hour sickness exclusion, accident & medicine books)</p>
-                    <p>• Collection Policy (Full fee applies if early, no unarranged early drop-off, 6pm closing, 5-min pick-up rule)</p>
+                    <h4 className="font-bold text-slate-800">Sickness Policy Confirmation</h4>
+                    <p>• Unwell contact policy (persistent coughing/sneezing)</p>
+                    <p>• Antibiotics or Calpol policy before session</p>
+                    <p>• 48-hour vomiting/diarrhoea rule until completely recovered</p>
                   </div>
                 </div>
               )}
 
-              {/* PAGE 7 */}
-              {activeModalPage === 7 && (
+              {/* PAGE 6 (MERGED: COLLECTION & SIGNATURES) */}
+              {activeModalPage === 6 && (
                 <div className="space-y-6">
-                  {/* Late Pickup Fee & Policy Reference */}
-                  <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
-                    <h4 className="font-bold text-slate-800 text-xs uppercase tracking-wider">
-                      Late Pickup Fee Reference (Document Terms)
-                    </h4>
-                    <p className="text-xs text-slate-600">
-                      A standard late pickup fee of £5.00 will be charged during the first 10 minutes after your scheduled pickup time. An additional £5 will be charged for every 5 minutes thereafter.
-                    </p>
-                    <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 text-center text-xs pt-1">
-                      <div className="p-2 bg-white rounded-lg border border-slate-200">
-                        <span className="text-slate-500 text-[10px] block">1–10 mins late</span>
-                        <strong className="text-slate-900 text-sm">£5.00</strong>
-                      </div>
-                      <div className="p-2 bg-white rounded-lg border border-slate-200">
-                        <span className="text-slate-500 text-[10px] block">11–15 mins late</span>
-                        <strong className="text-slate-900 text-sm">£10.00</strong>
-                      </div>
-                      <div className="p-2 bg-white rounded-lg border border-slate-200">
-                        <span className="text-slate-500 text-[10px] block">16–20 mins late</span>
-                        <strong className="text-slate-900 text-sm">£15.00</strong>
-                      </div>
-                      <div className="p-2 bg-white rounded-lg border border-slate-200">
-                        <span className="text-slate-500 text-[10px] block">21–25 mins late</span>
-                        <strong className="text-slate-900 text-sm">£20.00</strong>
-                      </div>
-                      <div className="p-2 bg-white rounded-lg border border-slate-200">
-                        <span className="text-slate-500 text-[10px] block">26–30 mins late</span>
-                        <strong className="text-slate-900 text-sm">£25.00</strong>
-                      </div>
-                    </div>
+                  <div className="p-5 bg-slate-50 rounded-2xl border border-slate-200 space-y-3 text-slate-700 text-xs">
+                    <h4 className="font-bold text-slate-900 text-sm">Collection</h4>
+                    <ul className="space-y-2 list-disc list-inside">
+                      <li>Full payment is required in advance for all contracted hours. No refunds or discounts are given for early collections, or absences.</li>
+                      <li>Early drop offs require prior arrangement due to strict staff to child ratio limits.</li>
+                      <li>Arrive 5 minutes before your scheduled pick up time. Repeated late pick ups constitute a breach of contract.</li>
+                      <li>A late collection fee will incur a fine of £3.00 per minute.</li>
+                      <li>Fines are payable and failure to pay will result in withdrawal of service until payment is made.</li>
+                      <li>Call at least 30 minutes in advance (or as soon as possible) if your child will be late or absent.</li>
+                    </ul>
                   </div>
 
                   {/* Signatures */}

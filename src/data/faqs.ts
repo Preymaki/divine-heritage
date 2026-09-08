@@ -35,10 +35,10 @@ export const FAQS: FAQ[] = [
     category: 'fees',
   },
   {
-    id: 'deposit',
-    question: 'Is a deposit required to secure a place?',
+    id: 'bank-holidays',
+    question: 'Are fees charged on bank holidays?',
     answer:
-      'Yes, a deposit equivalent to two weeks\' fees is required to secure a place. This is held throughout the placement and deducted from the final invoice. Notice periods and terms are outlined clearly in the contract.',
+      'The full fee will still be charged on bank holidays if the day falls on your child’s contracted or regular working day.',
     category: 'fees',
   },
   {
