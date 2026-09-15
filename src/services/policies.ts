@@ -33,14 +33,18 @@ export const POLICIES_COLLECTION = 'policies'
 // ---------------------------------------------------------------------------
 
 export async function addPolicy(input: PolicyInput): Promise<string> {
+  const data: Omit<Policy, 'id' | 'createdAt' | 'updatedAt'> = {
+    title:       input.title.trim(),
+    content:     input.content.trim(),
+    order:       input.order,
+    isPublished: input.isPublished,
+  }
+  if (input.category?.trim()) {
+    data.category = input.category.trim()
+  }
   return addDocument<Omit<Policy, 'id' | 'createdAt' | 'updatedAt'>>(
     POLICIES_COLLECTION,
-    {
-      title:       input.title.trim(),
-      content:     input.content.trim(),
-      order:       input.order,
-      isPublished: input.isPublished,
-    },
+    data,
   )
 }
 
@@ -51,6 +55,7 @@ export async function addPolicy(input: PolicyInput): Promise<string> {
 export async function updatePolicy(id: string, patch: PolicyPatch): Promise<void> {
   const sanitised: PolicyPatch = {}
   if (patch.title       !== undefined) sanitised.title       = patch.title.trim()
+  if (patch.category    !== undefined) sanitised.category    = patch.category.trim()
   if (patch.content     !== undefined) sanitised.content     = patch.content.trim()
   if (patch.order       !== undefined) sanitised.order       = patch.order
   if (patch.isPublished !== undefined) sanitised.isPublished = patch.isPublished
@@ -132,445 +137,535 @@ export function subscribeToPublishedPolicies(
 }
 
 // ---------------------------------------------------------------------------
-// Seed data — existing policy content
+// Official Policy Handbook (Verbatim — Updated September 2026 / Review September 2027)
 // ---------------------------------------------------------------------------
 
-interface SeedPolicy {
+export interface OfficialPolicyData {
   title: string
+  category: string
   content: string
 }
 
-const SEED_POLICIES: SeedPolicy[] = [
+export const OFFICIAL_POLICIES: OfficialPolicyData[] = [
+  // ── 1. Learning & Development ─────────────────────────────────────────────
   {
+    category: 'Learning & Development',
     title: 'Welcome',
-    content: `Welcome to Divine Heritage. This handbook provides information about my settings and what Ofsted requires.`,
+    content: `Welcome to Divine Heritage Childcare service, a warm, nurturing home-away-from-home place where every child thrives, grows, and belongs.
+
+It is a pleasure to welcome new families into the setting. Here, children are supported with personalised care, meaningful play, and gentle routines that help them feel safe, confident, and ready to explore. Every day is designed to encourage curiosity, build independence, and celebrate each child’s unique personality.`,
   },
   {
-    title: 'Ethos & Aims',
-    content: `"I believe in creating a nurturing environment where the children in my care feel happy, comfortable, and secure. I encourage them to learn through play, helping them to reach their full potential. Each child is treated as an individual with unique ideas and needs. I provide flexibility and continuity in care, allowing their routines to closely mirror those at home, which makes it easier for the children to settle in."
+    category: 'Learning & Development',
+    title: 'My Aims & Ethos',
+    content: `At Divine Heritage, my practice is rooted in three core pillars: helping every child belong, grow, and thrive. Through strong parent partnerships, safe environments, and enriching experiences, I am committed to fulfilling these aims every day:
 
-My Aims:
+1. Belong
+• I build strong, caring bonds with every child and family, ensuring parents and children feel welcomed, valued, and respected.
+• I listen actively to children, encouraging them to share their views, express their ideas constructively, and feel confident in who they are.
 
-1. To encourage children to be happy and confident
-2. To work with you (parent) to provide the best possible care for your child.
-3. To promote a caring, safe and stimulating learning environment
-4. To provide free-flow play in a safe environment
-5. Building a positive relationship
-6. To make sure children are competent and creative.
-7. I listen and encourage children to share their views and ideas constructively.
-8. I promote outdoor activities in my garden where children can learn and play. We also go to playgroups, parks, libraries and local farms.`,
+2. Grow
+• I provide a secure home-from-home setting with free-flow play where children feel safe to take managed risks, build confidence, and develop independence.
+• Through rich, child-led play, I spark curiosity and nurture creative, capable, and happy learners.
+
+3. Thrive
+• I work in close collaboration with parents to deliver tailored, consistent care that supports each child's overall well-being.
+• Children thrive through daily outdoor play in my garden as well as regular community outings to parks, libraries, playgroups, and local farms that expand their world.`,
   },
   {
-    title: 'Areas of Learning',
-    content: `The Early Years stage of learning and development covers three areas, which your child will mostly learn through games and play.
+    category: 'Learning & Development',
+    title: 'EYFS Assessment, Observation & Learning Journey Policy',
+    content: `As your child’s key person, I build a close relationship with them to support their unique growth, happiness, and learning. I follow the UK Early Years Foundation Stage (EYFS) framework, where children learn primarily through play across 7 key areas:
 
-The 7 areas of learning and development consist of 3 prime areas: communication and language, physical development, and personal, social, and emotional development. The 4 specific areas are literacy, mathematics, understanding the world and expressive arts & design.
+• Prime Areas: Communication & Language, Physical Development, Personal, Social & Emotional Development.
+• Specific Areas: Literacy, Mathematics, Understanding the World, Expressive Arts & Design.
 
-3 Prime Areas:
-- Communication and language
-- Physical development
-- Personal, social, and emotional development
+How I Assess Your Child
+• Ongoing (Formative) Assessment: I continuously observe your child during daily play to spot their interests, celebrate milestones, and plan their immediate next steps. I share updates with you regularly during pick-up and drop-off so we can work in partnership.
+• Two-Year Progress Check (Summative): Between 24 and 36 months, I complete a formal written summary of your child’s progress in the 3 Prime Areas, highlighting strengths and any extra support needed.
 
-4 Specific Areas:
-- Literacy
-- Mathematics
-- Understanding the world
-- Expressive arts & design`,
+Observations & Learning Journey
+To track progress and plan tailored, engaging activities, I make regular observations using written notes, photographs, and short video recordings.
+
+I gather all of these in your child's personal Learning Journey. This tracks their achievements and special moments while in my care. I share this with you via WhatsApp so you can add your own comments, photos, and updates from home.
+
+Special Educational Needs & Disability (SEND):
+• Any concerns regarding your child's progress in a prime area are discussed with you promptly so we can agree on support without delay.
+• Reasonable adjustments are made for disabled children. I follow the SEND Code of Practice, treating parents as equal partners in "assess-plan-do-review" arrangements and seeking outside professional support whenever needed.
+
+Supporting Children with English as an Additional Language (EAL)
+I value and celebrate the linguistic diversity of all children. For children learning English as an additional language, I ensure:
+• A child's home language is recognised as an essential foundation for learning. I encourage parents to continue speaking and reading in their home language at home.
+• With your guidance, I gather key words and phrases in your child’s home language (such as greetings, comfort words, and terms for personal needs) to help them feel safe, secure, and understood in my setting.
+• Children are given full opportunity to develop their home language through play while simultaneously acquiring English through visual aids, routine cards, body language, songs, stories, and rich conversational interactions.`,
+  },
+
+  // ── 2. Safeguarding & Child Policies ──────────────────────────────────────
+  {
+    category: 'Safeguarding & Child Policies',
+    title: 'Child Absence / Attendance Policy',
+    content: `At Divine Heritage, I am committed to providing a safe, reliable, and consistent service. Regular attendance supports your child’s routine, development, and well-being. Under the Early Years Foundation Stage (EYFS) statutory framework, keeping a daily attendance register is required. I take child protection very seriously and monitor attendance closely.
+
+• A daily register is kept recording all children's arrival and departure times to ensure the smooth operation of the setting and account for staff presence, to meet legal staff-to-child ratios throughout the day.
+• Please notify me as early as possible if your child will be absent or arriving late.
+• If your child has not arrived by 10:00 AM on a scheduled day and I have not heard from you, I will call you immediately.
+• If I cannot reach you, I will call your designated emergency contacts to verify your child's safety.
+• In line with local authority regulations, any prolonged or unnotified absence that raises welfare concerns will be referred to local safeguarding services.`,
   },
   {
-    title: 'Assessments',
-    content: `I do two types of assessments based on the Early Years Foundation Stage (EYFS).
+    category: 'Safeguarding & Child Policies',
+    title: 'Uncollected Child Policy & Procedure',
+    content: `At Divine Heritage, I am committed to ensuring the safety and emotional well-being of all children in my care. Children thrive on predictability, and arriving on time for collection helps them feel secure. I understand that emergencies, severe traffic, or unforeseen delays happen; however, clear communication and strict procedures must be followed to ensure your child always remains safe.
 
-The Early Years Foundation Stage requires early years practitioners to review children's progress and share a summary with parents at two points:
+• Please ensure your child is collected promptly at the agreed contracted time. Late arrivals can cause distress to young children who rely on daily routines.
+• If you anticipate being late due to an emergency, please call or text me immediately. This allows me to reassure your child and make suitable staffing or routine arrangements.
+• Children will only be released to parents/carers or adults designated as authorised collectors on your registration form. If someone else is collecting your child, you must inform me in advance, and a pre-agreed password system or photo identification check will be required.
 
-1. Ongoing Assessment: Ongoing assessments are conducted regularly during pick-up to provide feedback on what the child has learned and what can be done to support their continued learning. This type of assessment is known as a "formative" assessment, as it informs the next steps in the child's development in collaboration with the parent.
+If a child is not collected at the agreed time and I have received no prior notification from the parents/carers, the following procedure is initiated:
 
-2. Summative Assessment: Between the ages of 24 and 36 months via the progress check.`,
+• I will continue to care for your child safely within the setting, reassuring them to prevent any anxiety or distress.
+• If your child has not been collected after 15 minutes, I will attempt to contact you via all provided mobile and workplace telephone numbers.
+• If I cannot reach you, I will immediately begin calling your nominated emergency contacts to arrange collection.
+• I will continue attempting to reach parents and emergency contacts every few minutes.
+• Your child will remain fully supervised, comforted, and provided with snacks or activities as needed.
+• If 30 minutes have passed since the contracted collection time, all emergency contact attempts have failed. No communication has been established; I am legally obligated under my EYFS safeguarding duties to contact the Local Authority Children’s Social Care Duty Team (and/or the Out-of-Hours Emergency Duty Team) as well as the local police for advice and intervention.
+• I will follow all instructions given by the Social Care Duty Officer regarding the safe care or handover of your child.
+• A full written record of the incident, including times, contact attempts, and outcome, will be documented in my setting logs and shared with the local safeguarding board/Ofsted if required.
+• A late collection fee (as outlined in your childcare contract) will be charged to cover the additional staffing, resource, and operational costs incurred due to unnotified late pick-ups.`,
   },
   {
-    title: 'Observation Policy',
-    content: `Guidance to the Foundation Stage Curriculum states: 'Practitioners must be able to observe and respond appropriately to children'.
+    category: 'Safeguarding & Child Policies',
+    title: 'Lost / Missing Child Policy & Procedure',
+    content: `At Divine Heritage, the safety, security, and emotional well-being of your child are my highest priorities. While the thought of a child going missing is distressing, I maintain strict supervisory routines and preventative measures to ensure this remains an extremely unlikely event.
 
-This principle requires childminders to observe the children and respond appropriately to help them progress. This is demonstrated when childminders:
+However, as a responsible, Ofsted-registered childminder, I have a clear, robust protocol in place to act swiftly and decisively in an emergency.
 
-1. Make systematic observations and assessments of each child's achievements, interests and learning styles.
-2. Use these observations and assessments to identify learning priorities and plan relevant and motivating learning experiences for each child.
-3. Match their observations to the expectations of the early learning goals.
-4. I will follow the Early Years Foundation Stage guidance to assist me in my work.
-5. I will make regular observations on your child, using different media, for example, photographs, written observations and video recordings.`,
+To prevent any child from wandering off or becoming lost, I implement strict safety procedures whenever we leave the setting:
+
+• Depending on age and developmental stage, children use safety reins, wrist straps, or always hold my hand/the pushchair when walking near roads or in public spaces.
+• During outings away from our local area, children wear discreet wristbands containing my contact telephone number (no child names are displayed for safeguarding reasons).
+• Children wear bright, high-visibility vests on outings, making them easily identifiable in public places.
+• I complete thorough risk assessments before visiting new locations and consciously avoid overcrowded or uncontained environments during peak hours.
+• I continuously teach children about spatial awareness, the importance of staying close, and what to do if they ever feel separated (e.g., finding a safe adult or shop assistant).
+• Continuous headcounts are conducted throughout all outings, especially when transitioning between spaces or vehicles.
+
+If a child becomes separated from the group, I will remain calm and immediately execute the following step-by-step procedure:
+
+• I will immediately raise the alarm to staff, venue attendants, or members of the public nearby to enlist immediate help in searching the surrounding area.
+• If in a contained or managed area (e.g., shopping centre, zoo, or soft play), I will alert security personnel immediately so they can monitor CCTV and manage access exits.
+• I will keep all other minded children calm, safe, and closely supervised alongside me throughout the search to prevent further distress or risk.
+• If the child is not located within 5 minutes, I will call 999 to alert the Police, providing a precise description of the child (including physical features, clothing, and last known location).
+• Immediately after contacting the police, I will call you (the parent/carer) to inform you calmly of the situation, the actions taken, and where to meet us.
+• In line with legal requirements, I will inform the Local Authority Children’s Social Care/Safeguarding Team and Ofsted as soon as reasonably practicable (and within 14 days) following any serious incident.`,
   },
   {
-    title: 'Learning Journey',
-    content: `This records your child's learning during their time with me. Observations of your child playing and interacting with others are added alongside photographs and videos. These observations are used to inform planning and assessments. You can add your comments whenever you wish.`,
+    category: 'Safeguarding & Child Policies',
+    title: 'Prevent Duty & Counter-Extremism Policy',
+    content: `At Divine Heritage, safeguarding children’s safety, emotional well-being, and moral development is my highest duty. In compliance with Section 26 of the Counter terrorism and Security Act 2015, the statutory Prevent Duty Guidance, and the EYFS Statutory Framework, I am legally required to protect children from the risks of radicalisation, extreme views, and being drawn into terrorism.
+
+I recognise that radicalisation is a safeguarding concern like any other. I embed protective measures into daily routines to nurture an inclusive, critical-thinking, and resilient environment.
+
+• I maintain an active awareness of potential vulnerability factors in a child's life at home or in the community. I monitor for indicators of concern, such as sudden changes in family dynamics, exposure to extreme ideological views, or hostility toward other cultures and faiths.
+• I undertake mandatory Prevent Duty and Channel awareness training to ensure I have the knowledge and confidence to spot early warning signs, challenge extremist narratives, and follow correct referral pathways.
+
+I build children’s resilience to negative influences by embedding fundamental British values into everyday play:
+o Democracy: Encouraging children to make choices, vote on activities, share, and listen to each other's views.
+o Rule of Law: Helping children understand right from wrong, manage feelings, and follow simple setting rules.
+o Individual Liberty: Fostering self-esteem, confidence, personal responsibility, and freedom of expression.
+o Mutual Respect & Tolerance: Celebrating cultural diversity, learning about different faiths and backgrounds, and modelling inclusion and empathy.
+
+• I ensure all digital devices used within the setting are protected by robust internet filtering and monitoring safety controls to prevent access to harmful, inappropriate, or extremist content online.
+
+If I suspect a child or family member is at risk of radicalisation, being targeted by extremists, or exposed to dangerous ideologies:
+1. I will document detailed, objective factual notes of my observations, including dates, times, and context.
+2. In accordance with my local authority safeguarding procedures, I will immediately report my concerns to the Local Authority Designated Officer (LADO), the Prevent Team / Local Safeguarding Children Partnership (LSCP), or the Anti-Terrorism Hotline (0800 789 321).
+3. If there is an immediate, urgent threat of harm to a child or others, I will contact emergency services by dialling 999. Ofsted: 0300 1234 666 • NSPCC/Childline: 0800 1111`,
   },
   {
-    title: 'Accident Procedures',
-    content: `If a child is injured in my care and the injury is minor (such as a scratch or graze), it will be handled by myself/assistance. An accident form will be completed, and on collection of the child at the end of the day, parents/carers will be required to read and sign the form. A copy will be given to the parent/carer. If a child has an accident and it's a major injury, I will administer first aid and consult the parents/carers, and an accident form will be completed.
+    category: 'Safeguarding & Child Policies',
+    title: 'Safeguarding & Child Protection Policy',
+    content: `I am committed to providing a safe, secure, and welcoming environment where children are protected from harm, abuse, and neglect. My primary aim is to safeguard the physical, emotional, and developmental well-being of every child in my care by maintaining a culture of continuous vigilance, clear communication, and prompt action.
 
-Accident at Home: If a child has an accident at home, parents or carers must inform me and complete an accident form. A copy of this form will be provided to the parents or carers.`,
+Recognising Concerns
+I remain alert to the physical, behavioural, and emotional indicators that may suggest a child is at risk of harm or abuse (including physical, emotional, or sexual abuse, or neglect).
+
+Key indicators I watch for include:
+• Unexplained bruises, marks, burns, injuries in non-accidental patterns, or persistent untreated medical issues.
+• Sudden changes in behaviour or personality, extreme aggression, withdrawal, excessive clinginess, or developmentally unexpected sexual knowledge.
+• Consistently unwashed clothes, persistent poor hygiene, inadequate clothing for weather conditions, or constant extreme hunger.
+
+What Happens When a Child Discloses a Concern
+If a child discloses an issue or concern to me directly, I will handle the situation with sensitivity, reassurance, and strict adherence to protocol:
+• I will listen calmly without showing shock or disbelief, letting the child talk at their own pace.
+• I will reassure the child that they are safe and that they did the right thing by telling me. I will never promise to keep the disclosure a secret.
+• I will only ask open questions (e.g., "Tell me what happened") for basic clarification, ensuring I do not lead the child or ask suggestive questions.
+• I will make a detailed written record of the disclosure as soon as possible, using the child's exact words, along with the date, time, and surrounding context.
+• I will immediately contact the relevant local Children’s Social Care services and/or the local safeguarding board (and police if in immediate danger) to report the concern.
+
+Steps Taken if an Allegation is Made Against an Adult
+If an allegation of abuse or harm is made against me, a family member, or any other adult residing or working on the premises:
+1. The allegation will be reported immediately to the Local Authority Designated Officer (LADO) and my registering body (e.g., Ofsted) within required statutory timelines.
+2. I will not attempt to investigate the allegation myself to ensure the integrity of any official investigation.
+3. I will fully cooperate with all external investigations conducted by Social Care, the LADO, and the police.
+4. Depending on the nature of the allegation and advice from the LADO/Social Care, steps will be taken to immediately remove the accused adult from contact with children until the investigation is complete.
+5. Detailed notes of all actions, communications, and guidance received from authorities will be kept securely.
+
+As a registered childminder and the designated safeguarding lead, I make the safety, well-being, and protection of every child in my care my highest priority. I am committed to recognising signs of abuse, whether physical, emotional, sexual, or neglect, and acting swiftly to protect children. Parents are required to notify me of any existing concerns, accidents, incidents, or injuries affecting their child so they can be formally recorded.
+
+Recognising Concerns: I monitor children closely for any signs that may indicate potential abuse or distress, including:
+• Significant or sudden changes in behaviour or mood
+• Unexplained or unexpected bruising, marks, or injuries
+• Comments made by the child or others that raise concern
+• Play, language, or behaviours suggesting sexual knowledge beyond the child's developmental age
+• Any deterioration in general physical health, hygiene, or emotional well-being
+
+Responding to Concerns and Disclosures: When a child discloses information, or if I observe concerning signs, I follow a strict procedure:
+• If abuse is suspected, I will immediately contact the Children and Young People Service Multi-Agency Safeguarding Hub (MASH) by phone, followed by a formal written referral. Relevant information will be shared with MASH and the police as required.
+• I maintain clear, accurate, and dated written records of all concerns, even if an immediate referral is not required. These records are kept strictly confidential and stored securely, separate from general child records.
+• If a child subject to a child protection plan is absent without explanation, I will immediately report this to their assigned Social Worker.
+• I actively liaise with external agencies and attend case conferences or multi-agency planning meetings whenever required.
+• I will inform both MASH and Ofsted of any serious accident, illness, or injury involving a child in my care, ensuring Ofsted is notified within 14 days.
+
+Allegations Against Myself or a Family Member If an allegation of abuse is made against me, a member of my family, or any other adult associated with the setting, I immediately implement the following steps:
+• I will contact the Local Authority Designated Officer (LADO) immediately for guidance, support, and to determine the necessary course of action.
+• I will compile a thorough, written account of all related events, detailing dates, times, and exact statements made by all parties involved.
+• Subject to guidance from the LADO, I will ask any witnesses to provide written, signed statements along with their contact details for authority follow-up.
+• I will report any allegation made against me or anyone in my household/setting to both Ofsted and the LADO without delay, strictly within the 14-day statutory limit and in accordance with local Safeguarding Board procedures.
+
+Confidentiality
+All family and child records are kept strictly confidential and will not be shared publicly. However, child safety is our top priority. If any safeguarding or child protection concerns arise, we will share relevant information with external agencies, including the Local Authority Designated Officer (LADO), Social Care, and Ofsted, in accordance with multi-agency procedures and data protection laws. All records are stored securely.
+
+SOUTHWARK: 0207 525-1921 OUT OF HOURS 0207 525-5000.
+Southwark email: mash@southwark.gov.uk • Southwark LADO: Eva Simcock`,
   },
   {
-    title: 'Equal Opportunity Policy',
-    content: `"I actively promote equal opportunities and anti-discriminatory practices for all children in my care. I recognise the importance of ensuring that no child or parent is discriminated against based on race, gender, class, culture, age, religion, disability, sexual orientation, or family status. I am committed to treating all children according to their individual needs and abilities with respect."
+    category: 'Safeguarding & Child Policies',
+    title: 'Mobile phone, Cameras & Technological Devices',
+    content: `At Divine Heritage, protecting children in the digital age is an essential component of my safeguarding responsibilities. In accordance with the Early Years Foundation Stage (EYFS) Statutory Framework and national safeguarding guidance, I maintain strict controls regarding personal devices, photography, screen time, and internet access within my setting
 
-Procedure — How I put the statement into practice:
+Mobile Telephones & Personal Recording Devices
+• I use one personal mobile phone for both business and personal communication. When minded children are present, phone calls and messaging are kept strictly to essential business operations, emergency communications, or urgent family matters.
+• The phone is never used for personal browsing, social media, or non-essential calls while supervising children.
+• Mobile phones, smartwatches, recording devices, and cameras must not be used by parents, visitors, or contractors while children are present. All visitors must keep devices out of sight or stored securely to prevent unauthorised photographs, videos, or recordings.
 
-I value and respect the different racial origins, religions, cultures, and languages in a multi-ethnic society so that each child is valued as an individual without racial or gender stereotyping.
+Cameras, Photography & Digital Images
+• Photos and video recordings of minded children are captured solely on my designated phone/device exclusively for learning observations, assessments, and parent updates.
+• Photos are taken and stored only with explicit, prior written consent from parents/carers.
+• Camera functions are strictly prohibited during nappy changes, bathroom routines, or intimate care. Images are stored securely on password-protected devices and are never shared or posted publicly without explicit permission.
 
-I will also not discriminate against anyone on the grounds of race, gender, disability, sexual orientation, age, or religious beliefs.
+Screen Time & Digital Media
+• Screen use (television, tablets, interactive devices) is kept to a minimum and integrated purposefully to support specific EYFS learning goals or calm rest periods.
+• All media, applications, and programs accessed by children are strictly vetted for age-appropriateness, educational value, and suitability.
+• Screen time is never used as a substitute for active play, outdoor exploration, physical movement, or face-to-face social interaction.
 
-I will do my best to use toys, books, etc., to provide positive images of different cultures, racial groups, genders, religions, and disabilities.
+Online safety & Internet Access
+• I strictly supervise children’s access to internet-enabled devices.
+• Robust safety controls, child-friendly search filters, and security settings are maintained on all devices connected to the setting's network.
+• Children are guided on how to use technology safely, respectfully, and responsibly, building early foundations for online safety.`,
+  },
 
-I will recognise each child as an individual, treat them fairly and give them opportunities to develop to their full potential.
+  // ── 3. Operational & Staffing Policies ────────────────────────────────────
+  {
+    category: 'Operational & Staffing Policies',
+    title: 'Emergency & Backup Cover Policy',
+    content: `As a solo childminder, I have sole responsibility for the children in my care. While every effort is made to prevent disruptions, unexpected emergencies (such as sudden personal illness, serious injury, or an urgent family crisis) can still occur. To ensure your child's continuous safety and a high standard of care, I maintain formal, robust backup arrangements.
 
-I will always help children feel good about themselves by celebrating the differences that make us all unique. I will not stereotype any children. I encourage them to play with whatever they wish. Wherever possible, I will allow children to make their own choices regarding activities, play, etc.
+Designated Emergency Backup Personnel & Qualifications
+• I hold established agreements with named emergency backup covers (e.g., a fully registered fellow childminder or an Ofsted/agency-vetted, DBS-checked assistant/family member).
+• In the event of an urgent situation while minded children are present, my designated backup cover will be called to take over supervision immediately, ensuring children remain in a secure, supportive environment until they can be collected.
+• On rare, planned, or unexpected occasions, I may temporarily transfer care to another reputable, registered childminder. Full registration numbers, DBS details, and qualifications of my backup cover are kept on file and available for parents to inspect at any time
 
-I will always encourage children to develop respect for each other's differences and to value everyone as an individual.
+Data Sharing & Emergency Information
+• To ensure safe care during an emergency, my designated backup cover will be given secure, confidential access to your child’s emergency contact details, medical history, dietary requirements, and signed consent forms.
+• Information is shared strictly on a need-to-know basis in compliance with UK GDPR and data protection regulations, solely to safeguard your child's health and safety during an emergency.
 
-I trust parents/carers and children will accept this Equal Opportunities Policy.`,
+Communication & Parent Notification
+• If an emergency requires the activation of backup cover, I (or my named backup person) will contact you immediately to explain the situation, state your child's current location, and coordinate collection.
+• If parents or primary guardians are unreachable, I will systematically call the secondary emergency contacts listed on your child’s registration form.`,
   },
   {
-    title: 'Holidays',
-    content: `In every profession, workers will take time off to rejuvenate, reduce stress, and spend time with family. I take 25 days of holiday each year, not including Christmas and bank holidays. I provide four weeks' notice for any holidays I plan to take.
+    category: 'Operational & Staffing Policies',
+    title: 'Settling-In Policy',
+    content: `Starting at Divine Heritage is an exciting new chapter, but I understand it can also be an emotional transition for both you and your child. Every child settles at their own pace; some adjust quickly, while others need a bit more time or experience a delayed wave of separation anxiety a few weeks later.
 
-My setting is closed on bank holidays in line with Southwark Council childcare providers. A full fee will still be charged if a bank holiday falls on your child's normal contracted day.
+As your child's key person, I am dedicated to making this transition as gentle, reassuring, and seamless as possible, ensuring you both feel confident, relaxed, and happy in my care.
 
-If minded children or parents go on holiday or take any time off, I will charge the full fee, as I need to hold your child's place open during their absence.
-
-If I'm off work on a contracted day, I have backup childminders who will cover for me. These childminders are familiar with your child and the other children they care for. If you would like to meet them beforehand, please let me know. My backup childminders will charge their rates for the day(s) they cover.`,
+• Before your child's start date, we will complete a detailed "All About Me" profile. I will learn about your child's likes, dislikes, routines, favourite activities, sleep habits, comfort methods, and past reactions to separation so I can mirror home routines closely.
+• We begin with short, gradual visits starting with brief stay-and-play sessions alongside you, progressing to short periods where you step away, and slowly extending to full sessions. Admissions are tailored entirely to your child's emotional readiness.
+• I encourage children to bring a familiar comforter, such as a favourite teddy, blanket, or family photo album, to offer security and emotional grounding while adjusting to the setting.
+• Separation anxiety affects parents too! You are welcome to stay during initial sessions until your child feels comfortable, and we will work closely together to establish a confident, positive drop-off routine.
+• During the settling-in phase, I provide extra updates, photos, videos and quick check-ins via WhatsApp to give you complete peace of mind while you are away.
+• You are welcome to contact me during the day to check on your child’s well-being. If I am unable to answer immediately, please do not worry; my hands are likely busy caring for the children. I will always return your call or text as soon as it is safe to do so.`,
   },
   {
-    title: 'Attendance Policy',
-    content: `Although attendance in early years settings is not compulsory, I encourage regular attendance to ensure children gain maximum benefit from their time here. If a child was expected and not brought by parents, I must consider that the absence could be related to safeguarding concerns — for example, a parent having had an accident or died at home, or a child sustaining an injury that parents are hiding from me. The need to monitor children's attendance is also linked to female genital mutilation (FGM) and the Prevent Duty.
+    category: 'Operational & Staffing Policies',
+    title: 'Equality, Diversity & Inclusion Policy',
+    content: `At Divine Heritage, I actively promote equality of opportunity, anti-discriminatory practice, and inclusion for every child and family. As your child’s key person, I am committed to creating a welcoming, safe environment where diversity is celebrated, individual needs are met, and every child feels valued, respected, and empowered to reach their full potential.
 
-Absences will be followed up promptly, including those that occur for a prolonged period or without prior notification from parents. If a child is absent, I will make every effort to contact their parents or emergency contacts. I aim to have up to two or more emergency contacts for each child, in addition to the parents, to help me meet this requirement.
-
-When deciding whether an absence is prolonged, I must consider patterns and trends in the child's absences, the child's personal circumstances, the child's vulnerability, and the vulnerabilities and home life of the parent or carer. If I am concerned about a child's absence and the parents, carers, or the child's emergency contacts are unavailable, I will follow our Safeguarding Procedures and contact local children's social care services and/or the police to request a welfare check.
-
-Note: If the child's family live out of the area, I will also record the contact details for their social care services.`,
+• In line with the Equality Act 2010, I do not discriminate against any child, parent, or family member on the grounds of race, ethnicity, culture, religion or belief, gender, disability, sexual orientation, age, socio-economic background, or family structure.
+• I proactively challenge stereotyping based on gender, race, or ability. Children are encouraged to choose their own toys, resources, and activities freely, without restriction, bias, or role judgment.
+• I carefully select play materials, books, toys, and imagery that reflect positive, diverse representations of our multi-ethnic society, including different cultures, family structures, languages, faiths, and disabilities.
+• I embed fundamental British values- Democracy, Rule of Law, Individual Liberty, and Mutual Respect & Tolerance- into daily routines by encouraging turn-taking, listening to every child’s voice, celebrating global festivals, and fostering empathy.
+• Every child is unique. I tailor care and learning activities to accommodate individual developmental needs, making reasonable adjustments so that children with disabilities or extra needs can fully participate alongside their peers.
+• I help children develop a strong sense of identity, self-worth, and mutual respect. I celebrate the differences that make each child unique while supporting their home language and cultural background.
+• I work closely with parents to understand, respect, and value family backgrounds, traditions, and specific requirements, ensuring our setting reflects a fair, inclusive, and collaborative community.`,
   },
   {
-    title: 'Emergencies / Back-up Childminder',
-    content: `In an emergency where I can't provide childcare, I will contact my backup/colleague to temporarily care for the children until their parents can collect them. There may be occasions when I entrust the children in my care to another reputable, registered childminder.
+    category: 'Operational & Staffing Policies',
+    title: 'Complaints Policy & Procedure',
+    content: `At Divine Heritage, I value open, transparent communication and strive to work in close partnership with parents to provide the highest standard of care. I welcome all feedback, including concerns, as an opportunity to review and continuously improve my practice.
 
-It is best practice in our profession to have backup plans to ensure the children's safety, especially during unexpected situations. This could involve a trusted family member or another registered childminder who can assist.`,
+If you ever feel unhappy or have concerns about any aspect of the care provided, please bring it to my attention as early as possible so we can work together to resolve it.
+
+• Most concerns can be resolved quickly through an informal, open conversation during drop-off, pick-up, or a pre-arranged meeting.
+• I am committed to listening attentively to your perspective, reviewing my practice, and agreeing on practical solutions amicably to ensure your child’s needs continue to be met.
+
+If an issue cannot be resolved informally, or if you wish to submit a formal written complaint:
+• I will thoroughly investigate the matter promptly and objectively.
+• In accordance with EYFS statutory requirements, I will conduct the investigation and provide you with a full written report of my findings, including any corrective actions taken or proposed, within 28 days of receiving your complaint.
+• A detailed record of all written complaints (verbal and written) is maintained securely. This includes the complainant's details, the nature of the concern, investigation findings, and the final resolution.
+• Complaint records relating to the Childcare Register requirements are securely stored for at least 3 years and made available to parents (as a summary upon request) and Ofsted inspectors.
+
+While I hope we can resolve any concerns together, you have the right to contact Ofsted directly at any stage, particularly if you feel unable to discuss the concern with me, if an issue remains unresolved, or if you have a safeguarding concern.
+
+Ofsted will evaluate the complaint and determine whether it should be referred to me for internal investigation, inspected during a site visit, or referred to local safeguarding agencies in cases involving child protection.
+
+• Telephone: 0300 123 1231
+• Address: Ofsted, Piccadilly Gate, Store Street, Manchester, M1 2WD
+• Online Portal: www.gov.uk/government/organisations/ofsted`,
   },
   {
-    title: 'Settling In',
-    content: `Settling-in sessions for parents and children allow us to get to know each other.
+    category: 'Operational & Staffing Policies',
+    title: 'Confidentiality, Data Protection, and Photography Policy',
+    content: `1. As a solo childminder, I treat all personal information regarding your child and family with strict confidence and professionalism.
+• All physical and digital records are stored securely in compliance with UK GDPR and Data Protection regulations.
+• Parents have the right to inspect all records relating to their child at any reasonable time, except in rare circumstances where data protection law restricts access to protect the child's best interests.
+• Records must be made available to Ofsted or statutory authorities upon request to demonstrate compliance with Early Years Foundation Stage (EYFS) standards.
 
-1. It gives you a chance to provide me with lots of information about your child: their likes and dislikes, routines, favourite activities, how to comfort them if they become upset, and how they have reacted when left with others.
-2. I may visit your home to spend time with you and your child. It is a great opportunity to spend time in a relaxed atmosphere, exchanging information and planning your child's start. You will also have the chance to ask questions and express any concerns.
-3. Offer staggered admissions.
-4. Encourage children to bring a familiar object from home i.e., a teddy or toy.
-5. Invite parents to stay with the child as they adjust to the new environment.
+2. Confidentiality will always be maintained, except where sharing information without consent is necessary to protect a child. Prior permission may not be sought if:
+• The child requires urgent medical treatment and parents are unreachable.
+• There is a child protection or safeguarding concern where seeking consent would place the child or another individual at increased risk of harm.
 
-I understand that some children may take longer to settle in than others, while some may adjust quickly and become upset a few weeks later. I am here to support you and your child during this transition period to ensure it goes as smoothly as possible.
-
-Parents are welcome to contact me daily to check their child's health. If I cannot answer your call right away, please don't worry; I may be assisting another child. I will return your call as soon as possible within a reasonable timeframe.`,
+3. Use of Mobile Devices, Photography, and Videos
+• For business efficiency, I use a single mobile phone for both personal communications and childminding operations. Strict security measures (e.g., biometric locking, strong passwords, and restricted cloud access) are maintained on this device to protect all stored data.
+• Photos and videos of minded children are captured solely to document developmental milestones, create Learning Journeys/portfolios, and share key "wow factor" moments with parents.
+• Photos and videos will only be taken if parents have completed and signed the explicit photography consent form.
+• Media is shared directly with parents via private, individual WhatsApp groups created strictly for your child only. Photos or videos are never shared in group chats with other families, nor posted on public social media platforms, unless explicit, separate consent is granted.
+• Children’s full names are not used alongside published photographs or within portfolio displays. Media is periodically reviewed and deleted from the device in line with my Data Protection retention schedule once transferred to official records or sent to parents.`,
   },
   {
-    title: 'Sick / Medication Policy',
-    content: `(This forms part of my Health and Safety Policy)
+    category: 'Operational & Staffing Policies',
+    title: 'Smoking, Alcohol, and Substance Policy',
+    content: `1. Smoking and Vaping Policy
+• In line with the Statutory Framework for the Early Years Foundation Stage (EYFS) for Childminders, smoking or vaping (including the use of e-cigarettes) is strictly prohibited on the premises, in the garden, or in any vehicle used for transporting minded children.
+• Children will never be taken into smoky/vaping environments, private dwellings where smoking/vaping takes place, or public spaces where exposure to second-hand smoke or vapour cannot be avoided.
+• No household members, visitors, or assistant childminders are permitted to smoke or vape anywhere on the setting’s premises or within sight/reach of the children.
 
-Whilst I understand that it is difficult for you to take time off from work to look after a sick child, I must protect other children in my care and myself, from infection.
+Alcohol, Drugs, and Medication Policy
+• I will never be under the influence of alcohol, illegal drugs, or any substance (including legal highs or prescription medication) that impairs my ability or alertness to safely care for children.
+• If I am prescribed medication (other than routine, non-impairing treatments) that may impact my fitness to provide childcare, I will consult my GP/medical professional and promptly notify Ofsted as required.
+• All medication (whether for minded children, household members, or myself) will always be stored securely out of reach of children.
 
-1. Parents will be informed of any accidents. An accident that requires ice packs, marks, bruises, or bumps will be logged and parents will have to sign. Any bumps or bruises that your child arrives with will also be recorded with a brief explanation.
-2. You will be required to fill in a medicine record should your child require any medication whilst in my care.
-3. You must provide the medication/treatment you wish me to administer in its original packaging and you must have signed a "Non-prescription Medicine Permission Form" in advance.
-4. It is vital that you inform me of any medication you have given your child within 24 hours before they arrive at my care.
-5. I will ensure that all medication I receive is stored properly and that I check that it is still within its expiry date. Under no circumstances will I administer expired medication.
-6. I will keep a written record, and I'll inform parents of when and what times medications were administered.
+Safe Collection & Parent Responsibilities
+• For safeguarding reasons, children will only be released into the care of a fully competent adult. If a parent or designated emergency contact arrives to collect a child while appearing under the influence of alcohol, drugs, or any substance, I will not release the child.
+• In such instances, I will contact alternative secondary emergency contacts listed on the child’s registration form. If necessary, I will notify local Children's Social Care / safeguarding services to ensure the child’s safety.
+• If you are attending an event where alcohol may be consumed (e.g., a work event), please arrange for another designated, responsible adult to collect your child, or contact me in advance so alternative arrangements can be made.`,
+  },
 
-I reserve the right to follow NHS Public Health England's guidance regarding infectious diseases. Any child excluded due to an illness or infectious disease will not be allowed to return until they have been symptom-free for 48 hours.
+  // ── 4. Health & Safety Policies ───────────────────────────────────────────
+  {
+    category: 'Health & Safety Policies',
+    title: 'Sickness & Medication Policy',
+    content: `While I understand the difficulty of taking time off work, my priority is to maintain a healthy setting and protect all children, myself, and my household from infection.
 
-Exclusion Guidelines:
-1. Children who have shown signs of vomiting or have diarrhoea. They must be kept away for 48 hours after the vomiting or diarrhoea have ceased.
-2. Children with chicken pox must be kept at home until all scabs are dry.
-3. Children with conjunctivitis must stay home for at least 48 hours or until their eyes are no longer watering.
-4. Hand, Foot & Mouth Disease, Ringworm, Scabies, Scarlet fever, Threadworms.
-5. Hepatitis A, Impetigo, Measles, Mumps, Rubella (German Measles), Tuberculosis etc.
+1. Sickness & Infection Exclusion
+• Unwell children who have a high temperature (38C or above) or require infant paracetamol/ ibuprofen to manage a fever must not attend the setting.
+• Please notify me as early as possible (and at least within 2 hours of drop-off) if your child shows any signs of illness.
 
-Children who are unwell or have had a fever in the last 24 hours must stay home. Parents must notify me if their child is unwell or has displayed any signs of illness in the last 2 hours before drop-off.
+I strictly enforce the following UK Health Security Agency (UKHSA) exclusion periods. Children will not be permitted into the setting until these timeframes have passed:
+• Diarrhoea and /or vomiting: Excluded for a minimum of 48 hours after the last episode of diarrhoea or vomiting.
+• Chickenpox: Excluded until all blisters/scabs have dried over.
+• Conjunctivitis: Excluded for 48 hours or until eyes stop discharging.
+• Hand, Foot & Mouth: The child may attend once they feel well enough.
+• Measles: Excluded for a minimum of 4 days from the onset of the rash.
+• Mumps: Excluded for a minimum of 5 days from the onset of the swelling/swollen glands.
+• Scarlet Fever: Excluded until 24 hours after the first dose of appropriate antibiotic treatment has been administered.
+• Head Lice: Please notify me immediately so I can alert other parents (anonymously). Children must be treated before returning.
 
-Head Lice must be reported to me so that I can inform other parents. Please treat your child if you discover head lice!`,
+If your child becomes unwell while in my care, I will contact you immediately. You (or an agreed emergency contact) must collect your child promptly.
+• I’m required by law to report confirmed and suspected cases of measles, mumps and scarlet fever to my local UKHSA health protection team, Ofsted, within 14 days and notify parents; the affected child will remain strictly anonymous.
+
+Medication & Administering
+• I will only administer medication if you have completed and signed a Medication Permission Form.
+• All medication (prescription and non-prescription) must be in its original packaging, within date, and clearly labelled with your child’s name and dosage instructions.
+• Children starting a new course of prescribed medication (e.g., antibiotics) must complete the first 24–48 hours at home to ensure there are no adverse allergic reactions before returning to my setting.
+• You must inform me of any medication administered to your child within the 24 hours before drop-off (time, dose, and medicine type).
+• I keep a written log of every dose administered (time, dosage, and date), which you will be asked to sign at pick-up.
+
+Accidents & Existing Injuries
+• Minor accidents, bumps, or marks occurring during the day will be logged on an Incident/Accident Report Form. You will be informed and asked to sign it at pick-up (or immediately in the event of a head injury).
+• If your child arrives with any pre-existing injuries, bumps, or bruises, I am required to record these alongside your explanation, and you will be asked to sign the log upon drop-off.`,
   },
   {
-    title: 'Prevent Duty',
-    content: `As a Childcare provider, I must comply with the Prevent Duty Guidance requirement to protect children within my setting from radicalisation, extremism, and being drawn into terrorism. I am aware of the Government's prevention strategy, which aims to protect children from terrorism and radicalisation, and I have incorporated the strategy into my safeguarding procedures.
+    category: 'Health & Safety Policies',
+    title: 'Accident & Injury Policy',
+    content: `As a registered childminder, I hold a valid Paediatric First Aid qualification and maintain fully stocked first aid kits both in my setting and on outings. Your child's safety is my priority.
 
-1. To protect children in my care, I will be alert to any reason for concern in the child's life at home or elsewhere. This includes awareness of the expression of extremist views.
-2. Assessing the risk of children being drawn into terrorism.
-3. Demonstrate that children are protected from being drawn into terrorism by having robust safeguarding policies.
-4. Ensure that safeguarding arrangements are included in the policies and procedures of the Local Safeguarding Children Board.
-5. Keeping myself abreast and having training that gives me the knowledge and confidence to identify children at risk of being drawn into terrorism.
-6. Committed to teaching the children British Values, i.e. democracy, the rule of law, individual liberty and personal responsibility, mutual respect and tolerance of those of different cultures, faiths and beliefs.`,
+1. Accidents Occurring in My Care
+• Minor Injuries (Cuts, Grazes, Minor Bumps):
+o First aid will be administered immediately.
+o An Accident Report will be completed, detailing the time, location, nature of the injury, and first aid given.
+o You will be informed upon collection (or via message during the day) and asked to review and sign the report. A copy will be provided to you.
+• Head Injuries:
+o Due to the risk of concussion, I will contact you immediately by phone following any bump to the head, even if it appears minor.
+o Your child will be monitored closely for symptoms of deterioration.
+• Major Injuries or Medical Emergencies:
+o I will immediately call emergency services (999) and administer emergency first aid.
+o I will contact you (or your designated emergency contacts) straight away.
+o If your child needs to go to the hospital by ambulance before you arrive, I will accompany them and stay with them until you arrive.
+o Statutory Reporting: Major injuries, fractures, hospital admissions, or serious incidents will be reported to Ofsted within 14 days, in accordance with EYFS requirements.
+
+2. (Accidents at Home)
+To ensure safeguarding standards and maintain accurate health records:
+• You must inform me at drop-off if your child has sustained any injury at home or elsewhere (such as bumps, bruises, burns, or scratches).
+• We will complete a brief Existing Injury Form at drop-off outlining how the injury occurred, and you will be asked to sign it.`,
   },
   {
-    title: 'Visitors Policy',
-    content: `As an Ofsted-registered Childminder, I know my role in keeping your child safe. While children need to mix with other children and adults, my responsibility is to ensure the suitability of the people they meet during busy hours.
+    category: 'Health & Safety Policies',
+    title: 'Safer Sleep Policy',
+    content: `At Divine Heritage, the safety and well-being of sleeping children are paramount. In accordance with the Early Years Foundation Stage (EYFS) Statutory Framework and national Lullaby Trust safer sleep guidelines, I follow strict sleep protocols to reduce the risk of sudden infant death syndrome (SIDS) and ensure all children rest safely.
 
-1. Any regular visitors to my setting will need to complete a DBS check.
-2. I will not leave a minded child in a room alone with a visitor, unless I know they have been DBS cleared.
-3. I will not allow any visitors or my children to take children to the toilet or change them.
-4. I will check the identification of any visitors unknown to me and refuse entry to anyone whose identification I cannot verify.
-5. If possible, I will arrange for workmen and maintenance to my property outside of working hours.
-6. I will maintain written records / have a visitor's book available for you to look at.
+• Sleeping children are never left unattended. Rest areas are positioned so I can maintain continuous sight and hearing of all children.
+• I regularly check (every 10–15 minutes for babies) for breathing, position, and body temperature to monitor for signs of distress.
 
-If you have any concerns regarding this matter, please do not hesitate to contact me.`,
+• Babies (Under 12–18 Months):
+o Sleep in a clean, safety-tested travel cot fitted with a firm, flat, well-fitting mattress covered by a clean sheet.
+o Travel cot is kept clear of loose bedding, pillows, cot bumpers, soft toys, and duvet covers to eliminate suffocation risks.
+
+• Young Children & Toddlers:
+o Rest on individual, clean sleeping mats located safely on the floor in the main room, clear of trailing cords, heat sources, or hazards.
+
+• The main room is kept at a safe, comfortable temperature (ideally 16–20°C). Sleeping areas are well-ventilated and strictly smoke- and vape-free.
+• Babies are always placed to sleep on their backs with their feet at the foot of the travel cot.
+• Lightweight blankets are tucked securely below shoulder level.
+• I monitor children for signs of overheating by checking their neck or chest. Outerwear, hats, and bibs are removed before sleep.
+• I work with parents to support individual sleep routines while maintaining strict alignment with statutory safer sleep guidance.`,
   },
   {
-    title: 'Confidentiality',
-    content: `I endeavour to take a professional approach to confidentiality. I will not share confidential or sensitive information about children or their families without the family's permission. Information on children and families I work with will be kept secure and treated in confidence.
+    category: 'Health & Safety Policies',
+    title: 'Visitors & Safeguarding Policy',
+    content: `At Divine Heritage, the safety, security, and well-being of minded children are my highest priorities. In line with the Early Years Foundation Stage (EYFS) Statutory Framework and my safeguarding duties as an Ofsted-registered childminder, I maintain strict procedures regarding who enters my setting during operational hours.
 
-I will only break this rule in the interest of protecting a child. There may be circumstances when the parents' permission is not appropriate or able to be sought, as would be the case if the child required urgent medical attention or if there appeared to be a safeguarding issue.
+While I recognise the value of children interacting with others, I must ensure that all visitors are suitable and that no unvetted adult has unsupervised access to children in my care.
 
-Ofsted may ask to see my records at any time.
+• All adult (aged 16 or over) who lives on the premises hold an Enhanced Disclosure and Barring Service (DBS) check and are vetted for suitability.
+• I will only permit another adult to supervise children independently if they are fully DBS-cleared and vetted (such as another registered childminder or approved assistant).
+• My own family members are strictly prohibited from taking minded children to the toilet, changing nappies, or assisting with intimate care routines.
+• I strictly verify the official photo identification of any unknown visitor (e.g., inspectors, utility workers, or delivery personnel) before granting entry. I reserve the right to refuse entry to anyone whose identity or business cannot be verified.
+• Where possible, maintenance, repairs, and non-essential works are scheduled outside of childminding hours to minimise disruption and potential hazards.
+• I maintain a written record of all visitors entering the setting during operational hours. This log details the visitor's name, organisation/reason for visit, arrival and departure times, and is available for parents to inspect upon request.
 
-I will not use any photographs of the minded children other than for the Learning Journey. No photographs will be taken without signed authorisation from the parents, and it will be in line with the Data Protection Policy.
-
-Parents have the right to inspect all records about their child at any time, except in exceptional cases where data protection laws stipulate that it is against the child's best interests to do so.`,
+If you have any questions or concerns regarding these visitor procedures, please feel free to contact me.`,
   },
   {
-    title: 'Use of Mobile Telephones and Cameras',
-    content: `When children are present in the setting, parents or visitors are prohibited from using mobile phones, video recording devices, or cameras. This measure is intended to prevent unauthorised photographs, videos, and recordings.`,
+    category: 'Health & Safety Policies',
+    title: 'Health, Safety & Risk Assessment Policy',
+    content: `At Divine Heritage, providing a safe, clean, and healthy home environment is central to my practice. In accordance with the Early Years Foundation Stage (EYFS) Statutory Framework and Health and Safety at Work legislation, I maintain strict safety measures, routine risk assessments, and robust hygiene standards to protect every child in my care.
+
+Before minding commences each morning, I conduct a thorough check of all accessible areas:
+• I conduct visual and written risk assessments for all outings (e.g., parks, playgroups, walking routes to school). For new or unfamiliar locations, I perform advance assessments whenever possible to identify hazards, assess transport safety, and plan for emergency procedures.
+• All formal risk assessments are logged, reviewed annually (or immediately following an incident or change), and remain available for parents and Ofsted inspectors upon request.
+• Safety gates protect high-risk areas (e.g., kitchen and entrances), child locks secure hazardous cupboards, and glass protection film is applied to glass cabinets. Wires are kept tidy, and socket safety is regularly evaluated in line with modern electrical safety standards.
+• All cleaning chemicals, medicines, and sharp objects (such as kitchen knives) are stored securely in locked cupboards or positioned strictly out of reach.
+• Working smoke detectors are fitted, routinely tested, and logged. A fire blanket is maintained in the kitchen, and a clear emergency evacuation route is practised regularly with the children.
+• Toys and play equipment are inspected daily for wear and tear, cleaned routinely, and immediately removed or disposed of if damaged or faulty.
+• Inspect the living space for trailing wires and trip hazards.
+• I teach and model good hygiene practices, including supervised handwashing after using the toilet, outdoor play, or contact with animals, and before eating. Clean disposable tissues and liquid soap are always fully stocked.
+• I maintain strict kitchen standards. Fridge temperatures are monitored daily (below 5°C), and waste bins are emptied regularly.
+• I encourage healthy eating choices, safe hydration, daily outdoor physical play, and essential life safety skills (such as road safety awareness).`,
   },
   {
-    title: 'Emergency Plan & Fire Evacuation',
-    content: `In an emergency, I will strive to remain calm and handle the situation to the best of my ability. I will always ensure that all children are safe and, if necessary, removed from the immediate area. I will assess the situation and decide if there is a need to call the emergency services.
+    category: 'Health & Safety Policies',
+    title: 'Fire safety & Evacuation Procedure',
+    content: `In any emergency, the safety and well-being of the children in my care is my absolute priority. I will remain calm, assess the situation quickly, and take immediate action to protect the children. Emergency services will be called without delay whenever required.
 
-If the emergency involves a fire in the kitchen or main room, I will exit the flat by the front door. I grab my phone and call emergency services or shout for help. I will assemble the children outside by the side of Tesco. Any child who is unable to walk, I'll carry.
-
-I will contact the parents of all the children and inform them of the situation. If the parents are not available, I will leave a message and a contact number, and try to contact another "emergency contact", who is on the child's registration form.`,
+• If a fire occurs in the flat, all occupants will immediately exit through the front door.
+• I will grab my mobile phone and emergency contact details on the way out, provided it is safe to do so.
+• Children able to walk will be guided safely out of the building. Infants or children unable to walk will be carried.
+• The designated meeting point is outside by the side of Tesco.
+• Once safely outside, I will call emergency services (999) or raise the alarm by calling for help.
+• Once the children are safe at the assembly point, I will immediately contact parents to inform them of the situation and arrange collection.
+• If a parent is unavailable, I will leave a voicemail and immediately call the secondary emergency contacts listed on the child’s registration form.`,
   },
   {
-    title: 'Smoking Policy',
-    content: `I apply a strict No Smoking policy to my home.
+    category: 'Health & Safety Policies',
+    title: 'Risk Assessment Outing Procedure',
+    content: `In line with the EYFS Statutory Framework, I conduct systematic risk assessments for all outings to parks, public spaces, and unfamiliar environments to ensure children remain safe, secure, and fully supervised at all times.
 
-I shall not take minded children to any private dwelling where smoking is permitted.
+1. Pre-Outing Assessment & Planning
+• Conduct an advance or virtual check of unfamiliar locations to identify access points, toilets, boundaries, and potential hazards (e.g., open water, road proximity, busy crowds).
+• Confirm adult-to-child ratios are suitable for the environment and age/needs of minded children.
+• Identify the nearest safe meeting point, emergency exit routes, and local emergency contacts.
+• I make sure I have a
+o Fully charged mobile phone with emergency contact numbers saved.
+o First aid kit
+o Spare clothing, wipes, hand sanitiser, and water bottles.
+o High-visibility vests and child contact wristbands (displaying my phone number, no child names).
 
-Smoking is prohibited by law in all enclosed public spaces.
+• En Route & Road Safety:
+o Younger children are secured in pushchairs, hold hands, or wear safety reins.
+o Road safety skills (Stop, Look, Listen) are actively taught and practised at crossings.
+• Upon arrival at a park or unfamiliar space, perform an immediate visual sweep for physical hazards (e.g., broken glass, dog foul, faulty play equipment, uncontained boundaries).
+• Maintain continuous sight and hearing supervision. Perform headcounts before leaving the setting, upon arrival, during transitions, and before departing.
+• Ensure children do not talk to or leave with strangers. Only I manage toilet routines in public facilities.
 
-I will not take the children into smoky environments and will avoid places that permit smoking wherever possible.
-
-This policy supports the Early Years Foundation Stage Safeguarding and Welfare Requirements 2014 requirements and standards.`,
+3. Review & Record Keeping
+• Written risk assessment templates are logged and updated before visiting new locations.
+• Procedures are reviewed annually or immediately following any minor incident, near-miss, or change in circumstances. All records are available for parent and Ofsted inspection.`,
   },
   {
-    title: 'Procedure if a Child Is Not Collected',
-    content: `1. It is crucial to arrive at the scheduled time to collect your child. Even young children learn routines and know when their parents are expected. They can become anxious if you are late.
-2. Please inform me by telephone, at the earliest opportunity, if you expect to be late or if your child will not be attending for any reason.
-3. If a child is not collected within 15 minutes of their agreed collection time, and I have not been informed of their late collection, I will try calling the parents' contact numbers. Then I will try the emergency contact numbers.
-4. During this time, I will continue to care for the child safely and will keep attempting to contact the parents and their emergency contacts.
-5. If the child is not collected after 30 minutes, I will then contact my local authority duty social worker and follow their advice.
-6. This follows the Ofsted National Childminding Standards concerning child safety.`,
-  },
-  {
-    title: 'Lost / Missing Child',
-    content: `The care of your child is paramount, and I will always try to ensure that they remain with me and are safe. However, sometimes children can become 'lost' in busy places, and as a responsible childminder, I have written a procedure that will be followed in the unlikely event of this happening.
+    category: 'Health & Safety Policies',
+    title: 'Useful Contact Details & Policy Review Confirmation',
+    content: `Useful Contact details
+Emergency 999 (serious crime in progress, danger, life at risk)
+Police non-emergency 101
+Southwark MASH 020 7525 1921 | MASH@southwark.gov.uk
+Southwark LADO 020 7525 3297 | Eva.simcock@southwark.gov.uk
+Ofsted concerns/complaints 0300 123 4666 | enquiries@ofsted.gov.uk
+NSPCC Helpline 0808 800 5000 | help@nspcc.org.uk
 
-I will immediately raise the alarm to all around me that I have lost a child and enlist the help of everyone to look for them.
+I confirmed that these policies have been reviewed, signed, and will be updated next year by Avril Cole
 
-If it is a secure area such as a shopping centre, I will quickly alert the security staff, so they can seal off exits and monitor the situation on any CCTV. I will provide everyone involved in the search with a description of the child. I will reassure the other children, as they may be distressed.
-
-I will then alert the police and provide a full description, and alert the parents of the situation.
-
-I take precautions to avoid situations like this from happening by implementing the following measures:
-
-1. Ensuring children are on reins or holding my hand or the pushchair when we are out.
-2. Avoid going to overcrowded places.
-3. I will ensure the children wear wristbands with my mobile number when going on outings outside the local area.
-4. I will teach the children the dangers of wandering off and talking to strangers.`,
-  },
-  {
-    title: 'Behaviour Management',
-    content: `I aim to set good behaviour by setting a good example to the children.
-
-- I will not smack or shake any child.
-- I will not humiliate any child.
-- I will encourage children to share and reward good behaviour.
-- I will praise and approve of good behaviour.
-- I will attempt to distract and redirect a child who is misbehaving.
-- If the misbehaviour continues, I will remove the child from the situation. If the child is old enough to understand, I will take them to a calm-down area for five minutes to reflect on their behaviour.
-- I will explain to the children why I feel their behaviour is unacceptable.
-- I will only consider physical intervention if a child is in danger, e.g. if they are about to run into the road or are about to hurt another child.
-
-I expect the children to abide by the house rules (as appropriate for their age and stage of development). I will discuss and agree on behaviour management methods with the parents.
-
-Suppose a child continues to act unacceptably and is a danger to other children and myself. In that case, I will try to gain support from different services to address their behaviour before their contract is terminated. This would only be if all possible steps to improve the behaviour had failed or if the child caused severe injury to another person.`,
-  },
-  {
-    title: 'Alcohol, Drugs & Smoking Policy',
-    content: `As an Ofsted registered Childminder, I work alone and will have sole responsibility for your child whilst they are in my care. I must be alert to any dangers and able to protect him/her. To do this effectively, I must not be under the influence of any form of drugs (including some prescription medications). I do not drink or smoke at all.
-
-If you have been drinking, perhaps at a work Christmas party or whilst entertaining clients, I would prefer if you arranged for another responsible adult to collect your child, especially if you plan to drive home. Alternatively, you may call me, and I can delay the pickup time if possible.`,
-  },
-  {
-    title: 'Complaints Policy',
-    content: `As a registered childminder, I aim to work closely with all parents to meet their children's needs. If you have a complaint about any aspect of my care of your child, please bring it to my attention, and hopefully, we can resolve it amicably.
-
-I prefer to deal with complaints informally wherever possible and would hope to be able to resolve any issues through open discussion.
-
-If a parent feels unable to discuss an area of concern directly with me or has previously discussed their problem with me but remains unhappy, they should contact Ofsted.
-
-The complaints record will include:
-1. The nature of the complaint.
-2. How I dealt with the complaint.
-3. Any actions taken or proposed because of my findings.
-4. Whether the parent has been provided with an account of the findings and any action taken within 28 days after the complaint was made.
-
-Investigation Record Details:
-1. Name of the person making the complaint
-2. The nature of the complaint
-3. Date and time of complaint
-4. The outcome of the complaint investigation
-5. Details of the information and findings given to the person making the complaint, and any action taken.
-
-I will provide a summary of the complaint on request to any parent of a child for whom I act as a childminder or to Ofsted.
-
-OFSTED Contact: Piccadilly Gate, Store Street, Manchester, M1 2WD — Tel: 0300 123 1231`,
-  },
-  {
-    title: 'Safeguarding Child Policies',
-    content: `As a registered childminder and the designated officer for my childminding setting, I have always considered the safety and protection of children in my care to be of utmost importance.
-
-I understand that abuse can be emotional, physical, sexual or neglect. Parents must notify me of any concerns about their child and any accidents, incidents or injuries affecting the child, which will be recorded.
-
-If I notice anything that gives me cause for concern, such as:
-1. Significant changes in the child's behaviour
-2. Unexpected bruising or marks
-3. Comments that cause concern
-4. Play and language that indicate sexual knowledge beyond a child's years
-5. Deterioration in general well-being
-
-I will:
-- Refer a child, if there are concerns about possible abuse, to the Children and Young People Service Multi-Agency Safeguarding Hub (MASH). Referrals will be made in writing, following a telephone call.
-- Keep written records of concerns about a child, even if there is no need to make an immediate referral.
-- Liaise with other agencies and professionals.
-- Attend case conferences, or other multi-agency planning meetings, as necessary.
-- Inform my local child protection agency (MASH) and Ofsted of any serious accident, illness, or injury involving any child under my care. Ofsted will be notified within 14 days.
-
-Procedure if an allegation is made against me:
-- I will contact the Local Authority Designated Officer (LADO) immediately to discuss the nature of the allegation and the appropriate action to be taken.
-- I will write a detailed record of all related incidents, including what was said and by whom, with times and dates.
-- If an allegation is made against me or anyone within my setting, I will report it to Ofsted and LADO within fourteen days, following the local Safeguarding Children Board procedures.`,
-  },
-  {
-    title: 'Useful Telephone Numbers',
-    content: `MASH Team (Multi-Agency Safeguarding Hub)
-Daytime: 0207 525 1921
-Out of hours: 0207 525 5000
-
-Quality Assurance Unit Service Manager (LADO)
-Tel: 0207 525 3295
-
-Quality Assurance Unit Duty Number
-Tel: 0207 525 3297
-
-Head of Social Work Improvement & Quality Assurance
-Tel: 020 7525 0387
-
-NSPCC 24-hour Child Protection Helpline
-Tel: 0808 800 5000
-
-Ofsted
-Piccadilly Gate, Store Street, Manchester M1 2WD
-Tel: 0300 123 1231`,
-  },
-  {
-    title: 'Health & Safety — Home Environment',
-    content: `The Health and Safety of your child is important. These are some of the procedures in place to support this:
-
-- All unused electrical sockets accessible to young children have appropriate safety covers fitted. Toys are regularly inspected and cleaned to ensure they are safe for use.
-- Cleaning products and materials are kept in a cupboard and out of reach of small children.
-- Medicines are kept out of reach of small children.
-- A safety gate is fitted in the kitchen.
-- I use appropriate safety equipment for the children in my care, such as cupboard locks.
-- All glass cabinets have a glass protection film.
-- The kitchen has a fire blanket in case there is a fire.
-- I will ensure the first aid box is up to date.
-- I maintain a clean kitchen and adhere to food hygiene guidelines, such as ensuring the fridge is at the correct temperature.
-- Waste bins are emptied regularly.
-- I encourage good hygiene skills in the children and myself, such as washing hands after going to the toilet and before touching food.
-- I will teach children safety skills, such as how to cross the road safely.
-- I will encourage the children to make healthy food choices and to do physical exercise.
-- I have smoke detectors which are routinely tested to be in working order.
-- I will remove toys or equipment found to be faulty from areas where children can access them.`,
-  },
-  {
-    title: 'Risk Assessment — My Premises',
-    content: `As a registered childminder, my home is clean and checked before the minded children arrive to ensure the environment is safe for them to play. I also risk assess any environment I take the children into, such as walking to school, shops, parks, playgroups, etc.
-
-If I'm taking the children into unknown environments, I will try to do a risk assessment in advance, so I am aware of any potential hazards, although this may not always be possible.
-
-I will keep records of my assessments, which will be stored in a file. These documents are available for parents and Ofsted upon request.
-
-Each day before I commence minding I shall:
-- Check that the door slams are in position
-- Ensure that the wall unit cabinet is locked and sealed with a child lock
-- Check that the socket covers are in place
-- Check that bins are emptied
-- Check that knives and sharp objects are out of reach in the kitchen
-- Check that the toilet is clean, and all chemicals are out of reach
-- Ensure that enough soap, towels, toilet rolls and tissues are available
-- Ensure that the living room is clean and tidy
-- Check the temperature of the fridge
-- Check that the wires are not trailing anywhere
-
-I will carry out visual checks before children arrive, and review as necessary throughout the day.`,
-  },
-  {
-    title: 'Risk Assessment — Outing',
-    content: `This is reviewed before each outing, and any incidents are recorded in my accident/incident book. I will remember to take my mobile telephone, emergency contact numbers and a first aid kit.
-
-Type of outing: Park — How we get there: Walking
-
-Potential risks on the journey and how I will minimise these risks:
-1. I will look for animal faeces and broken glass on the path to ensure that no one steps on it.
-2. I will check for overhanging bushes and branches to ensure they will not scratch a child's face or go into their eyes.
-3. If we encounter a dog, I will teach the children to stay calm and ask the owner if the dog is friendly.
-4. I will teach the children about road safety by ensuring we cross at a visible stop; look left, right and left again before crossing; use pedestrian crossings where available.
-5. I will harness the child while the others will be in a pushchair to avoid anyone getting lost.
-
-Potential risks once we arrive and how I will minimise these risks:
-1. To stop a child from getting lost, I'll ensure we're always together and constantly keeping an eye on them.
-2. To prevent a child from getting hurt, I will teach them to avoid going behind and in front of swings.
-3. I will ensure that the child is using play equipment appropriate for their stage of development/age.
-4. To avoid a child going with someone they don't know, I will teach them basic 'Stranger Danger' rules.
-5. I will check for broken glass and animal faeces; if found, I will remove it using plastic gloves and paper tissues.`,
+Updated September 2026 Review September 2027`,
   },
 ]
 
+// ---------------------------------------------------------------------------
+// Sync / Reset to Official Handbook in Firestore
+// ---------------------------------------------------------------------------
+
 /**
- * Seeds the `policies` Firestore collection with the existing website policy content.
- * Idempotent — checks existing titles before inserting to avoid duplicates.
+ * Replaces all documents in the `policies` collection with the official 2026-2027 handbook.
+ * Clears old or legacy policies and writes all official policies in a clean batch.
  */
-export async function seedPolicies(): Promise<void> {
-  const q = query(collection(db, POLICIES_COLLECTION))
-  const snapshot = await getDocs(q)
-  const existingTitles = new Set(
-    snapshot.docs.map((d) => {
-      const data = d.data() as Partial<Policy>
-      return data.title ?? ''
-    })
-  )
-
-  const toInsert = SEED_POLICIES.filter((p) => !existingTitles.has(p.title))
-  if (toInsert.length === 0) return
-
-  const maxOrder = snapshot.docs.reduce((max, d) => {
-    const data = d.data() as Partial<Policy>
-    return Math.max(max, data.order ?? 0)
-  }, -1)
-
+export async function syncOfficialPolicies(): Promise<void> {
+  const snap = await getDocs(collection(db, POLICIES_COLLECTION))
   const batch = writeBatch(db)
-  const now = serverTimestamp()
 
-  toInsert.forEach((seed, idx) => {
+  // Remove existing policies
+  snap.docs.forEach((d) => {
+    batch.delete(d.ref)
+  })
+
+  // Insert all official policies
+  const now = serverTimestamp()
+  OFFICIAL_POLICIES.forEach((p, idx) => {
     const ref = doc(collection(db, POLICIES_COLLECTION))
     batch.set(ref, {
-      title:       seed.title,
-      content:     seed.content,
-      order:       maxOrder + 1 + idx,
+      title:       p.title,
+      category:    p.category,
+      content:     p.content,
+      order:       idx,
       isPublished: true,
       createdAt:   now,
       updatedAt:   now,
@@ -578,4 +673,12 @@ export async function seedPolicies(): Promise<void> {
   })
 
   await batch.commit()
+}
+
+/**
+ * Legacy seed function alias — now calls syncOfficialPolicies to guarantee
+ * that the new official handbook is loaded.
+ */
+export async function seedPolicies(): Promise<void> {
+  return syncOfficialPolicies()
 }

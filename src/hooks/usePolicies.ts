@@ -21,6 +21,7 @@ import {
   deletePolicy as serviceDelete,
   reorderPolicies,
   seedPolicies as serviceSeed,
+  syncOfficialPolicies as serviceSync,
 } from '@services/policies'
 import type { Policy, PolicyInput, PolicyPatch, ActionState } from '@appTypes/policy'
 
@@ -146,6 +147,20 @@ export function usePolicies() {
     }
   }, [])
 
+  // ── Sync Official Policies ───────────────────────────────────────────────
+  const syncOfficialPolicies = useCallback(async () => {
+    setSeedState({ phase: 'pending', error: null })
+    try {
+      await serviceSync()
+      setSeedState({ phase: 'success', error: null })
+    } catch (err: unknown) {
+      setSeedState({
+        phase: 'error',
+        error: err instanceof Error ? err.message : 'Sync failed.',
+      })
+    }
+  }, [])
+
   const resetAction = useCallback(() => setActionState(INITIAL_ACTION), [])
 
   return {
@@ -161,6 +176,7 @@ export function usePolicies() {
     moveUp,
     moveDown,
     seedPolicies,
+    syncOfficialPolicies,
     resetAction,
   }
 }

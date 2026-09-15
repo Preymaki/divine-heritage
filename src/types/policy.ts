@@ -21,6 +21,9 @@ export interface Policy {
   /** Display title, e.g. "Emergency Policy" */
   title: string
 
+  /** Section or handbook category, e.g. "Learning & Development" */
+  category?: string
+
   /**
    * Full policy text. Plain text with paragraph breaks (\n\n).
    * Lines starting with "- " are bullet points.
@@ -28,16 +31,16 @@ export interface Policy {
    */
   content: string
 
-  /** Manual sort order — lower numbers appear first on the public page */
+  /** Manual sort order â€” lower numbers appear first on the public page */
   order: number
 
   /** When true, the policy appears on the public-facing /policies page */
   isPublished: boolean
 
-  /** Firestore server timestamp — set on creation */
+  /** Firestore server timestamp â€” set on creation */
   createdAt: Timestamp | null
 
-  /** Firestore server timestamp — updated on every write */
+  /** Firestore server timestamp â€” updated on every write */
   updatedAt: Timestamp | null
 }
 

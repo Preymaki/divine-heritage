@@ -1,18 +1,20 @@
 /**
  * AdminPolicies — /admin/policies
  *
- * Simple CMS page for managing policy documents.
+ * CMS page for managing policy documents in Divine Heritage Childcare Services.
  *
  * The admin can:
- *  - Add a new policy (title + content textarea + published/hidden)
+ *  - View all policies organized by category (Learning & Development, Safeguarding, Operational, Health & Safety)
+ *  - Filter policies by category
+ *  - Add a new policy (title + category + content + published/hidden)
  *  - Edit an existing policy
  *  - Toggle published / hidden
  *  - Reorder policies (move up / move down)
  *  - Delete a policy (with confirmation)
- *  - Seed existing hardcoded content into Firestore (first-run only)
+ *  - One-click Sync / Reset to the Official September 2026 – September 2027 Handbook (23 policies verbatim)
  */
 
-import { useState, useCallback, useRef, useEffect } from 'react'
+import { useState, useCallback, useRef, useEffect, useMemo } from 'react'
 import {
   Plus,
   Pencil,
@@ -24,14 +26,24 @@ import {
   X,
   FileText,
   Sparkles,
+  RefreshCw,
+  Tag,
+  ShieldCheck,
 } from 'lucide-react'
 import { usePolicies } from '@hooks/usePolicies'
 import type { Policy } from '@appTypes/policy'
 import PageHeader from '@components/admin/PageHeader'
 
 // ---------------------------------------------------------------------------
-// Helpers
+// Constants & Helpers
 // ---------------------------------------------------------------------------
+
+export const STANDARD_CATEGORIES = [
+  'Learning & Development',
+  'Safeguarding & Child Policies',
+  'Operational & Staffing Policies',
+  'Health & Safety Policies',
+] as const
 
 function formatDate(ts: { toDate?: () => Date } | null | undefined): string {
   if (!ts) return '—'
@@ -43,12 +55,17 @@ function formatDate(ts: { toDate?: () => Date } | null | undefined): string {
   }
 }
 
-// Generate a URL-safe anchor ID from a policy title
 function toAnchorId(title: string): string {
   return title
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '')
+}
+
+function isLegacySeed(items: Policy[]): boolean {
+  if (items.length === 0) return true
+  const titles = new Set(items.map((i) => i.title.trim().toLowerCase()))
+  return titles.has('holidays') || !titles.has('prevent duty & counter-extremism policy')
 }
 
 // ---------------------------------------------------------------------------
@@ -57,6 +74,7 @@ function toAnchorId(title: string): string {
 
 interface PolicyFormData {
   title: string
+  category: string
   content: string
   isPublished: boolean
 }
@@ -71,9 +89,10 @@ interface PolicyModalProps {
 }
 
 function PolicyModal({ mode, initial, isPending, error, onSave, onClose }: PolicyModalProps) {
-  const [title, setTitle]           = useState(initial?.title       ?? '')
-  const [content, setContent]       = useState(initial?.content     ?? '')
-  const [isPublished, setPublished] = useState(initial?.isPublished ?? true)
+  const [title, setTitle]             = useState(initial?.title       ?? '')
+  const [category, setCategory]       = useState(initial?.category    ?? STANDARD_CATEGORIES[0])
+  const [content, setContent]         = useState(initial?.content     ?? '')
+  const [isPublished, setPublished]   = useState(initial?.isPublished ?? true)
   const titleRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -82,7 +101,12 @@ function PolicyModal({ mode, initial, isPending, error, onSave, onClose }: Polic
 
   const handleSave = () => {
     if (!title.trim()) return
-    onSave({ title: title.trim(), content: content.trim(), isPublished })
+    onSave({
+      title: title.trim(),
+      category: category.trim() || STANDARD_CATEGORIES[0],
+      content: content.trim(),
+      isPublished,
+    })
   }
 
   const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -90,8 +114,14 @@ function PolicyModal({ mode, initial, isPending, error, onSave, onClose }: Polic
   }
 
   return (
-    <div className="admin-modal-overlay" onClick={handleOverlayClick} role="dialog" aria-modal="true" aria-label={mode === 'add' ? 'Add Policy' : 'Edit Policy'}>
-      <div className="admin-modal">
+    <div
+      className="admin-modal-overlay"
+      onClick={handleOverlayClick}
+      role="dialog"
+      aria-modal="true"
+      aria-label={mode === 'add' ? 'Add Policy' : 'Edit Policy'}
+    >
+      <div className="admin-modal admin-modal--lg">
         {/* Header */}
         <div className="admin-modal-header">
           <span className="admin-modal-title">
@@ -120,7 +150,7 @@ function PolicyModal({ mode, initial, isPending, error, onSave, onClose }: Polic
               ref={titleRef}
               type="text"
               className="admin-form-input"
-              placeholder="e.g. Emergency Policy"
+              placeholder="e.g. Prevent Duty & Counter-Extremism Policy"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               disabled={isPending}
@@ -128,21 +158,50 @@ function PolicyModal({ mode, initial, isPending, error, onSave, onClose }: Polic
             />
           </div>
 
+          {/* Category */}
+          <div className="admin-form-group">
+            <label className="admin-form-label" htmlFor="policy-modal-category">
+              Handbook Category <span style={{ color: '#dc2626' }}>*</span>
+            </label>
+            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+              <select
+                id="policy-modal-category"
+                className="admin-form-input"
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                disabled={isPending}
+              >
+                {STANDARD_CATEGORIES.map((cat) => (
+                  <option key={cat} value={cat}>
+                    {cat}
+                  </option>
+                ))}
+                {!STANDARD_CATEGORIES.includes(category as unknown as typeof STANDARD_CATEGORIES[number]) && category && (
+                  <option value={category}>{category}</option>
+                )}
+              </select>
+            </div>
+            <p className="admin-form-hint">
+              Groups this policy under one of the 4 official sections of the Divine Heritage handbook.
+            </p>
+          </div>
+
           {/* Content */}
           <div className="admin-form-group">
             <label className="admin-form-label" htmlFor="policy-modal-content">
-              Policy Content
+              Policy Content <span style={{ color: '#dc2626' }}>*</span>
             </label>
             <textarea
               id="policy-modal-content"
               className="admin-form-input"
-              placeholder={`Write the full policy text here.\n\nSeparate paragraphs with a blank line.\nStart bullet points with: - \nStart numbered items with: 1. 2. 3.`}
+              style={{ minHeight: '280px', fontFamily: 'monospace', fontSize: '0.875rem' }}
+              placeholder={`Write the verbatim policy text here.\n\nSeparate paragraphs with a blank line.\nStart bullet points with: • or - \nStart sub-bullets with: o \nStart numbered items with: 1. 2. 3.`}
               value={content}
               onChange={(e) => setContent(e.target.value)}
               disabled={isPending}
             />
             <p className="admin-form-hint">
-              Separate paragraphs with a blank line. Start bullet items with <code>- </code> and numbered items with <code>1. </code>
+              Separate paragraphs with a blank line. Bullet items start with <code>• </code> or <code>- </code>, sub-bullets start with <code>o </code>, numbered items start with <code>1. </code>, and telephone/email links are auto-formatted.
             </p>
           </div>
 
@@ -205,6 +264,63 @@ function PolicyModal({ mode, initial, isPending, error, onSave, onClose }: Polic
 }
 
 // ---------------------------------------------------------------------------
+// Sync Confirmation Modal
+// ---------------------------------------------------------------------------
+
+interface SyncModalProps {
+  isPending: boolean
+  error: string | null
+  onConfirm: () => void
+  onClose: () => void
+}
+
+function SyncModal({ isPending, error, onConfirm, onClose }: SyncModalProps) {
+  const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.target === e.currentTarget) onClose()
+  }
+
+  return (
+    <div className="admin-modal-overlay" onClick={handleOverlayClick} role="dialog" aria-modal="true" aria-label="Sync Official Policies">
+      <div className="admin-modal admin-modal--sm">
+        <div className="admin-modal-header">
+          <span className="admin-modal-title">Sync Official 2026–2027 Handbook</span>
+          <button type="button" className="admin-modal-close" onClick={onClose} disabled={isPending} aria-label="Close">
+            <X size={16} />
+          </button>
+        </div>
+        <div className="admin-modal-body">
+          <p className="admin-delete-modal-desc">
+            This will update Firestore with all <strong>23 official policies</strong> from the September 2026 – September 2027 Policy Handbook with zero AI modifications.
+          </p>
+          <p style={{ fontSize: '0.8125rem', color: '#64748b', marginTop: '0.5rem' }}>
+            Existing legacy policies will be replaced with the official handbook content. You will be able to edit, customize, and reorder all policies afterwards.
+          </p>
+          {error && <p className="admin-modal-error" role="alert">{error}</p>}
+        </div>
+        <div className="admin-modal-footer">
+          <button type="button" className="cms-btn-ghost" onClick={onClose} disabled={isPending}>
+            Cancel
+          </button>
+          <button
+            type="button"
+            className="cms-btn-primary"
+            onClick={onConfirm}
+            disabled={isPending}
+            id="policy-sync-confirm-btn"
+          >
+            {isPending ? (
+              <><span className="admin-btn-spinner" aria-hidden="true" />Syncing…</>
+            ) : (
+              <><Sparkles size={14} />Confirm Sync</>
+            )}
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ---------------------------------------------------------------------------
 // Delete Confirmation Modal
 // ---------------------------------------------------------------------------
 
@@ -232,7 +348,7 @@ function DeleteModal({ policy, isPending, error, onConfirm, onClose }: DeleteMod
         </div>
         <div className="admin-modal-body">
           <p className="admin-delete-modal-desc">
-            Are you sure you want to permanently delete <strong>"{policy.title}"</strong>?
+            Are you sure you want to permanently delete <strong>&ldquo;{policy.title}&rdquo;</strong>?
             This cannot be undone.
           </p>
           {error && <p className="admin-modal-error" role="alert">{error}</p>}
@@ -269,13 +385,15 @@ export default function AdminPolicies() {
     policies, loading, error,
     actionState, seedState,
     addPolicy, updatePolicy, deletePolicy, togglePublish, moveUp, moveDown,
-    seedPolicies, resetAction,
+    syncOfficialPolicies, resetAction,
   } = usePolicies()
 
   // ── Modal state ──────────────────────────────────────────────────────────
   const [showAddModal,    setShowAddModal]    = useState(false)
+  const [showSyncModal,   setShowSyncModal]   = useState(false)
   const [policyToEdit,   setPolicyToEdit]    = useState<Policy | null>(null)
   const [policyToDelete, setPolicyToDelete]  = useState<Policy | null>(null)
+  const [selectedCategory, setSelectedCategory] = useState<string>('all')
 
   // ── Handlers ─────────────────────────────────────────────────────────────
 
@@ -335,28 +453,65 @@ export default function AdminPolicies() {
     resetAction()
   }, [policyToDelete, deletePolicy, resetAction])
 
+  const handleOpenSync = useCallback(() => {
+    resetAction()
+    setShowSyncModal(true)
+  }, [resetAction])
+
+  const handleCloseSync = useCallback(() => {
+    if (seedState.phase === 'pending') return
+    setShowSyncModal(false)
+    resetAction()
+  }, [seedState.phase, resetAction])
+
+  const handleConfirmSync = useCallback(async () => {
+    await syncOfficialPolicies()
+    setShowSyncModal(false)
+    resetAction()
+  }, [syncOfficialPolicies, resetAction])
+
   // ── Computed ─────────────────────────────────────────────────────────────
-  const showSeedBanner = !loading && !error && policies.length === 0
-  const isSeedPending  = seedState.phase === 'pending'
+  const isLegacy = useMemo(() => !loading && isLegacySeed(policies), [loading, policies])
+  const showSyncBanner = !loading && !error && (policies.length === 0 || isLegacy)
+  const isSyncPending   = seedState.phase === 'pending'
   const isActionPending = actionState.phase === 'pending'
+
+  // Filtered policies by category
+  const filteredPolicies = useMemo(() => {
+    if (selectedCategory === 'all') return policies
+    return policies.filter((p) => (p.category || STANDARD_CATEGORIES[0]) === selectedCategory)
+  }, [policies, selectedCategory])
 
   return (
     <div className="cms-page">
       {/* ── Page Header ── */}
       <PageHeader
         title="Policies"
-        subtitle="Add, edit, reorder, and manage the visibility of policy entries on the public Policies page."
+        subtitle="Manage, edit, reorder, and synchronize official policy handbook entries on the website."
         action={
-          <button
-            type="button"
-            id="policy-add-btn"
-            onClick={handleOpenAdd}
-            className="cms-btn-primary"
-            disabled={loading}
-          >
-            <Plus size={15} aria-hidden="true" />
-            Add Policy
-          </button>
+          <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+            <button
+              type="button"
+              id="policy-sync-btn"
+              onClick={handleOpenSync}
+              className="cms-btn-secondary"
+              disabled={loading || isSyncPending}
+              title="Synchronize all 23 official handbook policies into Firestore"
+            >
+              <RefreshCw size={15} className={isSyncPending ? 'admin-btn-spinner' : ''} aria-hidden="true" />
+              Sync Official Handbook
+            </button>
+            <button
+              type="button"
+              id="policy-add-btn"
+              onClick={handleOpenAdd}
+              className="cms-btn-primary"
+              disabled={loading}
+            >
+              <Plus size={15} aria-hidden="true" />
+              Add Policy
+            </button>
+          </div>
         }
       />
 
@@ -367,37 +522,41 @@ export default function AdminPolicies() {
         </div>
       )}
 
-      {/* ── Seed banner ── */}
-      {showSeedBanner && (
-        <div className="admin-seed-banner" role="region" aria-label="Policies initialisation">
+      {/* ── Official Handbook Sync Banner ── */}
+      {showSyncBanner && (
+        <div className="admin-seed-banner" role="region" aria-label="Official Handbook Sync">
           <div className="admin-seed-banner-icon">
             <Sparkles size={22} aria-hidden="true" />
           </div>
           <div className="admin-seed-banner-body">
-            <p className="admin-seed-banner-title">Import existing policy content</p>
+            <p className="admin-seed-banner-title">
+              {policies.length === 0 ? 'No policies in database' : 'Update to Official 2026–2027 Policy Handbook'}
+            </p>
             <p className="admin-seed-banner-desc">
-              No policies found in Firestore. Click the button to import all 29 existing policies from the website directly into the database. You can then edit, reorder, or add more from this page.
+              {policies.length === 0
+                ? 'Your database currently has no policies. Click the button below to import all 23 official policies from the September 2026 – September 2027 Handbook directly into Firestore.'
+                : 'Your database currently contains legacy policy records. Click below to synchronize with the official September 2026 – September 2027 Handbook (23 policies categorized under Learning & Development, Safeguarding, Operational, and Health & Safety).'}
             </p>
             {seedState.phase === 'error' && seedState.error && (
               <p className="admin-seed-banner-error" role="alert">{seedState.error}</p>
             )}
             {seedState.phase === 'success' && (
               <p className="admin-seed-banner-success" role="status">
-                All 29 policies imported successfully! They are now live on the public Policies page.
+                ✓ All 23 official policies synchronized successfully! You can now edit and manage them below.
               </p>
             )}
           </div>
           <button
             type="button"
-            id="policy-seed-btn"
-            onClick={seedPolicies}
-            disabled={isSeedPending || seedState.phase === 'success'}
+            id="policy-sync-banner-btn"
+            onClick={syncOfficialPolicies}
+            disabled={isSyncPending || seedState.phase === 'success'}
             className="cms-btn-primary admin-seed-btn"
           >
-            {isSeedPending ? (
-              <><span className="admin-btn-spinner" aria-hidden="true" />Importing…</>
+            {isSyncPending ? (
+              <><span className="admin-btn-spinner" aria-hidden="true" />Syncing…</>
             ) : (
-              <><Sparkles size={15} aria-hidden="true" />Import Existing Policies</>
+              <><ShieldCheck size={15} aria-hidden="true" />Sync 2026–2027 Handbook</>
             )}
           </button>
         </div>
@@ -413,19 +572,54 @@ export default function AdminPolicies() {
       {/* ── Policy list ── */}
       {!loading && !error && policies.length > 0 && (
         <>
-          {/* Stats bar */}
-          <div style={{ fontSize: '0.8125rem', color: '#64748b', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-            <span>{policies.length} {policies.length === 1 ? 'policy' : 'policies'} total</span>
-            <span style={{ color: '#15803d' }}>
-              {policies.filter((p) => p.isPublished).length} published
-            </span>
-            <span>
-              {policies.filter((p) => !p.isPublished).length} hidden
-            </span>
+          {/* Controls bar: Category filter & Stats */}
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              flexWrap: 'wrap',
+              gap: '1rem',
+              padding: '0.5rem 0',
+            }}
+          >
+            {/* Category filter pills */}
+            <div style={{ display: 'flex', gap: '0.375rem', flexWrap: 'wrap' }} role="tablist" aria-label="Filter by category">
+              <button
+                type="button"
+                className={`admin-filter-pill ${selectedCategory === 'all' ? 'admin-filter-pill--active' : ''}`}
+                onClick={() => setSelectedCategory('all')}
+              >
+                All ({policies.length})
+              </button>
+              {STANDARD_CATEGORIES.map((cat) => {
+                const count = policies.filter((p) => p.category === cat).length
+                return (
+                  <button
+                    key={cat}
+                    type="button"
+                    className={`admin-filter-pill ${selectedCategory === cat ? 'admin-filter-pill--active' : ''}`}
+                    onClick={() => setSelectedCategory(cat)}
+                  >
+                    {cat} ({count})
+                  </button>
+                )
+              })}
+            </div>
+
+            {/* Stats */}
+            <div style={{ fontSize: '0.8125rem', color: '#64748b', display: 'flex', gap: '1rem' }}>
+              <span style={{ color: '#15803d' }}>
+                {policies.filter((p) => p.isPublished).length} published
+              </span>
+              <span>
+                {policies.filter((p) => !p.isPublished).length} hidden
+              </span>
+            </div>
           </div>
 
           <div className="policy-list" role="list" aria-label="Policy documents">
-            {policies.map((policy, idx) => (
+            {filteredPolicies.map((policy, idx) => (
               <div
                 key={policy.id}
                 className="policy-row"
@@ -462,7 +656,15 @@ export default function AdminPolicies() {
 
                 {/* Info */}
                 <div className="policy-row-info">
-                  <p className="policy-row-title">{policy.title}</p>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                    <p className="policy-row-title">{policy.title}</p>
+                    {policy.category && (
+                      <span className="admin-category-badge">
+                        <Tag size={10} />
+                        {policy.category}
+                      </span>
+                    )}
+                  </div>
                   <div className="policy-row-meta">
                     <span
                       className={`policy-status-badge ${policy.isPublished ? 'policy-status-badge--published' : 'policy-status-badge--hidden'}`}
@@ -518,19 +720,22 @@ export default function AdminPolicies() {
         </>
       )}
 
-      {/* ── Empty state (after seed) ── */}
-      {!loading && !error && policies.length === 0 && seedState.phase !== 'idle' && seedState.phase !== 'pending' && (
+      {/* ── Empty state ── */}
+      {!loading && !error && policies.length === 0 && (
         <div className="empty-state">
           <div className="empty-state-icon-wrap">
             <FileText size={28} className="empty-state-icon" aria-hidden="true" />
           </div>
           <p className="empty-state-title">No policies yet</p>
           <p className="empty-state-desc">
-            Click "+ Add Policy" to create your first policy, or use the import button above to bring in the existing website content.
+            Synchronize with the official handbook above, or click "+ Add Policy" to create a custom policy.
           </p>
-          <div className="empty-state-action">
-            <button type="button" className="cms-btn-primary" onClick={handleOpenAdd} id="policy-empty-add-btn">
-              <Plus size={15} />Add Policy
+          <div className="empty-state-action" style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center' }}>
+            <button type="button" className="cms-btn-primary" onClick={syncOfficialPolicies} id="policy-empty-sync-btn">
+              <Sparkles size={15} />Sync Official Handbook
+            </button>
+            <button type="button" className="cms-btn-secondary" onClick={handleOpenAdd} id="policy-empty-add-btn">
+              <Plus size={15} />Add Custom Policy
             </button>
           </div>
         </div>
@@ -553,6 +758,7 @@ export default function AdminPolicies() {
           mode="edit"
           initial={{
             title:       policyToEdit.title,
+            category:    policyToEdit.category || STANDARD_CATEGORIES[0],
             content:     policyToEdit.content,
             isPublished: policyToEdit.isPublished,
           }}
@@ -571,6 +777,16 @@ export default function AdminPolicies() {
           error={actionState.phase === 'error' ? actionState.error : null}
           onConfirm={handleConfirmDelete}
           onClose={handleCloseDelete}
+        />
+      )}
+
+      {/* ── Sync confirmation modal ── */}
+      {showSyncModal && (
+        <SyncModal
+          isPending={isSyncPending}
+          error={seedState.phase === 'error' ? seedState.error : null}
+          onConfirm={handleConfirmSync}
+          onClose={handleCloseSync}
         />
       )}
     </div>
