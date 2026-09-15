@@ -17,7 +17,6 @@ import {
   ChevronDown,
   ChevronUp,
   BookOpen,
-  AlertCircle,
   Loader2,
   Phone,
   Mail,
@@ -398,7 +397,6 @@ function MobileNav({
 export default function Policies() {
   const [policies, setPolicies] = useState<Policy[]>([])
   const [loading,  setLoading]  = useState(true)
-  const [error,    setError]    = useState<string | null>(null)
   const [activeId, setActiveId] = useState<string | null>(null)
 
   // ── Firestore subscription ────────────────────────────────────────────────
@@ -552,14 +550,6 @@ export default function Policies() {
                 <div className="policy-loading" role="status" aria-label="Loading policies">
                   <Loader2 size={28} className="policy-loading-icon" aria-hidden="true" />
                   <p>Loading policies…</p>
-                </div>
-              )}
-
-              {/* Error fallback */}
-              {!loading && error && (
-                <div className="policy-error" role="alert">
-                  <AlertCircle size={22} aria-hidden="true" />
-                  <p>{error}</p>
                 </div>
               )}
 

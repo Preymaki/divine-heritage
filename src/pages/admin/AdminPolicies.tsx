@@ -38,7 +38,7 @@ import PageHeader from '@components/admin/PageHeader'
 // Constants & Helpers
 // ---------------------------------------------------------------------------
 
-export const STANDARD_CATEGORIES = [
+const STANDARD_CATEGORIES = [
   'Learning & Development',
   'Safeguarding & Child Policies',
   'Operational & Staffing Policies',
