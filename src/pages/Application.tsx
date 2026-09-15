@@ -14,6 +14,8 @@ import {
   Download,
   RotateCcw,
   AlertCircle,
+  Calculator,
+  Clock,
 } from 'lucide-react'
 import SectionWrapper from '@components/ui/SectionWrapper'
 import type {
@@ -236,6 +238,49 @@ export default function Application() {
         ...currentDay,
         totalHours: value,
         rate: rateStr,
+      },
+    }
+
+    const nextWeekly = calculateWeeklySchedule(updatedContracted, isBabyRate)
+    updatedContracted.totalHoursPerWeek = nextWeekly.totalHours > 0 ? String(nextWeekly.totalHours) : ''
+    updatedContracted.totalCostPerWeek = nextWeekly.totalHours > 0 ? nextWeekly.grossCostStr : ''
+
+    setFormData((prev) => ({
+      ...prev,
+      page3: {
+        ...prev.page3,
+        contractedHours: updatedContracted,
+      },
+    }))
+  }
+
+  function handleApplyPreset(
+    day: 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday',
+    preset: 'fullDay' | 'morning' | 'afternoon' | 'clear'
+  ) {
+    let from = ''
+    let to = ''
+    if (preset === 'fullDay') {
+      from = '08:00'
+      to = day === 'friday' ? '17:00' : '18:00'
+    } else if (preset === 'morning') {
+      from = '08:00'
+      to = '13:00'
+    } else if (preset === 'afternoon') {
+      from = '12:00'
+      to = '17:00'
+    }
+
+    const dayCalc = calculateDayRate(from, to, isBabyRate)
+    const currentDay = formData.page3.contractedHours[day]
+    const updatedContracted = {
+      ...formData.page3.contractedHours,
+      [day]: {
+        ...currentDay,
+        timeFrom: from,
+        timeTo: to,
+        totalHours: dayCalc.hours > 0 ? String(dayCalc.hours) : '',
+        rate: dayCalc.costStr,
       },
     }
 
@@ -580,21 +625,24 @@ export default function Application() {
                 <button
                   key={pageNum}
                   type="button"
-                  onClick={() => {
-                    if (pageNum <= currentPage || validatePage(currentPage)) {
-                      setCurrentPage(pageNum)
-                    }
-                  }}
-                  className={`h-2.5 rounded-full transition-all cursor-pointer ${
-                    pageNum === currentPage
-                      ? 'bg-[var(--color-accent-400)] ring-2 ring-[var(--color-accent-300)]/50 shadow-xs'
-                      : pageNum < currentPage
-                      ? 'bg-emerald-400'
-                      : 'bg-white/20 hover:bg-white/35'
-                  }`}
-                  title={`Go to Page ${pageNum}`}
-                  aria-label={`Go to Page ${pageNum}`}
-                />
+                  onClick={() => setCurrentPage(pageNum)}
+                  className="py-2.5 px-0.5 sm:px-1 cursor-pointer flex flex-col items-center group -my-1"
+                  title={`Go to Step ${pageNum}: ${PAGE_TITLES[pageNum - 1]}`}
+                  aria-label={`Go to Step ${pageNum}`}
+                >
+                  <div
+                    className={`w-full h-3 rounded-full transition-all ${
+                      pageNum === currentPage
+                        ? 'bg-[var(--color-accent-400)] ring-2 ring-[var(--color-accent-300)] shadow-xs'
+                        : pageNum < currentPage
+                        ? 'bg-emerald-400'
+                        : 'bg-white/25 hover:bg-white/40'
+                    }`}
+                  />
+                  <span className="text-[10px] text-white/70 group-hover:text-white mt-1 hidden sm:block">
+                    Step {pageNum}
+                  </span>
+                </button>
               ))}
             </div>
           </div>
@@ -610,6 +658,30 @@ export default function Application() {
           ══════════════════════════════════════════════════════════════════ */}
           {currentPage === 1 && (
             <div className="bg-white rounded-3xl shadow-sm border border-slate-200 p-6 md:p-10 space-y-8 animate-fadeIn">
+              {/* Quick Jump to Fee Calculator on Step 3 */}
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-4 bg-gradient-to-r from-blue-50 to-indigo-50/70 border border-blue-200 rounded-2xl">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-xl bg-[var(--color-primary-600)] text-white flex items-center justify-center shrink-0 shadow-xs font-bold text-sm">
+                    <Calculator size={18} />
+                  </div>
+                  <div>
+                    <h3 className="text-xs sm:text-sm font-bold text-slate-900">
+                      Childcare Fee & Hours Calculator
+                    </h3>
+                    <p className="text-[11px] sm:text-xs text-slate-600">
+                      Looking to calculate weekly childcare fees, funded hours, or advance payments?
+                    </p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setCurrentPage(3)}
+                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white border border-blue-300 text-[var(--color-primary-700)] hover:bg-blue-50 font-bold text-xs shadow-xs transition-all cursor-pointer whitespace-nowrap self-stretch sm:self-auto justify-center"
+                >
+                  Open Fee Calculator (Step 3) <ChevronRight size={14} />
+                </button>
+              </div>
+
               {/* Section Header */}
               <div className="border-b-2 border-slate-800 pb-2">
                 <h2 className="text-base md:text-lg font-bold text-slate-900">
@@ -1492,7 +1564,53 @@ export default function Application() {
                   <p className="text-xs text-slate-500 italic">Only complete if you’re entitled to funded hours.</p>
                 </div>
 
-                <div className="overflow-x-auto border border-slate-300 rounded-xl">
+                {/* Mobile View: Clean Tap-Friendly Session Cards */}
+                <div className="block md:hidden space-y-3">
+                  {(
+                    [
+                      { key: 'row8to1', label: '8 – 1pm', sub: '5 hrs/day' },
+                      { key: 'row12to5', label: '12 – 5pm', sub: '5 hrs/day' },
+                      { key: 'rowFullDay', label: 'Full Day 8–6 pm', sub: '10 hrs/day (Friday closes at 5pm)' },
+                    ] as const
+                  ).map(({ key, label, sub }) => (
+                    <div key={key} className="p-3.5 bg-slate-50 rounded-2xl border border-slate-200 space-y-2.5">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <span className="font-bold text-xs text-slate-900 block">{label}</span>
+                          <span className="text-[10px] text-slate-500">{sub}</span>
+                        </div>
+                        {formData.page3.fundedSchedule[key].totalHrs && (
+                          <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-blue-100 text-blue-800">
+                            {formData.page3.fundedSchedule[key].totalHrs} hrs
+                          </span>
+                        )}
+                      </div>
+                      <div className="grid grid-cols-5 gap-1.5">
+                        {(['monday', 'tuesday', 'wednesday', 'thursday', 'friday'] as const).map((day) => {
+                          const isChecked = formData.page3.fundedSchedule[key][day]
+                          return (
+                            <button
+                              key={day}
+                              type="button"
+                              onClick={() => handleToggleFundedDay(key, day, !isChecked)}
+                              className={`py-2 px-1 rounded-xl text-xs font-bold transition-all cursor-pointer flex flex-col items-center justify-center border ${
+                                isChecked
+                                  ? 'bg-[var(--color-primary-600)] text-white border-[var(--color-primary-600)] shadow-xs'
+                                  : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100'
+                              }`}
+                            >
+                              <span className="capitalize text-[11px]">{day.slice(0, 3)}</span>
+                              <span className="text-[10px] mt-0.5 opacity-80">{isChecked ? '✓' : '+'}</span>
+                            </button>
+                          )
+                        })}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Desktop View: Form Table */}
+                <div className="hidden md:block overflow-x-auto border border-slate-300 rounded-xl">
                   <table className="w-full text-xs text-left">
                     <thead className="bg-slate-100 border-b border-slate-300 text-slate-800 font-bold">
                       <tr>
@@ -1559,16 +1677,24 @@ export default function Application() {
                 </div>
               </div>
 
-              {/* Contracted Hours Table */}
+              {/* Contracted Hours Table & Mobile Calculator */}
               <div className="space-y-3">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                  <h3 className="text-sm font-bold text-slate-900">Contracted Hours</h3>
+                  <div>
+                    <h3 className="text-sm font-bold text-slate-900 flex items-center gap-1.5">
+                      <Calculator size={16} className="text-[var(--color-primary-600)]" />
+                      Contracted Hours & Fee Calculator
+                    </h3>
+                    <p className="text-[11px] text-slate-500">
+                      Enter times or use quick presets to calculate weekly childcare costs.
+                    </p>
+                  </div>
                   <div className="flex items-center gap-2 text-xs">
-                    <span className="text-slate-500">Rate applied:</span>
+                    <span className="text-slate-500">Rate:</span>
                     <button
                       type="button"
                       onClick={() => setManualBabyRate(false)}
-                      className={`px-2.5 py-1 rounded-lg font-medium transition-colors ${
+                      className={`px-2.5 py-1 rounded-lg font-medium transition-colors cursor-pointer ${
                         !isBabyRate
                           ? 'bg-[var(--color-primary-600)] text-white shadow-xs'
                           : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
@@ -1579,7 +1705,7 @@ export default function Application() {
                     <button
                       type="button"
                       onClick={() => setManualBabyRate(true)}
-                      className={`px-2.5 py-1 rounded-lg font-medium transition-colors ${
+                      className={`px-2.5 py-1 rounded-lg font-medium transition-colors cursor-pointer ${
                         isBabyRate
                           ? 'bg-amber-600 text-white shadow-xs'
                           : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
@@ -1590,7 +1716,151 @@ export default function Application() {
                   </div>
                 </div>
 
-                <div className="overflow-x-auto border border-slate-300 rounded-xl">
+                {/* Mobile View: Responsive Day Cards for Phones */}
+                <div className="block md:hidden space-y-3.5">
+                  {(['monday', 'tuesday', 'wednesday', 'thursday', 'friday'] as const).map((day) => {
+                    const dayRow = formData.page3.contractedHours[day]
+                    const hasHours = dayRow.totalHours && parseFloat(dayRow.totalHours) > 0
+                    return (
+                      <div
+                        key={day}
+                        className={`p-4 rounded-2xl border transition-all ${
+                          hasHours
+                            ? 'bg-blue-50/40 border-blue-200 shadow-xs'
+                            : 'bg-slate-50/70 border-slate-200'
+                        }`}
+                      >
+                        {/* Card Header */}
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="font-bold text-sm text-slate-900 capitalize flex items-center gap-1.5">
+                            <Clock size={15} className="text-slate-500" />
+                            {day}
+                          </span>
+                          {dayRow.rate ? (
+                            <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                              {dayRow.rate} ({dayRow.totalHours}h)
+                            </span>
+                          ) : (
+                            <span className="text-[11px] text-slate-400 font-medium">No hours set</span>
+                          )}
+                        </div>
+
+                        {/* Quick Preset Buttons */}
+                        <div className="flex flex-wrap items-center gap-1.5 mb-3">
+                          <button
+                            type="button"
+                            onClick={() => handleApplyPreset(day, 'fullDay')}
+                            className="px-2 py-1 rounded-lg text-[11px] font-semibold bg-white border border-slate-300 text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
+                          >
+                            Full Day ({day === 'friday' ? '8–5' : '8–6'})
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleApplyPreset(day, 'morning')}
+                            className="px-2 py-1 rounded-lg text-[11px] font-semibold bg-white border border-slate-300 text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
+                          >
+                            Morning (8–1)
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleApplyPreset(day, 'afternoon')}
+                            className="px-2 py-1 rounded-lg text-[11px] font-semibold bg-white border border-slate-300 text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
+                          >
+                            Afternoon (12–5)
+                          </button>
+                          {(dayRow.timeFrom || dayRow.timeTo || dayRow.totalHours) && (
+                            <button
+                              type="button"
+                              onClick={() => handleApplyPreset(day, 'clear')}
+                              className="px-2 py-1 rounded-lg text-[11px] font-medium text-red-600 hover:bg-red-50 transition-colors ml-auto cursor-pointer"
+                            >
+                              Clear
+                            </button>
+                          )}
+                        </div>
+
+                        {/* Time From & Time To Inputs */}
+                        <div className="grid grid-cols-2 gap-2.5">
+                          <div>
+                            <label className="block text-[11px] font-bold text-slate-600 mb-1">
+                              Time From:
+                            </label>
+                            <input
+                              type="time"
+                              value={dayRow.timeFrom}
+                              onInput={(e) => handleContractedTimeChange(day, 'timeFrom', e.currentTarget.value)}
+                              onChange={(e) => handleContractedTimeChange(day, 'timeFrom', e.target.value)}
+                              className="w-full px-3 py-2 border border-slate-300 rounded-xl text-base sm:text-xs bg-white font-medium focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-[11px] font-bold text-slate-600 mb-1">
+                              Time To:
+                            </label>
+                            <input
+                              type="time"
+                              value={dayRow.timeTo}
+                              onInput={(e) => handleContractedTimeChange(day, 'timeTo', e.currentTarget.value)}
+                              onChange={(e) => handleContractedTimeChange(day, 'timeTo', e.target.value)}
+                              className="w-full px-3 py-2 border border-slate-300 rounded-xl text-base sm:text-xs bg-white font-medium focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
+                            />
+                          </div>
+                        </div>
+
+                        {/* Direct Hours & Rate adjustment row */}
+                        <div className="mt-2.5 pt-2 border-t border-slate-200/80 flex items-center justify-between text-xs text-slate-600">
+                          <div className="flex items-center gap-1.5">
+                            <span>Hours:</span>
+                            <input
+                              type="text"
+                              inputMode="decimal"
+                              value={dayRow.totalHours}
+                              onChange={(e) => handleContractedHoursChange(day, e.target.value)}
+                              placeholder="0"
+                              className="w-14 px-2 py-1 border border-slate-300 rounded-lg text-xs font-bold text-slate-900 bg-white text-center"
+                            />
+                          </div>
+                          <div className="flex items-center gap-1.5">
+                            <span>Rate:</span>
+                            <input
+                              type="text"
+                              value={dayRow.rate}
+                              onChange={(e) => {
+                                const updated = { ...formData.page3.contractedHours }
+                                updated[day].rate = e.target.value
+                                setFormData({
+                                  ...formData,
+                                  page3: { ...formData.page3, contractedHours: updated },
+                                })
+                              }}
+                              placeholder="£0.00"
+                              className="w-20 px-2 py-1 border border-slate-300 rounded-lg text-xs font-bold text-slate-900 bg-white text-center"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    )
+                  })}
+
+                  {/* Mobile Totals Card */}
+                  <div className="p-4 bg-slate-900 text-white rounded-2xl flex items-center justify-between shadow-sm">
+                    <div>
+                      <span className="text-[11px] text-slate-400 block font-medium">Weekly Total</span>
+                      <strong className="text-xl text-white font-black">
+                        {formData.page3.contractedHours.totalCostPerWeek || '£0.00'}
+                      </strong>
+                    </div>
+                    <div className="text-right">
+                      <span className="text-[11px] text-slate-400 block font-medium">Contracted Hours</span>
+                      <span className="text-sm font-bold text-slate-200">
+                        {formData.page3.contractedHours.totalHoursPerWeek || '0'} hrs / wk
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Desktop View: Contracted Hours Table */}
+                <div className="hidden md:block overflow-x-auto border border-slate-300 rounded-xl">
                   <table className="w-full text-xs text-left">
                     <thead className="bg-slate-100 border-b border-slate-300 text-slate-800 font-bold">
                       <tr>
@@ -1611,6 +1881,7 @@ export default function Application() {
                               <input
                                 type="time"
                                 value={dayRow.timeFrom}
+                                onInput={(e) => handleContractedTimeChange(day, 'timeFrom', e.currentTarget.value)}
                                 onChange={(e) => handleContractedTimeChange(day, 'timeFrom', e.target.value)}
                                 className="px-2 py-1 border border-slate-300 rounded text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
                               />
@@ -1619,6 +1890,7 @@ export default function Application() {
                               <input
                                 type="time"
                                 value={dayRow.timeTo}
+                                onInput={(e) => handleContractedTimeChange(day, 'timeTo', e.currentTarget.value)}
                                 onChange={(e) => handleContractedTimeChange(day, 'timeTo', e.target.value)}
                                 className="px-2 py-1 border border-slate-300 rounded text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
                               />
@@ -1626,6 +1898,7 @@ export default function Application() {
                             <td className="p-2.5">
                               <input
                                 type="text"
+                                inputMode="decimal"
                                 value={dayRow.totalHours}
                                 onChange={(e) => handleContractedHoursChange(day, e.target.value)}
                                 placeholder="0"
@@ -1660,6 +1933,7 @@ export default function Application() {
                         <td className="p-2.5">
                           <input
                             type="text"
+                            inputMode="decimal"
                             value={formData.page3.contractedHours.totalHoursPerWeek}
                             onChange={(e) =>
                               setFormData({

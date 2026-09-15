@@ -78,15 +78,22 @@ export function calculateDayRate(
     return { hours: 0, cost: 0, costStr: '' }
   }
 
-  const [fromH, fromM] = timeFrom.split(':').map(Number)
-  const [toH, toM] = timeTo.split(':').map(Number)
+  let [fromH, fromM] = timeFrom.split(':').map(Number)
+  let [toH, toM] = timeTo.split(':').map(Number)
   if (isNaN(fromH) || isNaN(toH)) {
     return { hours: 0, cost: 0, costStr: '' }
   }
 
-  const diff = Math.max(0, toH + (toM || 0) / 60 - (fromH + (fromM || 0) / 60))
+  // Normalization for 12-hour clock inputs common on mobile devices:
+  // e.g., care starting at 08:00 and ending at 01:00, 03:00, 05:00, 06:00 PM.
+  // If toH <= fromH and toH < 12, it represents an afternoon/evening pickup.
+  if (toH <= fromH && toH < 12) {
+    toH += 12
+  }
+
+  const diff = toH + (toM || 0) / 60 - (fromH + (fromM || 0) / 60)
   if (diff <= 0) {
-    return { hours: 0, cost: 0, costStr: '£0.00' }
+    return { hours: 0, cost: 0, costStr: '' }
   }
 
   const roundedHours = Math.round(diff * 10) / 10
@@ -134,31 +141,51 @@ export function calculateWeeklySchedule(
       if (!row) return
       if (row.timeFrom && row.timeTo) {
         const dayRes = calculateDayRate(row.timeFrom, row.timeTo, isBaby)
-        totalHours += dayRes.hours
-        totalCost += dayRes.cost
-        if (dayRes.hours > 5) {
-          fullDaysCount++
+        if (dayRes.hours > 0) {
+          totalHours += dayRes.hours
+          totalCost += dayRes.cost
+          if (dayRes.hours > 5) {
+            fullDaysCount++
+          }
+        } else if (row.totalHours) {
+          const h = parseFloat(row.totalHours) || 0
+          if (h > 0) {
+            totalHours += h
+            if (h > 5) {
+              fullDaysCount++
+              totalCost += isBaby ? 80 : 70
+            } else {
+              totalCost += Math.ceil(h) * (isBaby ? 14 : 12)
+            }
+          }
         }
       } else if (row.totalHours) {
         const h = parseFloat(row.totalHours) || 0
-        totalHours += h
-        if (h > 5) {
-          fullDaysCount++
-          totalCost += isBaby ? 80 : 70
-        } else if (h > 0) {
-          totalCost += Math.ceil(h) * (isBaby ? 14 : 12)
+        if (h > 0) {
+          totalHours += h
+          if (h > 5) {
+            fullDaysCount++
+            totalCost += isBaby ? 80 : 70
+          } else {
+            totalCost += Math.ceil(h) * (isBaby ? 14 : 12)
+          }
         }
       }
     })
 
-    // Fallback: if totalCost is 0 or uncalculated, check if totalCostPerWeek was stored
-    if (totalCost === 0 && contractedHours.totalCostPerWeek) {
+    const hasAnyDayInput = days.some((day) => {
+      const row = contractedHours[day]
+      return !!(row && (row.timeFrom || row.timeTo || (row.totalHours && parseFloat(row.totalHours) > 0)))
+    })
+
+    // Fallback: only if no day inputs exist at all (e.g. legacy/imported record)
+    if (!hasAnyDayInput && totalCost === 0 && contractedHours.totalCostPerWeek) {
       const parsed = parseFloat(contractedHours.totalCostPerWeek.replace(/[^0-9.]/g, ''))
       if (!isNaN(parsed) && parsed > 0) {
         totalCost = parsed
       }
     }
-    if (totalHours === 0 && contractedHours.totalHoursPerWeek) {
+    if (!hasAnyDayInput && totalHours === 0 && contractedHours.totalHoursPerWeek) {
       const parsedH = parseFloat(contractedHours.totalHoursPerWeek.replace(/[^0-9.]/g, ''))
       if (!isNaN(parsedH) && parsedH > 0) {
         totalHours = parsedH
