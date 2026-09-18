@@ -23,6 +23,7 @@ import {
   ExternalLink,
   ShieldCheck,
   CheckCircle2,
+  ArrowUp,
 } from 'lucide-react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import AnimatedSection from '@components/ui/AnimatedSection'
@@ -296,8 +297,20 @@ function PolicySidebar({
   return (
     <nav className="policy-sidebar" aria-label="Handbook Table of Contents">
       <div className="policy-sidebar-header">
-        <BookOpen size={16} aria-hidden="true" />
-        <p className="policy-sidebar-heading">Contents</p>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <BookOpen size={16} aria-hidden="true" />
+          <p className="policy-sidebar-heading" style={{ margin: 0, padding: 0 }}>Contents</p>
+        </div>
+        <button
+          type="button"
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          className="policy-sidebar-top-btn"
+          title="Quick scroll to top"
+          aria-label="Scroll to top of page"
+        >
+          <ArrowUp size={11} aria-hidden="true" />
+          <span>Top</span>
+        </button>
       </div>
       <div className="policy-sidebar-groups">
         {grouped.map((group) => (

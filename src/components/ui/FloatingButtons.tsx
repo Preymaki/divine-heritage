@@ -1,5 +1,6 @@
-import { Phone } from 'lucide-react'
-import { motion, useReducedMotion } from 'framer-motion'
+import { useState, useEffect } from 'react'
+import { Phone, ArrowUp } from 'lucide-react'
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { useContactSettings } from '@hooks/useContactSettings'
 
 // WhatsApp SVG icon (brand colour)
@@ -19,7 +20,7 @@ function WhatsAppIcon({ size = 24 }: { size?: number }) {
 }
 
 /**
- * Floating action buttons — WhatsApp and Call.
+ * Floating action buttons — Scroll-to-Top, WhatsApp, and Call.
  *
  * Fixed to the bottom-right of the viewport.
  * Fully accessible: labelled, keyboard-navigable, respects prefers-reduced-motion.
@@ -28,6 +29,20 @@ function WhatsAppIcon({ size = 24 }: { size?: number }) {
 export default function FloatingButtons() {
   const prefersReducedMotion = useReducedMotion()
   const { contact } = useContactSettings()
+  const [showScrollTop, setShowScrollTop] = useState(false)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowScrollTop(window.scrollY > 300)
+    }
+    handleScroll()
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
 
   const phoneNumber = contact.phone.replace(/\s/g, '')
   const whatsappUrl = `https://wa.me/44${phoneNumber.replace(/^0/, '')}`
@@ -46,8 +61,46 @@ export default function FloatingButtons() {
       {...containerVariants}
       className="fixed bottom-6 right-5 z-40 flex flex-col items-end gap-3"
       role="region"
-      aria-label="Quick contact buttons"
+      aria-label="Quick contact and navigation buttons"
     >
+      {/* Quick Scroll to Top */}
+      <AnimatePresence>
+        {showScrollTop && (
+          <motion.div
+            initial={prefersReducedMotion ? false : { opacity: 0, scale: 0.7, y: 12 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={prefersReducedMotion ? false : { opacity: 0, scale: 0.7, y: 12 }}
+            transition={{ duration: 0.2 }}
+            className="group relative flex items-center gap-2"
+          >
+            {/* Tooltip — visible on focus & hover (desktop) */}
+            <span
+              className="
+                hidden sm:flex
+                absolute right-[calc(100%+10px)] top-1/2 -translate-y-1/2
+                items-center px-3 py-1.5 rounded-lg
+                bg-slate-800 text-white text-xs font-semibold whitespace-nowrap
+                opacity-0 group-hover:opacity-100 group-focus-within:opacity-100
+                transition-opacity duration-150 pointer-events-none
+                shadow-[var(--shadow-card)]
+              "
+              aria-hidden="true"
+            >
+              Scroll to top
+            </span>
+            <button
+              type="button"
+              onClick={scrollToTop}
+              className="fab-button text-slate-700 bg-white border border-slate-200 hover:text-primary-600 hover:border-slate-300 shadow-md"
+              aria-label="Scroll to top of page"
+              id="fab-scroll-top"
+            >
+              <ArrowUp size={22} className="stroke-[2.5]" />
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* WhatsApp */}
       <div className="group relative flex items-center gap-2">
         {/* Tooltip — visible on focus & hover (desktop) */}
