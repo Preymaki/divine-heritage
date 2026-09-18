@@ -67,9 +67,9 @@ export default function FloatingButtons() {
       <AnimatePresence>
         {showScrollTop && (
           <motion.div
-            initial={prefersReducedMotion ? false : { opacity: 0, scale: 0.7, y: 12 }}
+            initial={prefersReducedMotion ? undefined : { opacity: 0, scale: 0.7, y: 12 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={prefersReducedMotion ? false : { opacity: 0, scale: 0.7, y: 12 }}
+            exit={prefersReducedMotion ? undefined : { opacity: 0, scale: 0.7, y: 12 }}
             transition={{ duration: 0.2 }}
             className="group relative flex items-center gap-2"
           >
