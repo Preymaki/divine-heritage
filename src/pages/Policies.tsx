@@ -118,6 +118,18 @@ function formatInline(text: string): React.ReactNode {
   })
 }
 
+const SUBHEADING_PATTERNS = /^(How I Assess Your Child|Observations & Learning Journey|Special Educational Needs & Disability|Supporting Children with English as an Additional Language|Recognising Concerns|What Happens When a Child Discloses a Concern|Steps Taken if an Allegation is Made Against an Adult|Responding to Concerns and Disclosures|Allegations Against Myself or a Family Member|Confidentiality$|Mobile Telephones & Personal Recording Devices|Cameras, Photography & Digital Images|Screen Time & Digital Media|Online safety & Internet Access|Designated Emergency Backup Personnel & Qualifications|Data Sharing & Emergency Information|Communication & Parent Notification|1\.\s+Sickness & Infection Exclusion|Medication & Administering|Accidents & Existing Injuries|1\.\s+Accidents Occurring in My Care|2\.\s+\(Accidents at Home\)|1\.\s+Smoking and Vaping Policy|Alcohol, Drugs, and Medication Policy|Safe Collection & Parent Responsibilities|Babies \(Under 12–18 Months\):|Young Children & Toddlers:|1\.\s+Pre-Outing Assessment & Planning|En Route & Road Safety:|3\.\s+Review & Record Keeping|Useful Contact details|\d+\.\s+(?:Belong|Grow|Thrive))/i
+
+function isSubheadingLine(line: string): boolean {
+  const trimmed = line.trim()
+  if (/^[-•*o]\s/.test(trimmed)) return false
+  if (SUBHEADING_PATTERNS.test(trimmed)) return true
+  if (trimmed.endsWith(':') && trimmed.length < 80 && !trimmed.includes('http') && !trimmed.includes('@')) {
+    return true
+  }
+  return false
+}
+
 /**
  * Renders plain-text policy content into structured JSX.
  * Recognizes subheadings, bullets, sub-bullets, numbered lists, and paragraphs.
@@ -129,19 +141,12 @@ function renderContent(content: string): React.ReactNode[] {
     if (lines.length === 0) return null
 
     // Standalone subheading check (short line ending in colon or specific section header)
-    if (lines.length === 1) {
-      const line = lines[0].trim()
-      const isSubheading =
-        (line.endsWith(':') && line.length < 90) ||
-        /^(How I Assess Your Child|Observations & Learning Journey|Special Educational Needs & Disability|Supporting Children with English as an Additional Language|Recognising Concerns|What Happens When a Child Discloses a Concern|Steps Taken if an Allegation is Made Against an Adult|Responding to Concerns and Disclosures|Allegations Against Myself or a Family Member|Confidentiality$|Mobile Telephones & Personal Recording Devices|Cameras, Photography & Digital Images|Screen Time & Digital Media|Online safety & Internet Access|Designated Emergency Backup Personnel & Qualifications|Data Sharing & Emergency Information|Communication & Parent Notification|1\.\s+Sickness & Infection Exclusion|Medication & Administering|Accidents & Existing Injuries|1\.\s+Accidents Occurring in My Care|2\.\s+\(Accidents at Home\)|1\.\s+Smoking and Vaping Policy|Alcohol, Drugs, and Medication Policy|Safe Collection & Parent Responsibilities|Babies \(Under 12–18 Months\):|Young Children & Toddlers:|1\.\s+Pre-Outing Assessment & Planning|En Route & Road Safety:|3\.\s+Review & Record Keeping|Useful Contact details)/i.test(line)
-
-      if (isSubheading) {
-        return (
-          <h3 key={blockIdx} className="policy-content-subheading">
-            {line}
-          </h3>
-        )
-      }
+    if (lines.length === 1 && isSubheadingLine(lines[0])) {
+      return (
+        <h3 key={blockIdx} className="policy-content-subheading">
+          {lines[0].trim()}
+        </h3>
+      )
     }
 
     const isBullet    = lines.every((l) => /^[-•*]\s/.test(l.trim()))
@@ -178,11 +183,18 @@ function renderContent(content: string): React.ReactNode[] {
       )
     }
 
-    // Mixed block: render line by line handling bullet points or sub-bullets seamlessly
+    // Mixed block: render line by line handling bullet points, sub-bullets, subheadings, or numbers
     return (
       <div key={blockIdx} className="policy-content-block">
         {lines.map((line, i) => {
           const trimmed = line.trim()
+          if (isSubheadingLine(trimmed)) {
+            return (
+              <h3 key={i} className="policy-content-subheading">
+                {trimmed}
+              </h3>
+            )
+          }
           if (/^[-•*]\s/.test(trimmed)) {
             return (
               <div key={i} className="policy-mixed-bullet">
