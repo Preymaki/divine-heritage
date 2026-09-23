@@ -251,9 +251,6 @@ function PolicyEntry({ policy, isFirst }: { policy: Policy; isFirst: boolean }) 
     >
       <div className="policy-entry-header">
         {!isFirst && <div className="policy-entry-divider" aria-hidden="true" />}
-        {policy.category && (
-          <span className="policy-entry-category-badge">{policy.category}</span>
-        )}
         <h2 className="policy-entry-title">{policy.title}</h2>
       </div>
 
