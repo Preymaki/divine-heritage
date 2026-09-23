@@ -472,6 +472,15 @@ export default function Application() {
       }
     }
 
+    if (page === 4) {
+      if (!formData.page6.photosArtworkSetting) {
+        newErrors.photosArtworkSetting = 'Please select either "I give permission" or "I do not permit"'
+      }
+      if (!formData.page6.photosWebsite) {
+        newErrors.photosWebsite = 'Please select either "I give permission" or "I do not permit"'
+      }
+    }
+
     if (page === 5) {
       if (!formData.page7.parentName.trim()) {
         newErrors.parentName = 'Parent / Guardian printed name is required'
@@ -489,6 +498,7 @@ export default function Application() {
     if (validatePage(currentPage)) {
       if (currentPage < 5) {
         setCurrentPage(currentPage + 1)
+        window.scrollTo({ top: 0, behavior: 'smooth' })
       }
     }
   }
@@ -496,11 +506,27 @@ export default function Application() {
   function handlePrev() {
     if (currentPage > 1) {
       setCurrentPage(currentPage - 1)
+      window.scrollTo({ top: 0, behavior: 'smooth' })
     }
   }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
+
+    if (!validatePage(1)) {
+      setCurrentPage(1)
+      setSubmitError('Please complete all required fields on Page 1 before submitting.')
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+      return
+    }
+
+    if (!validatePage(4)) {
+      setCurrentPage(4)
+      setSubmitError('Please select an option for both mandatory permissions on Page 4 before submitting.')
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+      return
+    }
+
     if (!validatePage(5)) return
 
     setSubmitting(true)
@@ -625,7 +651,12 @@ export default function Application() {
                 <button
                   key={pageNum}
                   type="button"
-                  onClick={() => setCurrentPage(pageNum)}
+                  onClick={() => {
+                    if (pageNum > currentPage) {
+                      if (!validatePage(currentPage)) return
+                    }
+                    setCurrentPage(pageNum)
+                  }}
                   className="py-2.5 px-0.5 sm:px-1 cursor-pointer flex flex-col items-center group -my-1"
                   title={`Go to Step ${pageNum}: ${PAGE_TITLES[pageNum - 1]}`}
                   aria-label={`Go to Step ${pageNum}`}
@@ -2302,85 +2333,145 @@ export default function Application() {
                   </div>
 
                   {/* Photo & Artwork within setting */}
-                  <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
-                    <span className="font-semibold text-slate-900 block">
-                      I give/do not permit my child's photos and artwork to be used and displayed within the setting
-                    </span>
-                    <div className="flex items-center gap-6">
-                      <label className="inline-flex items-center gap-2 cursor-pointer font-medium">
+                  <div
+                    className={`p-4 rounded-2xl border transition-all space-y-2.5 ${
+                      errors.photosArtworkSetting
+                        ? 'bg-red-50/50 border-red-300 ring-1 ring-red-300'
+                        : 'bg-slate-50 border-slate-200'
+                    }`}
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <span className="font-semibold text-slate-900 block leading-snug">
+                        I give/do not permit my child's photos and artwork to be used and displayed within the setting <span className="text-red-500 font-bold">*</span>
+                      </span>
+                    </div>
+                    <div className="flex flex-wrap items-center gap-6 pt-1">
+                      <label className="inline-flex items-center gap-2 cursor-pointer font-medium text-slate-800">
                         <input
                           type="radio"
                           name="photosArtworkSetting"
                           value="give"
                           checked={formData.page6.photosArtworkSetting === 'give'}
-                          onChange={() =>
+                          onChange={() => {
                             setFormData({
                               ...formData,
                               page6: { ...formData.page6, photosArtworkSetting: 'give' },
                             })
-                          }
-                          className="w-4 h-4 text-[var(--color-primary-600)]"
+                            if (errors.photosArtworkSetting) {
+                              setErrors((prev) => {
+                                const next = { ...prev }
+                                delete next.photosArtworkSetting
+                                return next
+                              })
+                            }
+                            if (submitError) setSubmitError(null)
+                          }}
+                          className="w-4 h-4 text-[var(--color-primary-600)] focus:ring-[var(--color-primary-500)] cursor-pointer"
                         />
                         <span>I give permission</span>
                       </label>
-                      <label className="inline-flex items-center gap-2 cursor-pointer font-medium">
+                      <label className="inline-flex items-center gap-2 cursor-pointer font-medium text-slate-800">
                         <input
                           type="radio"
                           name="photosArtworkSetting"
                           value="do_not_permit"
                           checked={formData.page6.photosArtworkSetting === 'do_not_permit'}
-                          onChange={() =>
+                          onChange={() => {
                             setFormData({
                               ...formData,
                               page6: { ...formData.page6, photosArtworkSetting: 'do_not_permit' },
                             })
-                          }
-                          className="w-4 h-4 text-[var(--color-primary-600)]"
+                            if (errors.photosArtworkSetting) {
+                              setErrors((prev) => {
+                                const next = { ...prev }
+                                delete next.photosArtworkSetting
+                                return next
+                              })
+                            }
+                            if (submitError) setSubmitError(null)
+                          }}
+                          className="w-4 h-4 text-[var(--color-primary-600)] focus:ring-[var(--color-primary-500)] cursor-pointer"
                         />
                         <span>I do not permit</span>
                       </label>
                     </div>
+                    {errors.photosArtworkSetting && (
+                      <p className="text-xs text-red-600 font-semibold flex items-center gap-1.5 pt-0.5">
+                        <AlertCircle size={14} className="shrink-0 text-red-500" />
+                        <span>{errors.photosArtworkSetting}</span>
+                      </p>
+                    )}
                   </div>
 
                   {/* Photo on website */}
-                  <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
-                    <span className="font-semibold text-slate-900 block">
-                      I give/ do not permit photos/work featuring my child to be included on the website
-                    </span>
-                    <div className="flex items-center gap-6">
-                      <label className="inline-flex items-center gap-2 cursor-pointer font-medium">
+                  <div
+                    className={`p-4 rounded-2xl border transition-all space-y-2.5 ${
+                      errors.photosWebsite
+                        ? 'bg-red-50/50 border-red-300 ring-1 ring-red-300'
+                        : 'bg-slate-50 border-slate-200'
+                    }`}
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <span className="font-semibold text-slate-900 block leading-snug">
+                        I give/ do not permit photos/work featuring my child to be included on the website <span className="text-red-500 font-bold">*</span>
+                      </span>
+                    </div>
+                    <div className="flex flex-wrap items-center gap-6 pt-1">
+                      <label className="inline-flex items-center gap-2 cursor-pointer font-medium text-slate-800">
                         <input
                           type="radio"
                           name="photosWebsite"
                           value="give"
                           checked={formData.page6.photosWebsite === 'give'}
-                          onChange={() =>
+                          onChange={() => {
                             setFormData({
                               ...formData,
                               page6: { ...formData.page6, photosWebsite: 'give' },
                             })
-                          }
-                          className="w-4 h-4 text-[var(--color-primary-600)]"
+                            if (errors.photosWebsite) {
+                              setErrors((prev) => {
+                                const next = { ...prev }
+                                delete next.photosWebsite
+                                return next
+                              })
+                            }
+                            if (submitError) setSubmitError(null)
+                          }}
+                          className="w-4 h-4 text-[var(--color-primary-600)] focus:ring-[var(--color-primary-500)] cursor-pointer"
                         />
                         <span>I give permission</span>
                       </label>
-                      <label className="inline-flex items-center gap-2 cursor-pointer font-medium">
+                      <label className="inline-flex items-center gap-2 cursor-pointer font-medium text-slate-800">
                         <input
                           type="radio"
                           name="photosWebsite"
                           value="do_not_permit"
                           checked={formData.page6.photosWebsite === 'do_not_permit'}
-                          onChange={() =>
+                          onChange={() => {
                             setFormData({
                               ...formData,
                               page6: { ...formData.page6, photosWebsite: 'do_not_permit' },
                             })
-                          }
-                          className="w-4 h-4 text-[var(--color-primary-600)]"
+                            if (errors.photosWebsite) {
+                              setErrors((prev) => {
+                                const next = { ...prev }
+                                delete next.photosWebsite
+                                return next
+                              })
+                            }
+                            if (submitError) setSubmitError(null)
+                          }}
+                          className="w-4 h-4 text-[var(--color-primary-600)] focus:ring-[var(--color-primary-500)] cursor-pointer"
                         />
                         <span>I do not permit</span>
                       </label>
                     </div>
+                    {errors.photosWebsite && (
+                      <p className="text-xs text-red-600 font-semibold flex items-center gap-1.5 pt-0.5">
+                        <AlertCircle size={14} className="shrink-0 text-red-500" />
+                        <span>{errors.photosWebsite}</span>
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>
@@ -2562,13 +2653,13 @@ export default function Application() {
                   Please note that the Parent/Guardian signing above is responsible for paying fees.
                 </p>
               </div>
+            </div>
+          )}
 
-              {submitError && (
-                <div className="p-4 bg-red-50 border border-red-200 text-red-700 rounded-xl text-xs flex items-center gap-2">
-                  <AlertCircle size={16} />
-                  <span>{submitError}</span>
-                </div>
-              )}
+          {submitError && (
+            <div className="p-4 bg-red-50 border border-red-200 text-red-700 rounded-xl text-xs flex items-center gap-2 animate-fadeIn">
+              <AlertCircle size={16} className="shrink-0 text-red-600" />
+              <span>{submitError}</span>
             </div>
           )}
 
