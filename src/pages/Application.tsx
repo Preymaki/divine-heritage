@@ -151,8 +151,8 @@ const INITIAL_FORM_DATA: ApplicationFormData = {
 }
 
 const PAGE_TITLES = [
-  'Page 1: Child Details, Parents & Emergency Contact 1',
-  'Page 2: Emergency Contacts, Funded Entitlements & Fees',
+  'Page 1: Child Details, Parents & Emergency Contact 1 (Mandatory)',
+  'Page 2: Emergency Contact 2 (Mandatory), Funded Entitlements & Fees',
   'Page 3: Sessions & Hours Schedules',
   'Page 4: Medical Information, Consent & Sickness',
   'Page 5: Collection, Declarations & Signatures',
@@ -472,6 +472,15 @@ export default function Application() {
       }
     }
 
+    if (page === 2) {
+      if (!formData.emergencyContacts[1].name.trim()) {
+        newErrors.emergency2Name = 'Emergency contact 2 name is required'
+      }
+      if (!formData.emergencyContacts[1].contactNo.trim()) {
+        newErrors.emergency2ContactNo = 'Emergency contact 2 phone number is required'
+      }
+    }
+
     if (page === 4) {
       if (!formData.page6.photosArtworkSetting) {
         newErrors.photosArtworkSetting = 'Please select either "I give permission" or "I do not permit"'
@@ -516,6 +525,13 @@ export default function Application() {
     if (!validatePage(1)) {
       setCurrentPage(1)
       setSubmitError('Please complete all required fields on Page 1 before submitting.')
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+      return
+    }
+
+    if (!validatePage(2)) {
+      setCurrentPage(2)
+      setSubmitError('Please complete all required fields on Page 2 (Emergency Contact 2 is mandatory) before submitting.')
       window.scrollTo({ top: 0, behavior: 'smooth' })
       return
     }
@@ -653,7 +669,12 @@ export default function Application() {
                   type="button"
                   onClick={() => {
                     if (pageNum > currentPage) {
-                      if (!validatePage(currentPage)) return
+                      for (let p = currentPage; p < pageNum; p++) {
+                        if (!validatePage(p)) {
+                          setCurrentPage(p)
+                          return
+                        }
+                      }
                     }
                     setCurrentPage(pageNum)
                   }}
@@ -1249,10 +1270,15 @@ export default function Application() {
 
               {/* Emergency Contact 1 */}
               <div className="pt-4 border-t-2 border-slate-800">
-                <h3 className="text-sm font-bold text-slate-900 mb-1">
-                  Emergency Contact(s) - Please note that completing this task is mandatory, and all tasks must be finished.
-                </h3>
-                <p className="text-xs text-slate-500 mb-4">Contact 1 of 4 (continued on Page 2)</p>
+                <div className="flex flex-wrap items-center justify-between gap-2 mb-1">
+                  <h3 className="text-sm font-bold text-slate-900">
+                    Emergency Contact(s) — Emergency Contacts 1 &amp; 2 are mandatory
+                  </h3>
+                  <span className="text-xs font-semibold px-2.5 py-0.5 bg-rose-50 text-rose-700 border border-rose-200 rounded-full">
+                    Contact 1 Mandatory
+                  </span>
+                </div>
+                <p className="text-xs text-slate-500 mb-4">Contact 1 of 4 (Contact 2 is continued on Page 2 and is also mandatory)</p>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                   <div>
@@ -1267,8 +1293,17 @@ export default function Application() {
                         const updated = [...formData.emergencyContacts] as [any, any, any, any]
                         updated[0].name = e.target.value
                         setFormData({ ...formData, emergencyContacts: updated })
+                        if (errors.emergency1Name) {
+                          setErrors((prev) => {
+                            const next = { ...prev }
+                            delete next.emergency1Name
+                            return next
+                          })
+                        }
                       }}
-                      className="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
+                      className={`w-full px-3.5 py-2 rounded-xl border ${
+                        errors.emergency1Name ? 'border-red-400 focus:ring-red-400' : 'border-slate-300 focus:ring-[var(--color-primary-500)]'
+                      } text-sm focus:outline-none focus:ring-2`}
                     />
                     {errors.emergency1Name && (
                       <p className="text-xs text-red-500 mt-1">{errors.emergency1Name}</p>
@@ -1287,8 +1322,17 @@ export default function Application() {
                         const updated = [...formData.emergencyContacts] as [any, any, any, any]
                         updated[0].contactNo = e.target.value
                         setFormData({ ...formData, emergencyContacts: updated })
+                        if (errors.emergency1ContactNo) {
+                          setErrors((prev) => {
+                            const next = { ...prev }
+                            delete next.emergency1ContactNo
+                            return next
+                          })
+                        }
                       }}
-                      className="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
+                      className={`w-full px-3.5 py-2 rounded-xl border ${
+                        errors.emergency1ContactNo ? 'border-red-400 focus:ring-red-400' : 'border-slate-300 focus:ring-[var(--color-primary-500)]'
+                      } text-sm focus:outline-none focus:ring-2`}
                     />
                     {errors.emergency1ContactNo && (
                       <p className="text-xs text-red-500 mt-1">{errors.emergency1ContactNo}</p>
@@ -1320,58 +1364,128 @@ export default function Application() {
             <div className="bg-white rounded-3xl shadow-sm border border-slate-200 p-6 md:p-10 space-y-8 animate-fadeIn">
               {/* Emergency Contacts 2, 3, 4 */}
               <div className="space-y-4">
-                <div className="border-b-2 border-slate-800 pb-2">
-                  <h2 className="text-base md:text-lg font-bold text-slate-900">
-                    Emergency Contact(s) (Continued)
-                  </h2>
+                <div className="border-b-2 border-slate-800 pb-2 flex flex-wrap items-center justify-between gap-2">
+                  <div>
+                    <h2 className="text-base md:text-lg font-bold text-slate-900">
+                      Emergency Contact(s) (Continued)
+                    </h2>
+                    <p className="text-xs text-slate-500 mt-0.5">
+                      Emergency Contact 2 is mandatory. Contacts 3 &amp; 4 are optional.
+                    </p>
+                  </div>
+                  <span className="text-xs font-semibold px-2.5 py-0.5 bg-rose-50 text-rose-700 border border-rose-200 rounded-full">
+                    Contact 2 Mandatory
+                  </span>
                 </div>
 
-                <div className="space-y-3">
-                  {[1, 2, 3].map((idx) => (
-                    <div key={idx} className="grid grid-cols-1 md:grid-cols-3 gap-3 p-3 bg-slate-50 rounded-xl border border-slate-200">
-                      <div>
-                        <label className="block text-xs font-bold text-slate-800 mb-1">
-                          {idx + 1}. Name:
-                        </label>
-                        <input
-                          type="text"
-                          value={formData.emergencyContacts[idx].name}
-                          onChange={(e) => {
-                            const updated = [...formData.emergencyContacts] as [any, any, any, any]
-                            updated[idx].name = e.target.value
-                            setFormData({ ...formData, emergencyContacts: updated })
-                          }}
-                          className="w-full px-3 py-1.5 rounded-lg border border-slate-300 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
-                        />
+                <div className="space-y-4">
+                  {[1, 2, 3].map((idx) => {
+                    const isMandatory = idx === 1
+                    return (
+                      <div
+                        key={idx}
+                        className={`p-4 rounded-xl border transition-all ${
+                          isMandatory
+                            ? 'bg-rose-50/20 border-rose-200/90 shadow-xs'
+                            : 'bg-slate-50 border-slate-200'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between mb-3">
+                          <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                            <span>{idx + 1}. Contact</span>
+                            {isMandatory && <span className="text-rose-500">*</span>}
+                          </span>
+                          {isMandatory ? (
+                            <span className="text-[11px] font-semibold text-rose-600 bg-rose-50 border border-rose-200 px-2 py-0.5 rounded-full">
+                              Mandatory
+                            </span>
+                          ) : (
+                            <span className="text-[11px] font-medium text-slate-400">
+                              Optional
+                            </span>
+                          )}
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                          <div>
+                            <label className="block text-xs font-bold text-slate-800 mb-1">
+                              {idx + 1}. Name: {isMandatory && <span className="text-red-500">*</span>}
+                            </label>
+                            <input
+                              type="text"
+                              required={isMandatory}
+                              value={formData.emergencyContacts[idx].name}
+                              onChange={(e) => {
+                                const updated = [...formData.emergencyContacts] as [any, any, any, any]
+                                updated[idx].name = e.target.value
+                                setFormData({ ...formData, emergencyContacts: updated })
+                                if (isMandatory && errors.emergency2Name) {
+                                  setErrors((prev) => {
+                                    const next = { ...prev }
+                                    delete next.emergency2Name
+                                    return next
+                                  })
+                                }
+                              }}
+                              className={`w-full px-3 py-1.5 rounded-lg border ${
+                                isMandatory && errors.emergency2Name
+                                  ? 'border-red-400 focus:ring-red-400'
+                                  : 'border-slate-300 focus:ring-[var(--color-primary-500)]'
+                              } text-xs bg-white focus:outline-none focus:ring-2`}
+                            />
+                            {isMandatory && errors.emergency2Name && (
+                              <p className="text-xs text-red-500 mt-1">{errors.emergency2Name}</p>
+                            )}
+                          </div>
+
+                          <div>
+                            <label className="block text-xs font-bold text-slate-800 mb-1">
+                              Contact no: {isMandatory && <span className="text-red-500">*</span>}
+                            </label>
+                            <input
+                              type="tel"
+                              required={isMandatory}
+                              value={formData.emergencyContacts[idx].contactNo}
+                              onChange={(e) => {
+                                const updated = [...formData.emergencyContacts] as [any, any, any, any]
+                                updated[idx].contactNo = e.target.value
+                                setFormData({ ...formData, emergencyContacts: updated })
+                                if (isMandatory && errors.emergency2ContactNo) {
+                                  setErrors((prev) => {
+                                    const next = { ...prev }
+                                    delete next.emergency2ContactNo
+                                    return next
+                                  })
+                                }
+                              }}
+                              className={`w-full px-3 py-1.5 rounded-lg border ${
+                                isMandatory && errors.emergency2ContactNo
+                                  ? 'border-red-400 focus:ring-red-400'
+                                  : 'border-slate-300 focus:ring-[var(--color-primary-500)]'
+                              } text-xs bg-white focus:outline-none focus:ring-2`}
+                            />
+                            {isMandatory && errors.emergency2ContactNo && (
+                              <p className="text-xs text-red-500 mt-1">{errors.emergency2ContactNo}</p>
+                            )}
+                          </div>
+
+                          <div>
+                            <label className="block text-xs font-bold text-slate-800 mb-1">Relationship:</label>
+                            <input
+                              type="text"
+                              value={formData.emergencyContacts[idx].relationship}
+                              onChange={(e) => {
+                                const updated = [...formData.emergencyContacts] as [any, any, any, any]
+                                updated[idx].relationship = e.target.value
+                                setFormData({ ...formData, emergencyContacts: updated })
+                              }}
+                              className="w-full px-3 py-1.5 rounded-lg border border-slate-300 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
+                            />
+                          </div>
+                        </div>
                       </div>
-                      <div>
-                        <label className="block text-xs font-bold text-slate-800 mb-1">Contact no:</label>
-                        <input
-                          type="tel"
-                          value={formData.emergencyContacts[idx].contactNo}
-                          onChange={(e) => {
-                            const updated = [...formData.emergencyContacts] as [any, any, any, any]
-                            updated[idx].contactNo = e.target.value
-                            setFormData({ ...formData, emergencyContacts: updated })
-                          }}
-                          className="w-full px-3 py-1.5 rounded-lg border border-slate-300 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-bold text-slate-800 mb-1">Relationship:</label>
-                        <input
-                          type="text"
-                          value={formData.emergencyContacts[idx].relationship}
-                          onChange={(e) => {
-                            const updated = [...formData.emergencyContacts] as [any, any, any, any]
-                            updated[idx].relationship = e.target.value
-                            setFormData({ ...formData, emergencyContacts: updated })
-                          }}
-                          className="w-full px-3 py-1.5 rounded-lg border border-slate-300 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]"
-                        />
-                      </div>
-                    </div>
-                  ))}
+                    )
+                  })}
                 </div>
               </div>
 
