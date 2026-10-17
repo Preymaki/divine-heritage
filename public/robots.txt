@@ -1,5 +1,5 @@
 # robots.txt for Divine Heritage Childcare Service
-# https://divineheritagechildcare.co.uk
+# https://www.divineheritagechildcare.com
 
 User-agent: *
 Allow: /
@@ -9,4 +9,4 @@ Disallow: /admin/
 Disallow: /api/
 
 # Authoritative XML Sitemap
-Sitemap: https://divineheritagechildcare.co.uk/sitemap.xml
+Sitemap: https://www.divineheritagechildcare.com/sitemap.xml

@@ -10,7 +10,7 @@ export const SITE = {
   city: 'London',
   postcode: 'SE16 4BW',
   areaServed: 'Bermondsey, Rotherhithe, Southwark, London SE16',
-  url: 'https://divineheritagechildcare.co.uk',
+  url: 'https://www.divineheritagechildcare.com',
   ofsted: '', // TODO: Add Ofsted registration number before launch
   founded: '2017',
   social: {
