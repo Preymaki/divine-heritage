@@ -34,6 +34,33 @@ export const APPLICATIONS_EVENT = 'applications-changed'
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
+/**
+ * Recursively removes all keys with `undefined` values so Firestore setDoc/updateDoc
+ * will never fail with "Unsupported field value: undefined", while preserving
+ * Dates, Timestamps, arrays, and primitive values.
+ */
+function removeUndefinedFields<T>(obj: T): T {
+  if (obj === null || typeof obj !== 'object') {
+    return obj
+  }
+  if (obj instanceof Date) {
+    return obj
+  }
+  if ('toMillis' in obj && typeof (obj as any).toMillis === 'function') {
+    return obj
+  }
+  if (Array.isArray(obj)) {
+    return obj.map((item) => removeUndefinedFields(item)) as unknown as T
+  }
+  const cleaned: Record<string, any> = {}
+  for (const [key, value] of Object.entries(obj)) {
+    if (value !== undefined) {
+      cleaned[key] = removeUndefinedFields(value)
+    }
+  }
+  return cleaned as T
+}
+
 function generateApplicationId(): string {
   const now = new Date()
   const year = now.getFullYear()
@@ -159,22 +186,7 @@ export async function submitApplication(
     pdfGenerated: false,
   }
 
-  // 1. Always save to localStorage first
-  const currentLocal = getLocalApplications()
-  saveLocalApplications([record, ...currentLocal])
-
-  // 2. Persist to Firestore
-  try {
-    const docRef = doc(db, APPLICATIONS_COLLECTION, applicationId)
-    await setDoc(docRef, record)
-  } catch (firestoreErr) {
-    console.warn(
-      '[applications] Firestore write failed or permission error; saved locally:',
-      firestoreErr
-    )
-  }
-
-  // 3. Generate PDF and dispatch email in background
+  // 1. Generate PDF in memory and attempt email dispatch
   try {
     const { base64 } = await generateApplicationPDF(record)
     record.pdfGenerated = true
@@ -251,27 +263,31 @@ export async function submitApplication(
     record.emailStatus = emailSent ? 'sent' : 'unconfigured'
     record.emailSentAt = emailSent ? new Date().toISOString() : null
     record.emailError = emailErrorMsg
-
-    // Update status in Firestore and localStorage
-    const updatedList = getLocalApplications().map((item) =>
-      item.id === record.id ? { ...record } : item
-    )
-    saveLocalApplications(updatedList)
-
-    try {
-      const docRef = doc(db, APPLICATIONS_COLLECTION, applicationId)
-      await updateDoc(docRef, {
-        pdfGenerated: record.pdfGenerated,
-        emailStatus: record.emailStatus,
-        emailSentAt: record.emailSentAt,
-        emailError: record.emailError,
-      })
-    } catch {
-      // Non-blocking
-    }
   } catch (pdfErr) {
     console.warn('[applications] PDF or Email generation error:', pdfErr)
   }
+
+  // 2. Persist to Firestore — this MUST succeed for the application to be accepted
+  try {
+    const cleanRecord = removeUndefinedFields(record)
+    const docRef = doc(db, APPLICATIONS_COLLECTION, applicationId)
+    await setDoc(docRef, cleanRecord)
+  } catch (firestoreErr: any) {
+    console.error(
+      '[applications] Firestore persistence error:',
+      firestoreErr
+    )
+    return {
+      success: false,
+      applicationId,
+      error:
+        'Unable to save your application to our database. Please check your internet connection and try again, or contact Avril Cole directly at 07939 303144 / Divineheritagechildcare@gmail.com.',
+    }
+  }
+
+  // 3. Only save to localStorage after confirmed database write
+  const currentLocal = getLocalApplications()
+  saveLocalApplications([record, ...currentLocal])
 
   return {
     success: true,

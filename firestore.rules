@@ -7,27 +7,28 @@ service cloud.firestore {
     // Returns true only when ALL of the following are satisfied:
     //   1. The request carries a valid Firebase Auth token (user is signed in).
     //   2. The token's email address is verified by Firebase Auth.
-    //   3. The email exactly matches the one stored in settings/admin — the
-    //      single source of truth for the authorised admin account.
+    // Returns true only when ALL of the following are satisfied:
+    //   1. The request carries a valid Firebase Auth token (user is signed in).
+    //   2. The token's email address is verified by Firebase Auth.
+    //   3. The email matches an authorised administrator:
+    //      - Matches the verified admin email whitelist (vmacfoy3@gmail.com, divineheritagechildcare@gmail.com)
+    //      - OR matches the email stored in settings/admin (if the document exists)
     //
-    // This mirrors the client-side VITE_ADMIN_EMAIL_WHITELIST check performed in
-    // src/services/firebase/auth.ts → isAdminEmail(), but is enforced server-side
-    // by Firestore where it cannot be bypassed by modifying client code.
-    //
-    // Why settings/admin and not a hard-coded string?
-    //   Hard-coding the email in rules requires a rules re-deploy every time the
-    //   admin address changes. Storing it in a known Firestore document keeps
-    //   the rules generic while still being a server-authoritative value the
-    //   client can never forge. The document itself is protected by this same
-    //   function (only the existing admin can overwrite it).
-    //
-    // NOTE: request.auth.token.email_verified is checked so that a user who
-    // has the right email but has not verified it (possible in some Auth flows)
-    // still cannot write.
+    // Checking exists() before get() prevents runtime rule evaluation failures
+    // when settings/admin has not yet been seeded.
     function isAdmin() {
       return request.auth != null
           && request.auth.token.email_verified == true
-          && request.auth.token.email == get(/databases/$(database)/documents/settings/admin).data.email;
+          && (
+            request.auth.token.email.lower() in [
+              'vmacfoy3@gmail.com',
+              'divineheritagechildcare@gmail.com'
+            ]
+            || (
+              exists(/databases/$(database)/documents/settings/admin)
+              && request.auth.token.email.lower() == get(/databases/$(database)/documents/settings/admin).data.email.lower()
+            )
+          );
     }
 
     // ── Gallery collection ───────────────────────────────────────────────────

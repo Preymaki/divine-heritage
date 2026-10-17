@@ -17,6 +17,7 @@ import {
   Mail,
   MessageCircle,
   X,
+  AlertCircle,
 } from 'lucide-react'
 import PageHeader from '@components/admin/PageHeader'
 import EmptyState from '@components/admin/EmptyState'
@@ -62,6 +63,7 @@ function cleanPhoneForWhatsApp(phone: string): string {
 export default function AdminApplications() {
   const [applications, setApplications] = useState<ApplicationRecord[]>([])
   const [loading, setLoading] = useState(true)
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [statusFilter, setStatusFilter] = useState<ApplicationStatus | 'all'>('all')
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedApp, setSelectedApp] = useState<ApplicationRecord | null>(null)
@@ -72,9 +74,15 @@ export default function AdminApplications() {
       (data) => {
         setApplications(data)
         setLoading(false)
+        setErrorMessage(null)
       },
-      () => {
+      (err) => {
         setLoading(false)
+        setErrorMessage(
+          err.message?.includes('permission')
+            ? 'Live sync notice: Firestore security rules must be updated in Firebase Console to view remote applications.'
+            : 'Unable to connect to live applications: ' + err.message
+        )
       }
     )
     return unsub
@@ -130,6 +138,15 @@ export default function AdminApplications() {
         title="Childcare Applications"
         subtitle="Review submitted online applications, inspect full registration details, and download completed PDF copies."
       />
+
+      {errorMessage && (
+        <div className="p-4 bg-amber-50 border border-amber-200 text-amber-800 rounded-2xl text-xs flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
+            <AlertCircle size={16} className="shrink-0 text-amber-600" />
+            <span>{errorMessage}</span>
+          </div>
+        </div>
+      )}
 
       {/* ── Status Tabs & Search ────────────────────────────────────────── */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
