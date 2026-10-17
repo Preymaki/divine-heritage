@@ -5,6 +5,8 @@ import { FAQS } from '@data/faqs'
 import AnimatedSection from '@components/ui/AnimatedSection'
 import SectionWrapper from '@components/ui/SectionWrapper'
 import CTASection from '@components/home/CTASection'
+import SEO from '@components/common/SEO'
+import { generateFaqSchema, generateBreadcrumbSchema } from '@constants/schema'
 
 interface AccordionItemProps {
   question: string
@@ -79,6 +81,19 @@ export default function FAQs() {
 
   return (
     <>
+      <SEO
+        title="Frequently Asked Questions | Divine Heritage Childcare Bermondsey"
+        description="Find answers about admissions, fees, 15/30 hours government funding, EYFS routines, meals, and safety at Divine Heritage Childcare in Bermondsey, London SE16."
+        path="/faqs"
+        schema={[
+          generateFaqSchema(FAQS),
+          generateBreadcrumbSchema([
+            { name: 'Home', path: '/' },
+            { name: 'FAQs', path: '/faqs' },
+          ]),
+        ]}
+      />
+
       {/* Page header */}
       <div className="bg-[var(--color-primary-900)] pt-32 pb-16">
         <div className="container-site">

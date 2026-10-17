@@ -5,6 +5,8 @@ import { Phone, Mail, MapPin, Clock, CheckCircle, AlertCircle, Info } from 'luci
 import AnimatedSection from '@components/ui/AnimatedSection'
 import SectionWrapper from '@components/ui/SectionWrapper'
 import SectionHeader from '@components/ui/SectionHeader'
+import SEO from '@components/common/SEO'
+import { generateBreadcrumbSchema } from '@constants/schema'
 import { useContactSettings } from '@hooks/useContactSettings'
 import { submitEnquiry } from '@services/enquiries'
 
@@ -134,6 +136,16 @@ export default function Contact() {
 
   return (
     <>
+      <SEO
+        title="Contact Us & Book a Visit | Divine Heritage Childcare London SE16"
+        description="Contact Avril Cole at Divine Heritage Childcare Service in Pitman Building, Freda Street, Bermondsey, London SE16 4BW. Call 07939 303144 or arrange an in-person setting tour."
+        path="/contact"
+        schema={generateBreadcrumbSchema([
+          { name: 'Home', path: '/' },
+          { name: 'Contact Us', path: '/contact' },
+        ])}
+      />
+
       {/* Page header */}
       <div className="bg-[var(--color-primary-900)] pt-32 pb-16">
         <div className="container-site">

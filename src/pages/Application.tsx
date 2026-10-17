@@ -18,6 +18,8 @@ import {
   Clock,
 } from 'lucide-react'
 import SectionWrapper from '@components/ui/SectionWrapper'
+import SEO from '@components/common/SEO'
+import { generateBreadcrumbSchema } from '@constants/schema'
 import type {
   ApplicationFormData,
   ApplicationRecord,
@@ -635,6 +637,15 @@ export default function Application() {
 
   return (
     <main className="min-h-screen bg-[var(--color-neutral-50)] pb-20">
+      <SEO
+        title="Apply for Childcare Placement | Divine Heritage London SE16"
+        description="Register your child for a placement at Divine Heritage Childcare Service. Online application form for babies, toddlers, and school-age childcare in Bermondsey, London SE16."
+        path="/apply"
+        schema={generateBreadcrumbSchema([
+          { name: 'Home', path: '/' },
+          { name: 'Application Form', path: '/apply' },
+        ])}
+      />
       {/* ── Page Header Banner ────────────────────────────────────────────── */}
       <section className="bg-[var(--color-primary-900)] text-white pt-28 md:pt-32 pb-10 px-4 border-b border-[var(--color-primary-800)] relative overflow-hidden">
         {/* Subtle background glow */}

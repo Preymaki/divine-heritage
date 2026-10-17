@@ -1,9 +1,15 @@
 import { Link } from 'react-router-dom'
 import { ArrowRight, Home } from 'lucide-react'
+import SEO from '@components/common/SEO'
 
 export default function NotFound() {
   return (
     <div className="min-h-screen bg-[var(--color-background)] flex items-center justify-center px-5">
+      <SEO
+        title="Page Not Found (404) | Divine Heritage Childcare"
+        description="The page you requested could not be found. Return to Divine Heritage Childcare Service homepage."
+        noindex
+      />
       <div className="text-center max-w-md">
         <div className="w-20 h-20 rounded-3xl bg-[var(--color-primary-50)] flex items-center justify-center mx-auto mb-6">
           <Home size={32} className="text-[var(--color-primary-400)]" />

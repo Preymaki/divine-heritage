@@ -28,6 +28,8 @@ import {
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import AnimatedSection from '@components/ui/AnimatedSection'
 import CTASection from '@components/home/CTASection'
+import SEO from '@components/common/SEO'
+import { generateBreadcrumbSchema } from '@constants/schema'
 import { subscribeToPublishedPolicies, OFFICIAL_POLICIES } from '@services/policies'
 import type { Policy } from '@appTypes/policy'
 
@@ -503,11 +505,14 @@ export default function Policies() {
 
   return (
     <>
-      {/* ── SEO ── */}
-      <title>Policies & Procedures | Divine Heritage Childcare Services</title>
-      <meta
-        name="description"
-        content="Read the complete, official policies and procedures handbook for Divine Heritage Childcare Services (September 2026 – September 2027), covering Learning & Development, Safeguarding, Health & Safety, and Operational procedures."
+      <SEO
+        title="Policies & Procedures | Divine Heritage Childcare Services Bermondsey"
+        description="Read the complete, official policies and procedures handbook for Divine Heritage Childcare Services in Bermondsey, London SE16, covering Learning & Development, Safeguarding, Health & Safety, and Operational procedures."
+        path="/policies"
+        schema={generateBreadcrumbSchema([
+          { name: 'Home', path: '/' },
+          { name: 'Policies & Procedures', path: '/policies' },
+        ])}
       />
 
       {/* ─────────────────────────────────────────────────────────────────────

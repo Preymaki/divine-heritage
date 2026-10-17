@@ -24,6 +24,8 @@ import AnimatedSection from '@components/ui/AnimatedSection'
 import SectionWrapper from '@components/ui/SectionWrapper'
 import SectionHeader from '@components/ui/SectionHeader'
 import CTASection from '@components/home/CTASection'
+import SEO from '@components/common/SEO'
+import { generateBreadcrumbSchema } from '@constants/schema'
 import { IMAGES, VIDEOS } from '@utils/images'
 import { subscribeToPublishedGallery } from '@services/gallery'
 import {
@@ -176,6 +178,16 @@ export default function Gallery() {
 
   return (
     <>
+      <SEO
+        title="Photo & Video Gallery | Divine Heritage Childcare London SE16"
+        description="Explore daily life at Divine Heritage Childcare in Bermondsey, London SE16: large indoor playroom, creative sensory crafts, garden games, and local community outings."
+        path="/gallery"
+        schema={generateBreadcrumbSchema([
+          { name: 'Home', path: '/' },
+          { name: 'Gallery', path: '/gallery' },
+        ])}
+      />
+
       {/* Keyboard nav */}
       {lightboxIndex !== null && (
         <div

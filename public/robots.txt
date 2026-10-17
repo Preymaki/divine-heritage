@@ -1,0 +1,12 @@
+# robots.txt for Divine Heritage Childcare Service
+# https://divineheritagechildcare.co.uk
+
+User-agent: *
+Allow: /
+
+# Disallow admin dashboard and API endpoints from search index
+Disallow: /admin/
+Disallow: /api/
+
+# Authoritative XML Sitemap
+Sitemap: https://divineheritagechildcare.co.uk/sitemap.xml

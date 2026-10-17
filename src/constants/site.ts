@@ -7,6 +7,10 @@ export const SITE = {
   phone: '07939 303144',
   email: 'Divineheritagechildcare@gmail.com',
   address: 'Pitman Building, Freda Street, SE16 4BW',
+  city: 'London',
+  postcode: 'SE16 4BW',
+  areaServed: 'Bermondsey, Rotherhithe, Southwark, London SE16',
+  url: 'https://divineheritagechildcare.co.uk',
   ofsted: '', // TODO: Add Ofsted registration number before launch
   founded: '2017',
   social: {

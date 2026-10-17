@@ -3,6 +3,8 @@ import AnimatedSection from '@components/ui/AnimatedSection'
 import SectionWrapper from '@components/ui/SectionWrapper'
 import SectionHeader from '@components/ui/SectionHeader'
 import CTASection from '@components/home/CTASection'
+import SEO from '@components/common/SEO'
+import { generateBreadcrumbSchema } from '@constants/schema'
 import { useSiteImages } from '@hooks/useSiteImages'
 import { useAboutSettings } from '@hooks/useAboutSettings'
 
@@ -64,6 +66,16 @@ export default function About() {
 
   return (
     <>
+      <SEO
+        title="About Us | Divine Heritage Childcare Service Bermondsey London"
+        description="Learn about Avril Cole and Divine Heritage Childcare in Bermondsey, London SE16. Over 9 years of early years experience, EYFS accredited, Paediatric First Aid certified, and Ofsted registered."
+        path="/about"
+        schema={generateBreadcrumbSchema([
+          { name: 'Home', path: '/' },
+          { name: 'About Us', path: '/about' },
+        ])}
+      />
+
       {/* Page Header */}
       <div className="bg-[var(--color-primary-900)] pt-32 pb-16">
         <div className="container-site">

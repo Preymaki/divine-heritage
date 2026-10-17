@@ -4,6 +4,8 @@ import { SERVICES } from '@data/services'
 import AnimatedSection from '@components/ui/AnimatedSection'
 import SectionWrapper from '@components/ui/SectionWrapper'
 import CTASection from '@components/home/CTASection'
+import SEO from '@components/common/SEO'
+import { generateBreadcrumbSchema } from '@constants/schema'
 import { useSiteImages } from '@hooks/useSiteImages'
 
 const iconMap: Record<string, React.ComponentType<{ size?: number }>> = {
@@ -59,6 +61,16 @@ export default function Services() {
 
   return (
     <>
+      <SEO
+        title="Childcare Services | Full-Time, Flexible & After School Care London SE16"
+        description="Explore our registered childcare services in Bermondsey, London SE16: Full day care (5 months–3 years), flexible part-time sessions, after school care, holiday clubs, and 15/30 hours government funding."
+        path="/services"
+        schema={generateBreadcrumbSchema([
+          { name: 'Home', path: '/' },
+          { name: 'Services', path: '/services' },
+        ])}
+      />
+
       {/* Page header */}
       <div className="bg-[var(--color-primary-900)] pt-32 pb-16">
         <div className="container-site">
