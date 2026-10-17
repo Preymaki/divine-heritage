@@ -34,13 +34,23 @@ import { auth } from './config'
 export const EMAIL_STORAGE_KEY = 'dh:magicLinkEmail'
 
 /**
- * Allowed admin emails, parsed from the env variable.
+ * Allowed admin emails, parsed from the env variable and default admin accounts.
  * Stored as lower-cased strings for case-insensitive comparison.
  */
-const WHITELIST: string[] = (import.meta.env.VITE_ADMIN_EMAIL_WHITELIST ?? '')
-  .split(',')
-  .map((e: string) => e.trim().toLowerCase())
-  .filter(Boolean)
+const DEFAULT_ADMIN_EMAILS = [
+  'vmacfoy3@gmail.com',
+  'divineheritagechildcare@gmail.com',
+]
+
+const WHITELIST: string[] = Array.from(
+  new Set([
+    ...DEFAULT_ADMIN_EMAILS,
+    ...(import.meta.env.VITE_ADMIN_EMAIL_WHITELIST ?? '')
+      .split(',')
+      .map((e: string) => e.trim().toLowerCase())
+      .filter(Boolean),
+  ])
+)
 
 // ---------------------------------------------------------------------------
 // Helpers
