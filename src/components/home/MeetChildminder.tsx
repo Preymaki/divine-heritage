@@ -6,6 +6,7 @@ import SectionWrapper from '@components/ui/SectionWrapper'
 import SectionHeader from '@components/ui/SectionHeader'
 import { IMAGES } from '@utils/images'
 import { useAboutSettings } from '@hooks/useAboutSettings'
+import { useSiteImages } from '@hooks/useSiteImages'
 
 const CREDENTIALS = [
   'Ofsted registered childminder',
@@ -47,7 +48,8 @@ function renderBio(paragraphs: string[]) {
 
 export default function MeetChildminder() {
   const { about } = useAboutSettings()
-  const imageSrc = about.aboutImageUrl || IMAGES.meetChildminder
+  const siteImages = useSiteImages()
+  const imageSrc = about.aboutImageUrl || siteImages.homeAbout || IMAGES.meetChildminder
 
   return (
     <SectionWrapper id="meet-your-childminder" background="muted">
@@ -107,8 +109,8 @@ export default function MeetChildminder() {
         {/* Text side */}
         <AnimatedSection direction="left" delay={0.12} className="order-2 lg:order-1">
           <SectionHeader
-            eyebrow="Professional Childminder"
-            title="Welcome to Divine Heritage Childcare"
+            eyebrow={about.bioName ? `Professional Childminder · ${about.bioName}` : 'Professional Childminder'}
+            title={about.bioName ? `Meet ${about.bioName}` : 'Welcome to Divine Heritage Childcare'}
             maxWidth="max-w-full"
           />
 

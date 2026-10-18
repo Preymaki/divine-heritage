@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form'
 import { useState, useEffect } from 'react'
 import { useSearchParams, Link } from 'react-router-dom'
-import { Phone, Mail, MapPin, Clock, CheckCircle, AlertCircle, Info } from 'lucide-react'
+import { Phone, Mail, MapPin, Clock, CheckCircle, AlertCircle, Info, ShieldCheck } from 'lucide-react'
 import AnimatedSection from '@components/ui/AnimatedSection'
 import SectionWrapper from '@components/ui/SectionWrapper'
 import SectionHeader from '@components/ui/SectionHeader'
@@ -233,6 +233,48 @@ export default function Contact() {
                     )}
                   </div>
                 </div>
+
+                {/* Ofsted registration from Admin Settings */}
+                {contact.ofsted && (
+                  <div className="flex items-center gap-4 p-4 bg-white border border-[var(--color-muted)] rounded-[var(--radius-lg)]">
+                    <div className="w-10 h-10 rounded-xl bg-[var(--color-accent-50)] flex items-center justify-center shrink-0">
+                      <ShieldCheck size={18} className="text-[var(--color-accent-500)]" />
+                    </div>
+                    <div>
+                      <p className="text-xs text-[var(--color-text-muted)] mb-0.5">Ofsted Registered</p>
+                      <p className="text-[var(--color-text-primary)] font-medium text-sm">{contact.ofsted}</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Social links from Admin Settings */}
+                {(Boolean(contact.social?.facebook) || Boolean(contact.social?.instagram)) && (
+                  <div className="p-4 bg-white border border-[var(--color-muted)] rounded-[var(--radius-lg)]">
+                    <p className="text-xs text-[var(--color-text-muted)] mb-2 font-medium">Follow Divine Heritage</p>
+                    <div className="flex flex-wrap items-center gap-2">
+                      {contact.social?.facebook && (
+                        <a
+                          href={contact.social.facebook}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--color-background)] hover:bg-[var(--color-primary-50)] text-[var(--color-text-primary)] hover:text-[var(--color-primary-600)] text-xs font-medium border border-[var(--color-muted)] transition-colors"
+                        >
+                          Facebook
+                        </a>
+                      )}
+                      {contact.social?.instagram && (
+                        <a
+                          href={contact.social.instagram}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--color-background)] hover:bg-[var(--color-accent-50)] text-[var(--color-text-primary)] hover:text-[var(--color-accent-600)] text-xs font-medium border border-[var(--color-muted)] transition-colors"
+                        >
+                          Instagram
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div className="p-5 bg-[var(--color-accent-50)] border border-[var(--color-accent-200)] rounded-[var(--radius-lg)]">

@@ -79,7 +79,7 @@ export const DEFAULT_HERO: HeroSettings = {
 
 export const DEFAULT_ABOUT: AboutSettings = {
   aboutImageUrl: '',
-  previewTitle:    '',
+  previewTitle:    'A Safe, Nurturing Home for Every Child',
   previewSubtitle: 'Founded in 2017, Divine Heritage provides warm, professional home-based childminding for families across South East London.',
   highlights: [
     { title: 'Belonging',   description: 'emotional safety, inclusion, and feeling at home.' },
@@ -112,7 +112,7 @@ export const DEFAULT_ABOUT: AboutSettings = {
       description: 'Diversity is celebrated every day, guiding children to respect, appreciate, and embrace the wonderful world around them.',
     },
   ],
-  bioName:       '',
+  bioName:       'Avril Cole',
   bioParagraphs: [
     'With over a decade of dedicated early years experience, I launched Divine Heritage Childcare in 2017 to create something truly special: a vibrant, home-from-home environment where children don\u2019t just stay\u2014they thrive.',
     'My journey began at sixteen, babysitting for friends and family. That early spark grew into a lifelong calling, ultimately inspiring me to step away from my previous career and pour my heart into professional childminding full-time.',
@@ -225,7 +225,7 @@ function sanitiseAboutSettings(raw: AboutSettings): AboutSettings {
   )
 
   let missionQuote = data.missionQuote
-  if (!missionQuote || /Every child deserves to feel/i.test(missionQuote)) {
+  if (!missionQuote || !missionQuote.trim() || missionQuote === 'Every child deserves to feel safe, loved, and celebrated.') {
     missionQuote = 'Creating a warm, nurturing space where every child feels safe, loved, and celebrated.'
   }
 

@@ -45,13 +45,6 @@ function toAnchorId(title: string): string {
     .replace(/^-+|-+$/g, '')
 }
 
-/** Check if Firestore list is the legacy 29-item seed */
-function isLegacySeed(items: Policy[]): boolean {
-  if (items.length === 0) return true
-  const titles = new Set(items.map((i) => i.title.trim().toLowerCase()))
-  return titles.has('holidays') || !titles.has('prevent duty & counter-extremism policy')
-}
-
 /** Turn the static official policies into Policy interface objects */
 function getOfficialPolicyFallbacks(): Policy[] {
   return OFFICIAL_POLICIES.map((p, idx) => ({
@@ -427,11 +420,12 @@ export default function Policies() {
   useEffect(() => {
     const unsub = subscribeToPublishedPolicies(
       (data) => {
-        // If empty or still containing old legacy data, fallback to the official policies
-        if (data.length === 0 || isLegacySeed(data)) {
-          setPolicies(getOfficialPolicyFallbacks())
-        } else {
+        // If Firestore has published policies, use them directly so admin updates appear immediately
+        if (data.length > 0) {
           setPolicies(data)
+        } else {
+          // Fallback to official policy handbook if database has not yet been seeded
+          setPolicies(getOfficialPolicyFallbacks())
         }
         setLoading(false)
       },

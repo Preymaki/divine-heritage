@@ -38,49 +38,52 @@ export default function HeroSection() {
   }
 
   function renderHeading(heading: string, accentWord: string) {
-    // Check if any of the special coloured words exist in the heading
-    const hasColouredWords = Object.keys(COLOURED_WORDS).some((w) =>
-      heading.includes(w)
-    )
+    const trimmedAccent = accentWord?.trim()
+    const wordStyles: Record<string, { color: string; shadow: string }> = {}
 
-    if (hasColouredWords) {
-      // Split by all coloured words, preserving them
-      const pattern = new RegExp(`(${Object.keys(COLOURED_WORDS).join('|')})`, 'g')
-      const parts = heading.split(pattern)
-      return (
-        <>
-          {parts.map((part, i) =>
-            COLOURED_WORDS[part] ? (
-              <span
-                key={i}
-                style={{
-                  color: COLOURED_WORDS[part],
-                  textShadow: `0 0 18px ${COLOURED_WORDS[part]}88`,
-                }}
-              >
-                {part}
-              </span>
-            ) : (
-              part
-            )
-          )}
-        </>
-      )
+    // First add standard coloured words (Thrives=yellow, Grows=green, Belongs=blue)
+    for (const [w, color] of Object.entries(COLOURED_WORDS)) {
+      wordStyles[w] = { color, shadow: `0 0 18px ${color}88` }
     }
 
-    // Fallback: single accentWord highlight (original behaviour)
-    if (!accentWord || !heading.includes(accentWord)) {
+    // If a custom accentWord is provided and found in heading, give it vibrant pink accent priority
+    if (trimmedAccent && heading.toLowerCase().includes(trimmedAccent.toLowerCase())) {
+      const escaped = trimmedAccent.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+      const match = heading.match(new RegExp(`(${escaped})`, 'i'))
+      const exactWord = match ? match[1] : trimmedAccent
+      wordStyles[exactWord] = {
+        color: '#f054af',
+        shadow: '0 0 18px rgba(240,84,175,0.85)',
+      }
+    }
+
+    const matchedWords = Object.keys(wordStyles).filter((w) => heading.includes(w))
+    if (matchedWords.length === 0) {
       return <>{heading}</>
     }
-    const [before, ...rest] = heading.split(accentWord)
-    const after = rest.join(accentWord)
+
+    // Sort by length descending so longer words match first
+    matchedWords.sort((a, b) => b.length - a.length)
+    const pattern = new RegExp(`(${matchedWords.map((w) => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})`, 'g')
+    const parts = heading.split(pattern)
+
     return (
       <>
-        {before}
-        <span className="text-[#facc15] drop-shadow-[0_0_12px_rgba(250,204,21,0.6)]">
-          {accentWord}
-        </span>
-        {after}
+        {parts.map((part, i) =>
+          wordStyles[part] ? (
+            <span
+              key={i}
+              style={{
+                color: wordStyles[part].color,
+                textShadow: wordStyles[part].shadow,
+              }}
+            >
+              {part}
+            </span>
+          ) : (
+            part
+          )
+        )}
       </>
     )
   }

@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import { ArrowRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { Swiper, SwiperSlide } from 'swiper/react'
@@ -8,17 +9,43 @@ import AnimatedSection from '@components/ui/AnimatedSection'
 import SectionWrapper from '@components/ui/SectionWrapper'
 import SectionHeader from '@components/ui/SectionHeader'
 import { IMAGES } from '@utils/images'
+import { subscribeToPublishedGallery } from '@services/gallery'
+import type { GalleryItem } from '@appTypes/gallery'
 
-const GALLERY_PREVIEW = [
-  { src: IMAGES.gallery1, alt: 'Two happy children smiling on swings during outdoor play at Divine Heritage' },
-  { src: IMAGES.gallery2, alt: 'A child in a painting apron creating artwork at an easel during an arts and crafts session' },
-  { src: IMAGES.gallery3, alt: 'A young child sitting independently reading a picture book at Divine Heritage' },
-  { src: IMAGES.gallery4, alt: 'Divine Heritage childminder sitting on the floor with four children in hands-on sensory play' },
-  { src: IMAGES.gallery5, alt: 'Two children exploring nature outdoors during an outdoor play session' },
-  { src: IMAGES.gallery6, alt: 'Children delighting in a bubble play session at the local library during a Divine Heritage outing' },
+const FALLBACK_PREVIEW = [
+  { id: 'f1', src: IMAGES.gallery1, alt: 'Two happy children smiling on swings during outdoor play at Divine Heritage' },
+  { id: 'f2', src: IMAGES.gallery2, alt: 'A child in a painting apron creating artwork at an easel during an arts and crafts session' },
+  { id: 'f3', src: IMAGES.gallery3, alt: 'A young child sitting independently reading a picture book at Divine Heritage' },
+  { id: 'f4', src: IMAGES.gallery4, alt: 'Divine Heritage childminder sitting on the floor with four children in hands-on sensory play' },
+  { id: 'f5', src: IMAGES.gallery5, alt: 'Two children exploring nature outdoors during an outdoor play session' },
+  { id: 'f6', src: IMAGES.gallery6, alt: 'Children delighting in a bubble play session at the local library during a Divine Heritage outing' },
 ]
 
 export default function GalleryPreview() {
+  const [liveImages, setLiveImages] = useState<{ id: string; src: string; alt: string }[]>(FALLBACK_PREVIEW)
+
+  useEffect(() => {
+    const unsub = subscribeToPublishedGallery((items: GalleryItem[]) => {
+      if (items && items.length > 0) {
+        // Prefer gallery group photos (outings, learning, indoor, library, etc.)
+        const galleryItems = items.filter(
+          (i) => ['outings', 'learning', 'indoor', 'library', 'other'].includes(i.group) && i.downloadURL
+        )
+        const candidates = galleryItems.length > 0 ? galleryItems : items.filter((i) => i.downloadURL)
+
+        if (candidates.length > 0) {
+          setLiveImages(
+            candidates.slice(0, 10).map((item) => ({
+              id: item.id,
+              src: item.downloadURL,
+              alt: item.altText || item.title || 'Divine Heritage childcare activity',
+            }))
+          )
+        }
+      }
+    })
+    return unsub
+  }, [])
   return (
     <SectionWrapper id="gallery-preview" background="white">
       <AnimatedSection className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-10">
@@ -62,8 +89,8 @@ export default function GalleryPreview() {
             nextSlideMessage: 'Next image',
           }}
         >
-          {GALLERY_PREVIEW.map((image, i) => (
-            <SwiperSlide key={i}>
+          {liveImages.map((image) => (
+            <SwiperSlide key={image.id}>
               <div className="rounded-[var(--radius-xl)] overflow-hidden aspect-[4/3] group">
                 <img
                   src={image.src}
