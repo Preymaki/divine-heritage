@@ -38,52 +38,49 @@ export default function HeroSection() {
   }
 
   function renderHeading(heading: string, accentWord: string) {
-    const trimmedAccent = accentWord?.trim()
-    const wordStyles: Record<string, { color: string; shadow: string }> = {}
+    // Check if any of the special coloured words exist in the heading
+    const hasColouredWords = Object.keys(COLOURED_WORDS).some((w) =>
+      heading.includes(w)
+    )
 
-    // First add standard coloured words (Thrives=yellow, Grows=green, Belongs=blue)
-    for (const [w, color] of Object.entries(COLOURED_WORDS)) {
-      wordStyles[w] = { color, shadow: `0 0 18px ${color}88` }
+    if (hasColouredWords) {
+      // Split by all coloured words, preserving them
+      const pattern = new RegExp(`(${Object.keys(COLOURED_WORDS).join('|')})`, 'g')
+      const parts = heading.split(pattern)
+      return (
+        <>
+          {parts.map((part, i) =>
+            COLOURED_WORDS[part] ? (
+              <span
+                key={i}
+                style={{
+                  color: COLOURED_WORDS[part],
+                  textShadow: `0 0 18px ${COLOURED_WORDS[part]}88`,
+                }}
+              >
+                {part}
+              </span>
+            ) : (
+              part
+            )
+          )}
+        </>
+      )
     }
 
-    // If a custom accentWord is provided and found in heading, give it vibrant pink accent priority
-    if (trimmedAccent && heading.toLowerCase().includes(trimmedAccent.toLowerCase())) {
-      const escaped = trimmedAccent.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-      const match = heading.match(new RegExp(`(${escaped})`, 'i'))
-      const exactWord = match ? match[1] : trimmedAccent
-      wordStyles[exactWord] = {
-        color: '#f054af',
-        shadow: '0 0 18px rgba(240,84,175,0.85)',
-      }
-    }
-
-    const matchedWords = Object.keys(wordStyles).filter((w) => heading.includes(w))
-    if (matchedWords.length === 0) {
+    // Fallback: single accentWord highlight (original behaviour)
+    if (!accentWord || !heading.includes(accentWord)) {
       return <>{heading}</>
     }
-
-    // Sort by length descending so longer words match first
-    matchedWords.sort((a, b) => b.length - a.length)
-    const pattern = new RegExp(`(${matchedWords.map((w) => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})`, 'g')
-    const parts = heading.split(pattern)
-
+    const [before, ...rest] = heading.split(accentWord)
+    const after = rest.join(accentWord)
     return (
       <>
-        {parts.map((part, i) =>
-          wordStyles[part] ? (
-            <span
-              key={i}
-              style={{
-                color: wordStyles[part].color,
-                textShadow: wordStyles[part].shadow,
-              }}
-            >
-              {part}
-            </span>
-          ) : (
-            part
-          )
-        )}
+        {before}
+        <span className="text-[#facc15] drop-shadow-[0_0_12px_rgba(250,204,21,0.6)]">
+          {accentWord}
+        </span>
+        {after}
       </>
     )
   }
@@ -114,7 +111,8 @@ export default function HeroSection() {
 
   return (
     <section
-      className="hero-section-height relative flex flex-col justify-center overflow-hidden"
+      className="relative flex items-center justify-center overflow-hidden"
+      style={{ minHeight: 'min(80vh, 760px)', maxHeight: '860px', height: '78vh' }}
       aria-label="Welcome to Divine Heritage Childcare Service"
     >
       {/* Background image with overlay */}
@@ -145,7 +143,7 @@ export default function HeroSection() {
       />
 
       {/* Content */}
-      <div className="relative z-10 w-full container-site pt-24 pb-14 sm:pt-28 sm:pb-16 md:py-24 my-auto">
+      <div className="relative z-10 w-full container-site py-20 md:py-24">
         <div className="max-w-2xl xl:max-w-3xl">
           <motion.div
             variants={containerVariants}
@@ -153,10 +151,10 @@ export default function HeroSection() {
             animate="visible"
           >
             {/* Eyebrow pill */}
-            <motion.div variants={itemVariants} className="flex items-center gap-2 mb-3.5 sm:mb-5">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full bg-white/15 backdrop-blur-sm border border-white/25 shadow-xs">
-                <div className="w-1.5 h-1.5 rounded-full bg-[var(--color-accent-400)] shrink-0" aria-hidden="true" />
-                <span className="text-white text-[11px] sm:text-xs font-semibold tracking-wide drop-shadow-[0_1px_2px_rgba(0,0,0,0.6)]">
+            <motion.div variants={itemVariants} className="flex items-center gap-2.5 mb-5">
+              <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/15 backdrop-blur-sm border border-white/25 shadow-xs">
+                <div className="w-1.5 h-1.5 rounded-full bg-[var(--color-accent-400)]" aria-hidden="true" />
+                <span className="text-white text-xs font-semibold tracking-wide drop-shadow-[0_1px_2px_rgba(0,0,0,0.6)]">
                   {hero.eyebrow}
                 </span>
               </div>
@@ -166,7 +164,7 @@ export default function HeroSection() {
             <motion.h1
               variants={itemVariants}
               className="font-[var(--font-family-heading)] font-bold text-white leading-tight tracking-tight drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)]"
-              style={{ fontSize: 'clamp(1.85rem, 5vw, 3.75rem)' }}
+              style={{ fontSize: 'clamp(2.1rem, 4.5vw, 3.75rem)' }}
             >
               {renderHeading(hero.heading, hero.accentWord)}
             </motion.h1>
@@ -174,7 +172,7 @@ export default function HeroSection() {
             {/* Subtitle */}
             <motion.p
               variants={itemVariants}
-              className="mt-3.5 sm:mt-4 text-white text-sm sm:text-base md:text-lg leading-relaxed max-w-xl font-normal drop-shadow-[0_1px_3px_rgba(0,0,0,0.7)]"
+              className="mt-4 text-white text-base md:text-lg leading-relaxed max-w-xl font-normal drop-shadow-[0_1px_3px_rgba(0,0,0,0.7)]"
             >
               {hero.subtitle}
             </motion.p>
@@ -182,12 +180,12 @@ export default function HeroSection() {
             {/* CTA buttons */}
             <motion.div
               variants={itemVariants}
-              className="flex flex-wrap items-center gap-2.5 sm:gap-3 mt-6 sm:mt-7"
+              className="flex flex-wrap items-center gap-3 mt-7"
             >
               <Link
                 to="/contact"
                 id="hero-cta-book-visit"
-                className="inline-flex items-center justify-center gap-2 px-5 sm:px-7 py-3 sm:py-3.5 bg-[var(--color-accent-500)] hover:bg-[var(--color-accent-400)] text-white font-semibold rounded-xl text-sm sm:text-base transition-all duration-200 hover:shadow-[0_8px_28px_rgba(224,40,155,0.40)] hover:-translate-y-0.5 group focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2"
+                className="inline-flex items-center gap-2 px-7 py-3.5 bg-[var(--color-accent-500)] hover:bg-[var(--color-accent-400)] text-white font-semibold rounded-xl text-base transition-all duration-200 hover:shadow-[0_8px_28px_rgba(224,40,155,0.40)] hover:-translate-y-0.5 group focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2"
               >
                 {hero.ctaPrimary}
                 <ArrowRight
@@ -199,7 +197,7 @@ export default function HeroSection() {
               <Link
                 to="/about"
                 id="hero-cta-learn-more"
-                className="inline-flex items-center justify-center gap-2 px-5 sm:px-7 py-3 sm:py-3.5 bg-white/15 hover:bg-white/25 backdrop-blur-sm border border-white/30 text-white font-semibold rounded-xl text-sm sm:text-base transition-all duration-200 hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2 shadow-xs"
+                className="inline-flex items-center gap-2 px-7 py-3.5 bg-white/15 hover:bg-white/25 backdrop-blur-sm border border-white/30 text-white font-semibold rounded-xl text-base transition-all duration-200 hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2 shadow-xs"
               >
                 {hero.ctaSecondary}
               </Link>
@@ -208,18 +206,18 @@ export default function HeroSection() {
             {/* Trust badges */}
             <motion.div
               variants={itemVariants}
-              className="flex flex-wrap items-center gap-x-4 sm:gap-x-5 gap-y-2 mt-6 sm:mt-8"
+              className="flex flex-wrap items-center gap-5 mt-8"
               aria-label="Key trust indicators"
             >
               {TRUST_BADGES.map(({ icon: Icon, label }) => (
-                <div key={label} className="flex items-center gap-1.5 sm:gap-2">
+                <div key={label} className="flex items-center gap-2">
                   <div
-                    className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-white/15 backdrop-blur-sm flex items-center justify-center shrink-0 border border-white/20"
+                    className="w-7 h-7 rounded-lg bg-white/15 backdrop-blur-sm flex items-center justify-center shrink-0 border border-white/20"
                     aria-hidden="true"
                   >
                     <Icon size={14} className="text-[var(--color-accent-300)]" />
                   </div>
-                  <span className="text-white font-semibold text-xs sm:text-sm drop-shadow-[0_1px_3px_rgba(0,0,0,0.7)]">{label}</span>
+                  <span className="text-white font-semibold text-sm drop-shadow-[0_1px_3px_rgba(0,0,0,0.7)]">{label}</span>
                 </div>
               ))}
             </motion.div>
@@ -227,13 +225,13 @@ export default function HeroSection() {
         </div>
       </div>
 
-      {/* Scroll cue — tablet and desktop only */}
+      {/* Scroll cue */}
       {!prefersReducedMotion && (
         <motion.div
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1.4, duration: 0.5 }}
-          className="hidden md:flex absolute bottom-7 left-1/2 -translate-x-1/2 z-10 flex-col items-center gap-1.5"
+          className="absolute bottom-7 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-1.5"
           aria-hidden="true"
         >
           <span className="text-white/80 text-[10px] tracking-widest uppercase font-semibold drop-shadow-[0_1px_2px_rgba(0,0,0,0.6)]">Scroll</span>

@@ -56,13 +56,14 @@ export default function Navbar() {
       {/* Logo — fixed upper-left, independent of navbar */}
       <Link
         to="/"
-        className="fixed top-2.5 sm:top-3 left-3 sm:left-4 z-50 flex items-center group"
+        className="fixed top-3 left-4 z-50 flex items-center group"
         aria-label={`${SITE.name} Home`}
       >
         <img
           src="/logo.png"
           alt={SITE.name}
-          className="h-11 sm:h-12 md:h-16 w-auto object-contain transition-transform duration-200 group-hover:scale-105 rounded-xl md:rounded-2xl overflow-hidden max-w-[145px] sm:max-w-[170px] md:max-w-[190px]"
+          className="h-14 md:h-16 w-auto object-contain transition-transform duration-200 group-hover:scale-105 rounded-2xl overflow-hidden"
+          style={{ maxWidth: 190 }}
         />
       </Link>
 
