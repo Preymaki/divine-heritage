@@ -238,6 +238,23 @@
   box-shadow: var(--shadow-elevated);
 }
 
+/* Hero section responsive dimensions:
+   - Mobile (< 768px): full viewport height minimum with natural auto expansion so content never clips or overlaps
+   - Tablet & Desktop (>= 768px): exact original dimensions preserved (min 80vh/760px, max 860px, height 78vh)
+*/
+.hero-section-height {
+  min-height: 100svh;
+  height: auto;
+}
+
+@media (min-width: 768px) {
+  .hero-section-height {
+    min-height: min(80vh, 760px);
+    max-height: 860px;
+    height: 78vh;
+  }
+}
+
 /* ─────────────────────────────────────────────
    Swiper overrides
    ───────────────────────────────────────────── */
