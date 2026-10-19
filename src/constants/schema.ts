@@ -12,7 +12,7 @@ export const LOCAL_BUSINESS_SCHEMA = {
   name: SITE.name,
   alternateName: SITE.shortName,
   url: SITE.url,
-  logo: `${SITE.url}/logo.png`,
+  logo: `${SITE.url}/logo-512.png`,
   image: [
     `${SITE.url}/images/about-setting-overview.jpeg`,
     `${SITE.url}/images/outdoor-spinning-ride.jpeg`,

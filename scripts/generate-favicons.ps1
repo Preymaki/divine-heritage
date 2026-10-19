@@ -57,11 +57,12 @@ function Resize-Image {
     return $destBmp
 }
 
-# 1. Generate PNGs
+# 1. Generate crisp square PNGs for search engines, browsers, and mobile devices
 $sizes = @{
     "favicon-16x16.png" = 16
     "favicon-32x32.png" = 32
     "favicon-48x48.png" = 48
+    "favicon-96x96.png" = 96
     "apple-touch-icon.png" = 180
     "logo-192.png" = 192
     "logo-512.png" = 512
@@ -69,45 +70,75 @@ $sizes = @{
 
 foreach ($name in $sizes.Keys) {
     $sz = $sizes[$name]
-    $radius = [int][Math]::Round($sz * 0.16)
-    $resized = Resize-Image -source $srcBmp -width $sz -height $sz -cornerRadius $radius
+    # For standard search engines and web favicons, full square with crisp white background is optimal
+    # so search engines (like Google) and mobile OS can display or circle-mask the icon cleanly without corner clipping.
+    $resized = Resize-Image -source $srcBmp -width $sz -height $sz -cornerRadius 0
     $outPath = Join-Path $projectRoot "public\$name"
     $resized.Save($outPath, [System.Drawing.Imaging.ImageFormat]::Png)
     $resized.Dispose()
     Write-Host "Created $name ($sz x $sz)"
 }
 
-# Also generate a square version of 32 and 16 without rounded corners for standard crisp favicon
-$fav32 = Resize-Image -source $srcBmp -width 32 -height 32 -cornerRadius 0
-$fav16 = Resize-Image -source $srcBmp -width 16 -height 16 -cornerRadius 0
-$fav48 = Resize-Image -source $srcBmp -width 48 -height 48 -cornerRadius 0
+# 2. Create true multi-resolution favicon.ico containing 48x48, 32x32, and 16x16 frames
+# Googlebot-Image and modern browsers strictly look for 48x48 or multi-res ICO
+$icoPngSizes = @(48, 32, 16)
+$icoEntries = @()
 
-# Create favicon.ico (can contain 32x32 icon)
-$hIcon = $fav32.GetHicon()
-$icon = [System.Drawing.Icon]::FromHandle($hIcon)
+foreach ($sz in $icoPngSizes) {
+    $pngPath = Join-Path $projectRoot "public\favicon-${sz}x${sz}.png"
+    $bytes = [System.IO.File]::ReadAllBytes($pngPath)
+    $icoEntries += [PSCustomObject]@{
+        Width = [byte]$sz
+        Height = [byte]$sz
+        Bytes = $bytes
+    }
+}
+
+$ms = New-Object System.IO.MemoryStream
+$bw = New-Object System.IO.BinaryWriter($ms)
+
+# Write ICO Header
+$bw.Write([uint16]0)                  # Reserved (must be 0)
+$bw.Write([uint16]1)                  # Resource type: 1 = ICO
+$bw.Write([uint16]$icoEntries.Count)  # Image count (3)
+
+# Calculate image data offset
+$dataOffset = 6 + ($icoEntries.Count * 16)
+
+# Write Directory Entries
+foreach ($entry in $icoEntries) {
+    $bw.Write([byte]$entry.Width)                    # Width
+    $bw.Write([byte]$entry.Height)                   # Height
+    $bw.Write([byte]0)                               # Colors (0 for truecolor/PNG)
+    $bw.Write([byte]0)                               # Reserved
+    $bw.Write([uint16]1)                             # Color planes
+    $bw.Write([uint16]32)                            # Bits per pixel
+    $bw.Write([uint32]$entry.Bytes.Length)           # Size of image data
+    $bw.Write([uint32]$dataOffset)                   # Offset of image data
+    $dataOffset += $entry.Bytes.Length
+}
+
+# Write PNG byte arrays
+foreach ($entry in $icoEntries) {
+    $bw.Write($entry.Bytes)
+}
+
+$bw.Flush()
 $icoPath = Join-Path $projectRoot "public\favicon.ico"
-$fs = [System.IO.File]::Create($icoPath)
-$icon.Save($fs)
-$fs.Close()
-$icon.Dispose()
-Write-Host "Created favicon.ico"
+[System.IO.File]::WriteAllBytes($icoPath, $ms.ToArray())
+$bw.Close()
+$ms.Close()
+Write-Host "Created modern multi-res favicon.ico (48x48, 32x32, 16x16, size: $((Get-Item $icoPath).Length) bytes)"
 
-# Create SVG favicon embedding the 192x192 PNG as base64
+# 3. Create SVG favicon embedding the 192x192 PNG as base64
 $png192Path = Join-Path $projectRoot "public\logo-192.png"
 $bytes192 = [System.IO.File]::ReadAllBytes($png192Path)
 $b64 = [Convert]::ToBase64String($bytes192)
 
 $svgContent = @"
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" width="100%" height="100%">
-  <defs>
-    <clipPath id="squircle">
-      <rect width="192" height="192" rx="32" ry="32"/>
-    </clipPath>
-  </defs>
-  <rect width="192" height="192" rx="32" ry="32" fill="#ffffff"/>
-  <g clip-path="url(#squircle)">
-    <image href="data:image/png;base64,$b64" width="192" height="192" x="0" y="0"/>
-  </g>
+  <rect width="192" height="192" rx="38" ry="38" fill="#ffffff"/>
+  <image href="data:image/png;base64,$b64" width="192" height="192" x="0" y="0"/>
 </svg>
 "@
 
@@ -115,9 +146,5 @@ $svgPath = Join-Path $projectRoot "public\favicon.svg"
 [System.IO.File]::WriteAllText($svgPath, $svgContent, [System.Text.Encoding]::UTF8)
 Write-Host "Updated public/favicon.svg"
 
-$fav32.Dispose()
-$fav16.Dispose()
-$fav48.Dispose()
 $srcBmp.Dispose()
-
 Write-Host "All favicons generated successfully!"
