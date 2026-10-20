@@ -14,8 +14,8 @@ export const SITE = {
   ofsted: '', // TODO: Add Ofsted registration number before launch
   founded: '2017',
   social: {
-    facebook: 'https://facebook.com/divineheritagechildcare',
-    instagram: 'https://instagram.com/divineheritagechildcare',
+    facebook: '',
+    instagram: '',
     childcare: 'https://www.childcare.co.uk/profile/2305993',
   },
 } as const

@@ -79,7 +79,7 @@ export const LOCAL_BUSINESS_SCHEMA = {
     SITE.social.facebook,
     SITE.social.instagram,
     SITE.social.childcare,
-  ],
+  ].filter(Boolean),
 }
 
 /**

@@ -60,8 +60,8 @@ export const DEFAULT_CONTACT: ContactSettings = {
     notes:    'School holiday care available on request',
   },
   social: {
-    facebook:  'https://facebook.com/divineheritagechildcare',
-    instagram: 'https://instagram.com/divineheritagechildcare',
+    facebook:  '',
+    instagram: '',
   },
   updatedAt: null,
 }
