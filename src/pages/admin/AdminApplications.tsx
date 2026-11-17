@@ -18,6 +18,8 @@ import {
   MessageCircle,
   X,
   AlertCircle,
+  Send,
+  CheckCircle2,
 } from 'lucide-react'
 import PageHeader from '@components/admin/PageHeader'
 import EmptyState from '@components/admin/EmptyState'
@@ -26,6 +28,8 @@ import {
   updateApplicationStatus,
   deleteApplication,
   downloadApplicationPDF,
+  sendApplicationEmailToAdmin,
+  ADMIN_APPLICATION_EMAIL,
 } from '@services/applications'
 import type { ApplicationRecord, ApplicationStatus } from '@appTypes/application'
 import {
@@ -68,6 +72,11 @@ export default function AdminApplications() {
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedApp, setSelectedApp] = useState<ApplicationRecord | null>(null)
   const [activeModalPage, setActiveModalPage] = useState<1 | 2 | 3 | 4 | 5 | 6>(1)
+  const [sendingEmailId, setSendingEmailId] = useState<string | null>(null)
+  const [emailBanner, setEmailBanner] = useState<{
+    type: 'success' | 'error'
+    text: string
+  } | null>(null)
 
   useEffect(() => {
     const unsub = subscribeToApplications(
@@ -132,12 +141,57 @@ export default function AdminApplications() {
     }
   }
 
+  async function handleSendEmail(app: ApplicationRecord) {
+    setSendingEmailId(app.id)
+    setEmailBanner(null)
+    const res = await sendApplicationEmailToAdmin(app)
+    setSendingEmailId(null)
+    setEmailBanner({
+      type: res.success ? 'success' : 'error',
+      text: res.message,
+    })
+    if (res.success && selectedApp?.id === app.id) {
+      setSelectedApp({
+        ...selectedApp,
+        emailStatus: 'sent',
+        emailSentAt: new Date().toISOString(),
+      })
+    }
+  }
+
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Childcare Applications"
-        subtitle="Review submitted online applications, inspect full registration details, and download completed PDF copies."
+        title="Childcare Applications Oversight"
+        subtitle={`Submitted applications are automatically emailed as PDF files to ${ADMIN_APPLICATION_EMAIL} and logged here for general website oversight.`}
       />
+
+      {emailBanner && (
+        <div
+          className={`p-4 rounded-2xl text-xs flex items-center justify-between gap-3 border ${
+            emailBanner.type === 'success'
+              ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
+              : 'bg-amber-50 border-amber-200 text-amber-800'
+          }`}
+        >
+          <div className="flex items-center gap-2">
+            {emailBanner.type === 'success' ? (
+              <CheckCircle2 size={16} className="shrink-0 text-emerald-600" />
+            ) : (
+              <AlertCircle size={16} className="shrink-0 text-amber-600" />
+            )}
+            <span>{emailBanner.text}</span>
+          </div>
+          <button
+            type="button"
+            onClick={() => setEmailBanner(null)}
+            className="text-slate-400 hover:text-slate-700 cursor-pointer"
+            aria-label="Dismiss notification"
+          >
+            <X size={15} />
+          </button>
+        </div>
+      )}
 
       {errorMessage && (
         <div className="p-4 bg-amber-50 border border-amber-200 text-amber-800 rounded-2xl text-xs flex items-center justify-between gap-3">
@@ -254,6 +308,11 @@ export default function AdminApplications() {
                     <span className={`text-[11px] px-2.5 py-0.5 rounded-full ${STATUS_PILL[app.status]}`}>
                       {STATUS_LABELS[app.status]}
                     </span>
+                    {app.emailStatus === 'sent' && (
+                      <span className="inline-flex items-center gap-1 text-[11px] px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 font-medium">
+                        <CheckCircle2 size={11} /> Emailed to {ADMIN_APPLICATION_EMAIL}
+                      </span>
+                    )}
                     <span className="text-xs text-slate-400">• Submitted {dateStr}</span>
                   </div>
 
@@ -322,6 +381,22 @@ export default function AdminApplications() {
                   >
                     <Eye size={14} />
                     View Form
+                  </button>
+
+                  {/* Send / Resend to Email Button */}
+                  <button
+                    type="button"
+                    disabled={sendingEmailId === app.id}
+                    onClick={() => handleSendEmail(app)}
+                    title={`Send application PDF to ${ADMIN_APPLICATION_EMAIL}`}
+                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 font-semibold text-xs transition-colors cursor-pointer disabled:opacity-50"
+                  >
+                    <Send size={13} />
+                    {sendingEmailId === app.id
+                      ? 'Sending...'
+                      : app.emailStatus === 'sent'
+                      ? 'Resend Email'
+                      : 'Email PDF'}
                   </button>
 
                   {/* Download PDF Button */}

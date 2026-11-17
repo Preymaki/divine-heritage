@@ -365,7 +365,7 @@ export default function Application() {
 
   // Setup canvas drawing
   useEffect(() => {
-    if (currentPage !== 6) return
+    if (currentPage !== 5) return
     const canvas = canvasRef.current
     if (!canvas) return
     const ctx = canvas.getContext('2d')
@@ -559,8 +559,9 @@ export default function Application() {
           applicationId: result.applicationId,
           status: 'new',
           submittedAt: new Date().toISOString(),
-          emailStatus: 'pending',
+          emailStatus: result.emailSent ? 'sent' : 'pending',
           pdfGenerated: true,
+          pdfStorageUrl: result.pdfStorageUrl || null,
         })
       } else {
         setSubmitError(result.error || 'Failed to submit application. Please try again.')
@@ -610,6 +611,10 @@ export default function Application() {
               <div className="flex justify-between">
                 <span className="text-slate-500">Registered Childminder:</span>
                 <strong className="text-slate-900">Avril Cole (07939303144)</strong>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-slate-500">Sent to Email:</span>
+                <strong className="text-slate-900">divineheritagechildcare@gmail.com</strong>
               </div>
             </div>
 

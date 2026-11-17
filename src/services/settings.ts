@@ -51,7 +51,7 @@ const DOC_ABOUT   = 'about'
 
 export const DEFAULT_CONTACT: ContactSettings = {
   phone:   '07939 303144',
-  email:   'Divineheritagechildcare@gmail.com',
+  email:   'divineheritagechildcare@gmail.com',
   address: 'Pitman Building, Freda Street, SE16 4BW',
   tagline: 'A Safe, Nurturing Home for Every Child',
   ofsted:  '',

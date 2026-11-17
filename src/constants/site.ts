@@ -5,7 +5,7 @@ export const SITE = {
   description:
     'A warm, secure space where every child thrives, grows, and belongs, supported through personalised care and meaningful play.',
   phone: '07939 303144',
-  email: 'Divineheritagechildcare@gmail.com',
+  email: 'divineheritagechildcare@gmail.com',
   address: 'Pitman Building, Freda Street, SE16 4BW',
   city: 'London',
   postcode: 'SE16 4BW',

@@ -176,7 +176,7 @@ export default function AdminDashboard() {
         <div className="dashboard-welcome-text">
           <PageHeader
             title={`${greeting}, ${displayName} 👋`}
-            subtitle="Here's a snapshot of your site content, gallery images, and parent enquiries."
+            subtitle="General website oversight — submitted applications are automatically sent to divineheritagechildcare@gmail.com and logged below."
           />
         </div>
         <div className="dashboard-welcome-badge" aria-hidden="true">
