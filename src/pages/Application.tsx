@@ -154,7 +154,7 @@ const INITIAL_FORM_DATA: ApplicationFormData = {
 
 const PAGE_TITLES = [
   'Page 1: Child Details, Parents & Emergency Contact 1 (Mandatory)',
-  'Page 2: Emergency Contact 2 (Mandatory), Funded Entitlements & Fees',
+  'Page 2: Emergency Contacts 2 & 3 (Mandatory), Funded Entitlements & Fees',
   'Page 3: Sessions & Hours Schedules',
   'Page 4: Medical Information, Consent & Sickness',
   'Page 5: Collection, Declarations & Signatures',
@@ -481,6 +481,12 @@ export default function Application() {
       if (!formData.emergencyContacts[1].contactNo.trim()) {
         newErrors.emergency2ContactNo = 'Emergency contact 2 phone number is required'
       }
+      if (!formData.emergencyContacts[2].name.trim()) {
+        newErrors.emergency3Name = 'Emergency contact 3 name is required'
+      }
+      if (!formData.emergencyContacts[2].contactNo.trim()) {
+        newErrors.emergency3ContactNo = 'Emergency contact 3 phone number is required'
+      }
     }
 
     if (page === 4) {
@@ -533,7 +539,7 @@ export default function Application() {
 
     if (!validatePage(2)) {
       setCurrentPage(2)
-      setSubmitError('Please complete all required fields on Page 2 (Emergency Contact 2 is mandatory) before submitting.')
+      setSubmitError('Please complete all required fields on Page 2 (Emergency Contacts 2 & 3 are mandatory) before submitting.')
       window.scrollTo({ top: 0, behavior: 'smooth' })
       return
     }
@@ -1304,13 +1310,13 @@ export default function Application() {
               <div className="pt-4 border-t-2 border-slate-800">
                 <div className="flex flex-wrap items-center justify-between gap-2 mb-1">
                   <h3 className="text-sm font-bold text-slate-900">
-                    Emergency Contact(s) — Emergency Contacts 1 &amp; 2 are mandatory
+                    Emergency Contact(s) — Emergency Contacts 1, 2 &amp; 3 are mandatory
                   </h3>
                   <span className="text-xs font-semibold px-2.5 py-0.5 bg-rose-50 text-rose-700 border border-rose-200 rounded-full">
                     Contact 1 Mandatory
                   </span>
                 </div>
-                <p className="text-xs text-slate-500 mb-4">Contact 1 of 4 (Contact 2 is continued on Page 2 and is also mandatory)</p>
+                <p className="text-xs text-slate-500 mb-4">Contact 1 of 4 (Contacts 2 &amp; 3 are continued on Page 2 and are also mandatory)</p>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                   <div>
@@ -1402,17 +1408,19 @@ export default function Application() {
                       Emergency Contact(s) (Continued)
                     </h2>
                     <p className="text-xs text-slate-500 mt-0.5">
-                      Emergency Contact 2 is mandatory. Contacts 3 &amp; 4 are optional.
+                      Emergency Contacts 2 &amp; 3 are mandatory. Contact 4 is optional.
                     </p>
                   </div>
                   <span className="text-xs font-semibold px-2.5 py-0.5 bg-rose-50 text-rose-700 border border-rose-200 rounded-full">
-                    Contact 2 Mandatory
+                    Contacts 2 &amp; 3 Mandatory
                   </span>
                 </div>
 
                 <div className="space-y-4">
                   {[1, 2, 3].map((idx) => {
-                    const isMandatory = idx === 1
+                    const isMandatory = idx === 1 || idx === 2
+                    const nameErrKey = `emergency${idx + 1}Name`
+                    const phoneErrKey = `emergency${idx + 1}ContactNo`
                     return (
                       <div
                         key={idx}
@@ -1451,22 +1459,22 @@ export default function Application() {
                                 const updated = [...formData.emergencyContacts] as [any, any, any, any]
                                 updated[idx].name = e.target.value
                                 setFormData({ ...formData, emergencyContacts: updated })
-                                if (isMandatory && errors.emergency2Name) {
+                                if (isMandatory && errors[nameErrKey]) {
                                   setErrors((prev) => {
                                     const next = { ...prev }
-                                    delete next.emergency2Name
+                                    delete next[nameErrKey]
                                     return next
                                   })
                                 }
                               }}
                               className={`w-full px-3 py-1.5 rounded-lg border ${
-                                isMandatory && errors.emergency2Name
+                                isMandatory && errors[nameErrKey]
                                   ? 'border-red-400 focus:ring-red-400'
                                   : 'border-slate-300 focus:ring-[var(--color-primary-500)]'
                               } text-xs bg-white focus:outline-none focus:ring-2`}
                             />
-                            {isMandatory && errors.emergency2Name && (
-                              <p className="text-xs text-red-500 mt-1">{errors.emergency2Name}</p>
+                            {isMandatory && errors[nameErrKey] && (
+                              <p className="text-xs text-red-500 mt-1">{errors[nameErrKey]}</p>
                             )}
                           </div>
 
@@ -1482,22 +1490,22 @@ export default function Application() {
                                 const updated = [...formData.emergencyContacts] as [any, any, any, any]
                                 updated[idx].contactNo = e.target.value
                                 setFormData({ ...formData, emergencyContacts: updated })
-                                if (isMandatory && errors.emergency2ContactNo) {
+                                if (isMandatory && errors[phoneErrKey]) {
                                   setErrors((prev) => {
                                     const next = { ...prev }
-                                    delete next.emergency2ContactNo
+                                    delete next[phoneErrKey]
                                     return next
                                   })
                                 }
                               }}
                               className={`w-full px-3 py-1.5 rounded-lg border ${
-                                isMandatory && errors.emergency2ContactNo
+                                isMandatory && errors[phoneErrKey]
                                   ? 'border-red-400 focus:ring-red-400'
                                   : 'border-slate-300 focus:ring-[var(--color-primary-500)]'
                               } text-xs bg-white focus:outline-none focus:ring-2`}
                             />
-                            {isMandatory && errors.emergency2ContactNo && (
-                              <p className="text-xs text-red-500 mt-1">{errors.emergency2ContactNo}</p>
+                            {isMandatory && errors[phoneErrKey] && (
+                              <p className="text-xs text-red-500 mt-1">{errors[phoneErrKey]}</p>
                             )}
                           </div>
 
