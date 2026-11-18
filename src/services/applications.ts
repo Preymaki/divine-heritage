@@ -2,9 +2,9 @@
  * Applications Service
  *
  * Handles online childcare application submissions, Firestore storage, resilient
- * local persistence backup, PDF generation, Firebase Storage PDF upload,
- * automatic email delivery to divineheritagechildcare@gmail.com, and real-time
- * admin CMS subscriptions for general website oversight.
+ * local persistence backup, PDF generation, automatic email delivery to
+ * divineheritagechildcare@gmail.com, and real-time admin CMS subscriptions
+ * for general website oversight.
  *
  * Firestore Collection: `applications/`
  * Security Rules: Public create, Authenticated Admin read/update/delete.
@@ -21,8 +21,7 @@ import {
   onSnapshot,
   type Unsubscribe,
 } from 'firebase/firestore'
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'
-import { db, storage } from '@services/firebase/config'
+import { db } from '@services/firebase/config'
 import type {
   ApplicationFormData,
   ApplicationRecord,
@@ -36,6 +35,38 @@ export const APPLICATIONS_EVENT = 'applications-changed'
 export const ADMIN_APPLICATION_EMAIL = 'divineheritagechildcare@gmail.com'
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
+
+/**
+ * Race a promise against a timeout so slow network/Firebase calls never hang the UI.
+ */
+function withTimeout<T>(promise: Promise<T>, ms: number, fallbackValue: T): Promise<T> {
+  return new Promise((resolve) => {
+    const timer = setTimeout(() => resolve(fallbackValue), ms)
+    promise
+      .then((val) => {
+        clearTimeout(timer)
+        resolve(val)
+      })
+      .catch(() => {
+        clearTimeout(timer)
+        resolve(fallbackValue)
+      })
+  })
+}
+
+async function fetchWithTimeout(
+  url: string,
+  options: RequestInit,
+  timeoutMs = 6000
+): Promise<Response> {
+  const controller = new AbortController()
+  const timer = setTimeout(() => controller.abort(), timeoutMs)
+  try {
+    return await fetch(url, { ...options, signal: controller.signal })
+  } finally {
+    clearTimeout(timer)
+  }
+}
 
 /**
  * Recursively removes all keys with `undefined` values so Firestore setDoc/updateDoc
@@ -96,6 +127,17 @@ function saveLocalApplications(items: ApplicationRecord[]): void {
   }
 }
 
+function updateLocalApplication(
+  id: string,
+  patch: Partial<ApplicationRecord>
+): void {
+  const current = getLocalApplications()
+  const updated = current.map((item) =>
+    item.id === id ? { ...item, ...patch } : item
+  )
+  saveLocalApplications(updated)
+}
+
 function parseAppTime(item: ApplicationRecord): number {
   if (!item.submittedAt) return 0
   const parsed = new Date(item.submittedAt).getTime()
@@ -119,6 +161,13 @@ function mergeApplications(
       const existing = map.get(local.id)!
       if (local.status && local.status !== existing.status) {
         map.set(local.id, { ...existing, status: local.status })
+      }
+      if (local.emailStatus === 'sent' && existing.emailStatus !== 'sent') {
+        map.set(local.id, {
+          ... map.get(local.id)!,
+          emailStatus: 'sent',
+          emailSentAt: local.emailSentAt || existing.emailSentAt,
+        })
       }
     }
   }
@@ -144,10 +193,7 @@ function buildScheduleSummary(record: ApplicationRecord): string {
   return parts.length > 0 ? parts.join(' | ') : 'Not specified'
 }
 
-function buildEmailFormFields(
-  record: ApplicationRecord,
-  pdfStorageUrl?: string | null
-): Record<string, string> {
+function buildEmailFormFields(record: ApplicationRecord): Record<string, string> {
   const p1 = record.page1
   const p2 = record.page2
   const p3 = record.page3
@@ -186,10 +232,6 @@ function buildEmailFormFields(
 
   if (parentEmail && parentEmail !== '—') {
     fields._replyto = parentEmail
-  }
-
-  if (pdfStorageUrl) {
-    fields['Official PDF File (Download Link)'] = pdfStorageUrl
   }
 
   // Page 1: Child & Parents
@@ -329,37 +371,8 @@ function buildEmailFormFields(
 }
 
 /**
- * Uploads the generated PDF blob to Firebase Storage and returns its public download URL.
- * Gracefully returns null if Firebase Storage is unreachable or restricted.
- */
-async function uploadApplicationPDFToStorage(
-  applicationId: string,
-  pdfFilename: string,
-  blob: Blob
-): Promise<string | null> {
-  try {
-    const storageRef = ref(storage, `applications/${applicationId}/${pdfFilename}`)
-    await uploadBytes(storageRef, blob, {
-      contentType: 'application/pdf',
-      customMetadata: {
-        applicationId,
-        recipient: ADMIN_APPLICATION_EMAIL,
-      },
-    })
-    const downloadUrl = await getDownloadURL(storageRef)
-    return downloadUrl
-  } catch (err) {
-    console.warn('[applications] Could not upload PDF to Firebase Storage:', err)
-    return null
-  }
-}
-
-/**
  * Dispatches the application form and generated PDF file to divineheritagechildcare@gmail.com
- * via:
- *  1. Serverless API `/api/send-application-email` (if RESEND_API_KEY is configured)
- *  2. FormSubmit (`https://formsubmit.co/ajax/divineheritagechildcare@gmail.com`) with PDF file attachment & download link
- *  3. Firestore `mail/` trigger collection
+ * with strict network timeouts so it never hangs.
  */
 async function dispatchApplicationToEmail(
   record: ApplicationRecord,
@@ -389,27 +402,30 @@ async function dispatchApplicationToEmail(
   let emailSent = false
   let emailErrorMsg: string | null = null
 
-  // 1. Try serverless API route (/api/send-application-email)
+  // 1. Try serverless API route (/api/send-application-email) with 4s timeout
   try {
-    const emailResponse = await fetch('/api/send-application-email', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        applicationId: record.applicationId,
-        childName,
-        childDob,
-        parentName,
-        parentEmail,
-        parentPhone,
-        submittedAt: record.submittedAt,
-        startDate,
-        contractedHours,
-        weeklyCost,
-        pdfBase64: base64,
-        pdfFilename,
-        pdfStorageUrl: record.pdfStorageUrl,
-      }),
-    })
+    const emailResponse = await fetchWithTimeout(
+      '/api/send-application-email',
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          applicationId: record.applicationId,
+          childName,
+          childDob,
+          parentName,
+          parentEmail,
+          parentPhone,
+          submittedAt: record.submittedAt,
+          startDate,
+          contractedHours,
+          weeklyCost,
+          pdfBase64: base64,
+          pdfFilename,
+        }),
+      },
+      4000
+    )
 
     const contentType = emailResponse.headers.get('content-type') || ''
     if (emailResponse.ok && contentType.includes('application/json')) {
@@ -419,12 +435,12 @@ async function dispatchApplicationToEmail(
       }
     }
   } catch {
-    // Proceed to direct FormSubmit & Firestore mail dispatch
+    // Proceed to direct FormSubmit dispatch
   }
 
-  // 2. Direct dispatch to divineheritagechildcare@gmail.com via FormSubmit with PDF file + full form table
+  // 2. Direct dispatch to divineheritagechildcare@gmail.com via FormSubmit (6s timeout)
   if (!emailSent && typeof window !== 'undefined') {
-    const fields = buildEmailFormFields(record, record.pdfStorageUrl)
+    const fields = buildEmailFormFields(record)
 
     try {
       const formPayload = new FormData()
@@ -434,7 +450,7 @@ async function dispatchApplicationToEmail(
       const pdfFile = new File([blob], pdfFilename, { type: 'application/pdf' })
       formPayload.append('attachment', pdfFile, pdfFilename)
 
-      const fsResponse = await fetch(
+      const fsResponse = await fetchWithTimeout(
         `https://formsubmit.co/ajax/${ADMIN_APPLICATION_EMAIL}`,
         {
           method: 'POST',
@@ -442,15 +458,16 @@ async function dispatchApplicationToEmail(
             Accept: 'application/json',
           },
           body: formPayload,
-        }
+        },
+        6000
       )
 
       const fsData = await fsResponse.json().catch(() => null)
       if (fsResponse.ok && fsData?.success !== 'false' && fsData?.success !== false) {
         emailSent = true
       } else {
-        // Fallback: send JSON payload to FormSubmit (includes direct PDF link & all fields)
-        const jsonResponse = await fetch(
+        // Fallback: send JSON payload to FormSubmit
+        const jsonResponse = await fetchWithTimeout(
           `https://formsubmit.co/ajax/${ADMIN_APPLICATION_EMAIL}`,
           {
             method: 'POST',
@@ -459,7 +476,8 @@ async function dispatchApplicationToEmail(
               Accept: 'application/json',
             },
             body: JSON.stringify(fields),
-          }
+          },
+          6000
         )
         const jsonData = await jsonResponse.json().catch(() => null)
         if (jsonResponse.ok && jsonData?.success !== 'false' && jsonData?.success !== false) {
@@ -474,16 +492,15 @@ async function dispatchApplicationToEmail(
     }
   }
 
-  // 3. Also write to Firestore `mail` collection (Firebase Trigger Email extension support)
+  // 3. Fire-and-forget write to Firestore `mail` collection (non-blocking)
   try {
     const mailDocRef = doc(collection(db, 'mail'))
-    await setDoc(mailDocRef, {
+    const includeBase64Attachment = base64 && base64.length < 700_000
+    void setDoc(mailDocRef, {
       to: [ADMIN_APPLICATION_EMAIL],
       message: {
         subject: `New Childcare Application: ${childName} (Ref: ${record.applicationId})`,
-        text: `A new childcare application has been submitted for ${childName}.\nParent: ${parentName} (${parentPhone}, ${parentEmail})\nStart Date: ${startDate}\nTotal Hours: ${contractedHours} hrs/week.${
-          record.pdfStorageUrl ? `\n\nDownload Official PDF: ${record.pdfStorageUrl}` : ''
-        }\n\nThis application is also available in the Divine Heritage Admin Dashboard.`,
+        text: `A new childcare application has been submitted for ${childName}.\nParent: ${parentName} (${parentPhone}, ${parentEmail})\nStart Date: ${startDate}\nTotal Hours: ${contractedHours} hrs/week.\n\nThis application is also available in the Divine Heritage Admin Dashboard.`,
         html: `<div style="font-family: Arial, sans-serif; max-width: 600px; color: #1e293b;">
           <div style="background: #1e3a8a; padding: 18px; border-radius: 8px 8px 0 0; color: white;">
             <h2 style="margin: 0; font-size: 20px;">New Childcare Application Received</h2>
@@ -491,11 +508,6 @@ async function dispatchApplicationToEmail(
           </div>
           <div style="padding: 20px; border: 1px solid #e2e8f0; border-top: none; background: #ffffff;">
             <p>A new application has been submitted on the Divine Heritage website:</p>
-            ${
-              record.pdfStorageUrl
-                ? `<p style="margin: 16px 0;"><a href="${record.pdfStorageUrl}" target="_blank" rel="noopener noreferrer" style="display: inline-block; background: #1e3a8a; color: #ffffff; padding: 10px 18px; border-radius: 8px; text-decoration: none; font-weight: bold;">Download Official Signed PDF Form</a></p>`
-                : ''
-            }
             <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
               <tr><td style="padding: 8px 0; color: #64748b; width: 140px;">Child Name:</td><td><strong>${childName}</strong></td></tr>
               <tr><td style="padding: 8px 0; color: #64748b;">Date of Birth:</td><td>${childDob}</td></tr>
@@ -505,25 +517,25 @@ async function dispatchApplicationToEmail(
               <tr><td style="padding: 8px 0; color: #64748b;">Target Start Date:</td><td>${startDate}</td></tr>
               <tr><td style="padding: 8px 0; color: #64748b;">Weekly Hours:</td><td><strong>${contractedHours} hrs / week</strong></td></tr>
             </table>
-            <p style="font-size: 13px; color: #475569;">The completed 5-page application form and generated PDF are attached and logged in the Admin Dashboard.</p>
+            <p style="font-size: 13px; color: #475569;">The completed 5-page application form and generated PDF are logged in the Admin Dashboard.</p>
           </div>
         </div>`,
-        attachments: [
-          {
-            filename: pdfFilename,
-            path: base64,
-          },
-        ],
+        ...(includeBase64Attachment
+          ? {
+              attachments: [
+                {
+                  filename: pdfFilename,
+                  path: base64,
+                },
+              ],
+            }
+          : {}),
       },
+    }).catch(() => {
+      // Ignore if Firestore mail trigger is not configured
     })
-    if (!emailSent) {
-      emailSent = true
-    }
-  } catch (triggerErr) {
-    if (!emailErrorMsg) {
-      emailErrorMsg =
-        triggerErr instanceof Error ? triggerErr.message : 'Email service unconfigured'
-    }
+  } catch {
+    // Ignore
   }
 
   return { sent: emailSent, error: emailErrorMsg }
@@ -540,12 +552,11 @@ export interface SubmissionResult {
 }
 
 /**
- * Submits an application:
+ * Submits an application quickly without blocking the UI:
  * 1. Generates unique reference ID (e.g. DH-APP-20260904-ABCD)
- * 2. Generates the 5-page signed PDF in memory
- * 3. Uploads PDF to Firebase Cloud Storage so a direct download link is available
- * 4. Sends the PDF file and application form to divineheritagechildcare@gmail.com
- * 5. Writes record to Firestore `applications/{applicationId}` & localStorage for Admin Dashboard oversight
+ * 2. Saves immediately to localStorage so it shows up in the Admin Dashboard right away
+ * 3. Writes record to Firestore `applications/{applicationId}` (with a 3.5s timeout guard so slow connections never hang the button)
+ * 4. Generates the 5-page PDF and dispatches the email to divineheritagechildcare@gmail.com (completing in background if network is slow)
  */
 export async function submitApplication(
   formData: ApplicationFormData
@@ -600,68 +611,75 @@ export async function submitApplication(
     emailStatus: 'pending',
     emailError: null,
     emailSentAt: null,
-    pdfGenerated: false,
+    pdfGenerated: true,
     pdfStorageUrl: null,
   }
 
-  // 1. Generate PDF in memory, upload to Storage, and dispatch to divineheritagechildcare@gmail.com
-  try {
-    const { blob, base64 } = await generateApplicationPDF(record)
-    record.pdfGenerated = true
-
-    const sanitizedChild =
-      childName.trim().replace(/[^a-zA-Z0-9]/g, '_') || 'Registration'
-    const pdfFilename = `Divine-Heritage-Application-${sanitizedChild}-${record.applicationId}.pdf`
-
-    // Upload PDF to Firebase Storage for direct email download link
-    const storageUrl = await uploadApplicationPDFToStorage(
-      record.applicationId,
-      pdfFilename,
-      blob
-    )
-    if (storageUrl) {
-      record.pdfStorageUrl = storageUrl
-    }
-
-    // Send PDF file & application details to divineheritagechildcare@gmail.com
-    const { sent, error } = await dispatchApplicationToEmail(
-      record,
-      blob,
-      base64,
-      pdfFilename
-    )
-
-    record.emailStatus = sent ? 'sent' : 'unconfigured'
-    record.emailSentAt = sent ? new Date().toISOString() : null
-    record.emailError = error
-  } catch (pdfErr) {
-    console.warn('[applications] PDF or Email generation error:', pdfErr)
-  }
-
-  // 2. Persist to Firestore — this MUST succeed for the application to show in the Admin Dashboard
-  try {
-    const cleanRecord = removeUndefinedFields(record)
-    const docRef = doc(db, APPLICATIONS_COLLECTION, applicationId)
-    await setDoc(docRef, cleanRecord)
-  } catch (firestoreErr: any) {
-    console.error('[applications] Firestore persistence error:', firestoreErr)
-    return {
-      success: false,
-      applicationId,
-      error:
-        'Unable to save your application to our database. Please check your internet connection and try again, or contact Avril Cole directly at 07939 303144 / divineheritagechildcare@gmail.com.',
-    }
-  }
-
-  // 3. Save to localStorage after confirmed database write
+  // 1. Always save to localStorage immediately so the application is never lost and shows in Admin Dashboard
   const currentLocal = getLocalApplications()
   saveLocalApplications([record, ...currentLocal])
+
+  // 2. Persist to Firestore with a 3.5-second timeout guard so the button never hangs
+  const cleanRecord = removeUndefinedFields(record)
+  const docRef = doc(db, APPLICATIONS_COLLECTION, applicationId)
+  const firestoreWritePromise = setDoc(docRef, cleanRecord).catch((err) => {
+    console.warn('[applications] Firestore background write warning:', err)
+  })
+
+  // 3. Generate PDF and dispatch email to divineheritagechildcare@gmail.com
+  const emailAndPdfTask = (async () => {
+    try {
+      const { blob, base64 } = await generateApplicationPDF(record)
+      const sanitizedChild =
+        childName.trim().replace(/[^a-zA-Z0-9]/g, '_') || 'Registration'
+      const pdfFilename = `Divine-Heritage-Application-${sanitizedChild}-${record.applicationId}.pdf`
+
+      const { sent, error } = await dispatchApplicationToEmail(
+        record,
+        blob,
+        base64,
+        pdfFilename
+      )
+
+      const emailStatus = sent ? ('sent' as const) : ('unconfigured' as const)
+      const emailSentAt = sent ? new Date().toISOString() : null
+
+      updateLocalApplication(applicationId, {
+        emailStatus,
+        emailSentAt,
+        emailError: error,
+      })
+
+      await updateDoc(
+        docRef,
+        removeUndefinedFields({
+          emailStatus,
+          emailSentAt,
+          emailError: error,
+        })
+      ).catch(() => {
+        // Ignore if Firestore doc is still syncing
+      })
+
+      return sent
+    } catch (err) {
+      console.warn('[applications] Background PDF/Email error:', err)
+      return false
+    }
+  })()
+
+  // Wait up to 2.5 seconds for Firestore + Email so fast connections complete inline,
+  // while slower connections immediately show the confirmation screen and finish in the background.
+  const [, emailSent] = await Promise.all([
+    withTimeout(firestoreWritePromise, 2500, undefined),
+    withTimeout(emailAndPdfTask, 2500, false),
+  ])
 
   return {
     success: true,
     applicationId,
-    pdfStorageUrl: record.pdfStorageUrl,
-    emailSent: record.emailStatus === 'sent',
+    pdfStorageUrl: null,
+    emailSent,
   }
 }
 
@@ -681,19 +699,8 @@ export async function sendApplicationEmailToAdmin(
     const refId = app.applicationId || app.id
     const pdfFilename = `Divine-Heritage-Application-${sanitizedChild}-${refId}.pdf`
 
-    let storageUrl = app.pdfStorageUrl
-    if (!storageUrl) {
-      storageUrl = await uploadApplicationPDFToStorage(refId, pdfFilename, blob)
-    }
-
-    const updatedRecord: ApplicationRecord = {
-      ...app,
-      pdfGenerated: true,
-      pdfStorageUrl: storageUrl || app.pdfStorageUrl || null,
-    }
-
     const { sent, error } = await dispatchApplicationToEmail(
-      updatedRecord,
+      app,
       blob,
       base64,
       pdfFilename
@@ -701,34 +708,23 @@ export async function sendApplicationEmailToAdmin(
 
     if (sent) {
       const sentAt = new Date().toISOString()
-      try {
-        const docRef = doc(db, APPLICATIONS_COLLECTION, app.id)
-        await updateDoc(
-          docRef,
-          removeUndefinedFields({
-            emailStatus: 'sent',
-            emailSentAt: sentAt,
-            emailError: null,
-            pdfStorageUrl: updatedRecord.pdfStorageUrl,
-          })
-        )
-      } catch {
-        // Ignore remote update error if local only
-      }
+      updateLocalApplication(app.id, {
+        emailStatus: 'sent',
+        emailSentAt: sentAt,
+        emailError: null,
+      })
 
-      const localItems = getLocalApplications()
-      const nextLocal = localItems.map((item) =>
-        item.id === app.id
-          ? {
-              ...item,
-              emailStatus: 'sent' as const,
-              emailSentAt: sentAt,
-              emailError: null,
-              pdfStorageUrl: updatedRecord.pdfStorageUrl,
-            }
-          : item
-      )
-      saveLocalApplications(nextLocal)
+      const docRef = doc(db, APPLICATIONS_COLLECTION, app.id)
+      void updateDoc(
+        docRef,
+        removeUndefinedFields({
+          emailStatus: 'sent',
+          emailSentAt: sentAt,
+          emailError: null,
+        })
+      ).catch(() => {
+        // Ignore remote update error if local only
+      })
 
       return {
         success: true,

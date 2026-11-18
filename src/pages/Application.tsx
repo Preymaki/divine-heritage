@@ -551,10 +551,25 @@ export default function Application() {
     setSubmitError(null)
 
     try {
-      const result = await submitApplication(formData)
+      let latestSignature = formData.page7.parentSignature
+      if (!latestSignature && hasSignature && canvasRef.current) {
+        try {
+          latestSignature = canvasRef.current.toDataURL('image/png')
+        } catch {
+          // ignore
+        }
+      }
+      const submissionPayload: ApplicationFormData = latestSignature
+        ? {
+            ...formData,
+            page7: { ...formData.page7, parentSignature: latestSignature },
+          }
+        : formData
+
+      const result = await submitApplication(submissionPayload)
       if (result.success) {
         setSubmittedRecord({
-          ...formData,
+          ...submissionPayload,
           id: result.applicationId,
           applicationId: result.applicationId,
           status: 'new',
@@ -563,6 +578,7 @@ export default function Application() {
           pdfGenerated: true,
           pdfStorageUrl: result.pdfStorageUrl || null,
         })
+        window.scrollTo({ top: 0, behavior: 'smooth' })
       } else {
         setSubmitError(result.error || 'Failed to submit application. Please try again.')
       }

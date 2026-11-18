@@ -19,9 +19,18 @@ const COLOR_BLACK: [number, number, number] = [0, 0, 0]
 async function loadLogoDataUrl(): Promise<string | null> {
   if (typeof window === 'undefined') return null
   return new Promise((resolve) => {
+    let settled = false
+    const finish = (val: string | null) => {
+      if (!settled) {
+        settled = true
+        resolve(val)
+      }
+    }
+    const timer = window.setTimeout(() => finish(null), 1500)
     const img = new Image()
     img.crossOrigin = 'anonymous'
     img.onload = () => {
+      window.clearTimeout(timer)
       try {
         const canvas = document.createElement('canvas')
         const size = 200
@@ -29,16 +38,19 @@ async function loadLogoDataUrl(): Promise<string | null> {
         canvas.height = size
         const ctx = canvas.getContext('2d')
         if (!ctx) {
-          resolve(img.src)
+          finish(img.src)
           return
         }
         ctx.drawImage(img, 0, 0, size, size)
-        resolve(canvas.toDataURL('image/png'))
+        finish(canvas.toDataURL('image/png'))
       } catch {
-        resolve('/logo.png')
+        finish('/logo.png')
       }
     }
-    img.onerror = () => resolve(null)
+    img.onerror = () => {
+      window.clearTimeout(timer)
+      finish(null)
+    }
     img.src = '/logo.png'
   })
 }
