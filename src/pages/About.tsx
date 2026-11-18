@@ -47,7 +47,7 @@ export default function About() {
   const rawStoryParagraphs = about.storyParagraphs && about.storyParagraphs.length > 0
     ? about.storyParagraphs
     : [
-        'Divine Heritage Childcare Service was founded in 2017 as a professional home-based childminding service where children can learn, play, and grow safely. A loving, familiar home environment provides the very best foundation for early childhood development.',
+        'Divine Heritage Childcare Service was founded in 2016 as a professional home-based childminding service where children can learn, play, and grow safely. A loving, familiar home environment provides the very best foundation for early childhood development.',
         'Full-time and part-time sessions are offered for babies and toddlers (5 months to 3 years), alongside after-school and holiday care for school-age children (up to 10 years). Every child is treated as an individual and cared for at their own pace.',
         'The large playroom is thoughtfully equipped with age-appropriate resources to spark curiosity and creativity. The setting features a spacious, secure garden, allowing for daily outdoor play and physical development.',
         'Regular outings are made to the local playground, library, and community playgroups, giving children rich social experiences and a connection to their local community. True partnership is maintained with families, with open and honest communication every step of the way.',
@@ -68,7 +68,7 @@ export default function About() {
     <>
       <SEO
         title="About Us | Divine Heritage Childcare Service Bermondsey London"
-        description="Learn about Avril Cole and Divine Heritage Childcare in Bermondsey, London SE16. Over 9 years of early years experience, EYFS accredited, Paediatric First Aid certified, and Ofsted registered."
+        description="Learn about Avril Cole and Divine Heritage Childcare in Bermondsey, London SE16. Over 10 years of early years experience, EYFS accredited, Paediatric First Aid certified, and Ofsted registered."
         path="/about"
         schema={generateBreadcrumbSchema([
           { name: 'Home', path: '/' },

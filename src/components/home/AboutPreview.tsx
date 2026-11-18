@@ -45,7 +45,7 @@ export default function AboutPreview() {
             {/* Floating stat card */}
             <div className="absolute -bottom-5 -right-3 sm:-right-6 bg-white rounded-2xl p-4 shadow-[var(--shadow-elevated)] border border-[var(--color-muted)] flex items-center gap-3.5 max-w-[200px]">
               <div className="w-12 h-12 rounded-xl bg-[var(--color-primary-50)] flex items-center justify-center shrink-0">
-                <span className="text-[var(--color-primary-500)] font-bold text-xl font-[var(--font-family-heading)]">9+</span>
+                <span className="text-[var(--color-primary-500)] font-bold text-xl font-[var(--font-family-heading)]">10+</span>
               </div>
               <div>
                 <p className="text-[var(--color-text-primary)] font-semibold text-sm leading-tight">Years of</p>
@@ -65,7 +65,7 @@ export default function AboutPreview() {
           <SectionHeader
             eyebrow="About Divine Heritage Childcare Services"
             title={about.previewTitle || 'A Safe, Nurturing Home for Every Child'}
-            subtitle={about.previewSubtitle || 'Founded in 2017, Divine Heritage provides warm, professional home-based childminding for families across South East London.'}
+            subtitle={about.previewSubtitle || 'Founded in 2016, Divine Heritage provides warm, professional home-based childminding for families across South East London.'}
           />
 
           <ul className="mt-7 space-y-3.5" role="list">

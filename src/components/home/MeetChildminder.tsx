@@ -84,7 +84,7 @@ export default function MeetChildminder() {
             >
               <div className="w-11 h-11 rounded-xl bg-[var(--color-accent-100)] flex items-center justify-center shrink-0">
                 <span className="text-[var(--color-accent-500)] font-bold text-lg font-[var(--font-family-heading)]">
-                  9+
+                  10+
                 </span>
               </div>
               <div>
@@ -120,7 +120,7 @@ export default function MeetChildminder() {
             ) : (
               <>
                 <p>
-                  With over a decade of dedicated early years experience, I launched Divine Heritage Childcare in 2017 to create something truly special: a vibrant, home-from-home environment where children don’t just stay—they thrive.
+                  With over a decade of dedicated early years experience, I launched Divine Heritage Childcare in 2016 to create something truly special: a vibrant, home-from-home environment where children don’t just stay—they thrive.
                 </p>
                 <p>
                   My journey began at sixteen, babysitting for friends and family. That early spark grew into a lifelong calling, ultimately inspiring me to step away from my previous career and pour my heart into professional childminding full-time.

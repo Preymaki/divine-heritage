@@ -80,7 +80,7 @@ export const DEFAULT_HERO: HeroSettings = {
 export const DEFAULT_ABOUT: AboutSettings = {
   aboutImageUrl: '',
   previewTitle:    'A Safe, Nurturing Home for Every Child',
-  previewSubtitle: 'Founded in 2017, Divine Heritage provides warm, professional home-based childminding for families across South East London.',
+  previewSubtitle: 'Founded in 2016, Divine Heritage provides warm, professional home-based childminding for families across South East London.',
   highlights: [
     { title: 'Belonging',   description: 'emotional safety, inclusion, and feeling at home.' },
     { title: 'Growth',      description: 'developmental progress, learning, and confidence.' },
@@ -88,7 +88,7 @@ export const DEFAULT_ABOUT: AboutSettings = {
     { title: 'Partnership', description: 'strong relationships with families.' },
   ],
   storyParagraphs: [
-    'Divine Heritage Childcare Service was founded in 2017 with a clear vision: to create a warm, loving home-from-home where every child is seen, valued, and inspired to reach their full potential.',
+    'Divine Heritage Childcare Service was founded in 2016 with a clear vision: to create a warm, loving home-from-home where every child is seen, valued, and inspired to reach their full potential.',
     'As an Ofsted registered childminder based in South East London, Divine Heritage offers professional care in a genuine family setting. Children thrive here through rich activities, learning opportunities, and a safe, nurturing atmosphere.',
     'The approach is rooted in the Early Years Foundation Stage (EYFS) framework, guiding everything from activity planning to observation and documentation of child growth. Beyond routine documentation, key developmental milestones and friendships formed make the environment uniquely enriching.',
     'Every family joining the setting becomes part of the Divine Heritage community. Open, honest communication, regular updates, and collaborative support guide each child\'s unique journey.',
@@ -114,7 +114,7 @@ export const DEFAULT_ABOUT: AboutSettings = {
   ],
   bioName:       'Avril Cole',
   bioParagraphs: [
-    'With over a decade of dedicated early years experience, I launched Divine Heritage Childcare in 2017 to create something truly special: a vibrant, home-from-home environment where children don\u2019t just stay\u2014they thrive.',
+    'With over a decade of dedicated early years experience, I launched Divine Heritage Childcare in 2016 to create something truly special: a vibrant, home-from-home environment where children don\u2019t just stay\u2014they thrive.',
     'My journey began at sixteen, babysitting for friends and family. That early spark grew into a lifelong calling, ultimately inspiring me to step away from my previous career and pour my heart into professional childminding full-time.',
     'When I\u2019m not planning personalised learning journeys, you\u2019ll find me:',
     '\u2022 Designing mind-stimulating activities tailored to spark natural curiosity.',
@@ -133,7 +133,7 @@ export const DEFAULT_ABOUT: AboutSettings = {
 function replaceLegacyYears<T>(val: T): T {
   if (typeof val === 'string') {
     return val
-      .replace(/\b2018\b/g, '2017')
+      .replace(/\b(2017|2018)\b/g, '2016')
       .replace(/,\s*,/g, ', ')
       .replace(/,\s*\./g, '.') as unknown as T
   }
